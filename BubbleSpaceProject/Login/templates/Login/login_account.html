@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BubbleSpace Login</title>
+    <link rel="stylesheet" href="{% static 'Login/loginStyle.css' %}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="#" class="back-link">← Back</a>
+            <a href="{% url 'register' %}" class="create-account-link">Create an account</a>
+        </header>
+        <div class="login-box">
+            <div class="logo-circle"></div>
+            <h1>BubbleSpace<br>Log in</h1>
+            <h2>Log in</h2>
+            <form action="{% url 'login' %}" method="POST">
+                {% csrf_token %}
+                
+                <label for="username">Username</label>
+                <input type="text" name="username" id="username" placeholder="Enter your username">
+
+                <label for="password">Password</label>
+                <div class="password-container">
+                    <input type="password" name="password" id="password" placeholder="Enter your password">
+                    <span class="toggle-password" onclick="togglePassword()">👁️ Show</span>
+                </div>
+
+                <button type="submit" class="login-button">Log in</button>
+            </form>
+        </div>
+    </div>
+    <script>
+        function togglePassword() {
+            const passwordField = document.getElementById("password");
+            const toggleText = document.querySelector(".toggle-password");
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+                toggleText.textContent = "👁️ Hide";
+            } else {
+                passwordField.type = "password";
+                toggleText.textContent = "👁️ Show";
+            }
+        }
+    </script>
+</body>
+</html>

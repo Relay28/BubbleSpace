@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bubble Space - Edit Profile</title>
+    <link rel="stylesheet" href="{% static 'Profile/editProfStyle.css' %}">
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <!-- Sidebar content here -->
+        </aside>
+
+        <main class="main-content">
+            <header class="app-bar">
+                <!-- App Bar content here -->
+            </header>
+
+            <section class="profile-section">
+                <h2>My Profile</h2>
+                <div class="profile-info">
+                    <div class="profile-picture">
+                        <div class="profile-image-placeholder">👤</div>
+                        <p><strong>Name:</strong> {{ username }}</p>
+                    </div>
+
+                    <div class="personal-info">
+                        <h3>Personal Information</h3>
+                        <form method="POST">
+                            {% csrf_token %}
+                            <div class="form-row">
+                                <label for="fname">First Name:</label>
+                                <input type="text" id="fname" name="fname" value="{{ fname }}" placeholder="Type here...">
+                            </div>
+                            <div class="form-row">
+                                <label for="lname">Last Name:</label>
+                                <input type="text" id="lname" name="lname" value="{{ lname }}" placeholder="Type here...">
+                            </div>
+                            <div class="form-row">
+                                <label for="gender">Gender:</label>
+                                <select id="gender" name="gender">
+                                    <option value="Male" {% if gender == "Male" %}selected{% endif %}>Male</option>
+                                    <option value="Female" {% if gender == "Female" %}selected{% endif %}>Female</option>
+                                </select>
+                            </div>
+                            <div class="form-row">
+                                <label for="birthDate">Birthday:</label>
+                                <input type="date" id="birthDate" name="birthDate" value="{{ birthDate|date:"Y-m-d" }}">
+                            </div>
+                            <div class="form-row">
+                                <label for="password">New Password:</label>
+                                <input type="password" id="password" name="password" placeholder="Enter new password if you want to change it">
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="save-button">Save</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

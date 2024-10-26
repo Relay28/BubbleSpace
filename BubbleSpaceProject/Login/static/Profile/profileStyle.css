@@ -1,0 +1,143 @@
+*{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    }
+    
+    body {
+      display: flex;
+      background-color: #f5f5f5;
+    }
+   /* Sidebar */
+.sidebar {
+    width: 220px;
+    height: 100vh;
+    background-color: #ffffff;
+    padding: 20px;
+    border-right: 2px solid #e0e0e0;
+    border-radius: 0 20px 20px 0;
+}
+
+.sidebar-header h2 {
+    font-size: 18px;
+    color: #333;
+    font-weight: 600;
+}
+
+.sidebar-content h3 {
+    font-size: 16px;
+    color: #4caf50;
+    font-weight: 600;
+    margin-top: 20px;
+    margin-bottom: 15px;
+}
+
+.sidebar-content ul {
+    list-style: none;
+}
+
+.sidebar-content ul li {
+    font-size: 14px;
+    color: #333;
+    padding: 10px 0;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.sidebar-content ul li i.icon {
+    margin-right: 8px;
+}
+
+    
+    .logo {
+      font-size: 1.5em;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+    
+    .workspace h2 {
+      font-size: 1.2em;
+      color: #3d6e4f;
+      margin-bottom: 10px;
+    }
+    
+    .workspace ul {
+      list-style-type: none;
+      width: 100%;
+    }
+    
+    .workspace li {
+      font-size: 1em;
+      margin: 10px 0;
+      color: #3d6e4f;
+    }
+    
+    .main-content {
+      width: 100%;
+      padding: 20px;
+    }
+    
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    header h1 {
+      font-size: 1.5em;
+    }
+    
+    .header-icons {
+      font-size: 1em;
+      color: #3d6e4f;
+      cursor: pointer;
+    }
+    
+    .profile-info {
+      margin-top: 20px;
+    }
+    
+    .profile-image .placeholder {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background-color: #c7d3c0;
+      margin-bottom: 15px;
+    }
+    
+    .name {
+      font-size: 1.2em;
+      font-weight: bold;
+      color: #3d6e4f;
+      text-align: center;
+    }
+    
+    .personal-info {
+      margin-top: 20px;
+    }
+    
+    .personal-info h3 {
+      font-size: 1.2em;
+      color: #3d6e4f;
+      margin-bottom: 10px;
+    }
+    
+    .info-box {
+      padding: 15px;
+      border: 1px solid #c7d3c0;
+      border-radius: 5px;
+      margin-bottom: 15px;
+    }
+    
+    .info-box div {
+      margin-bottom: 10px;
+    }
+    
+    .delete-account {
+      color: #d9534f;
+      font-size: 0.9em;
+      text-decoration: none;
+      cursor: pointer;
+    }
