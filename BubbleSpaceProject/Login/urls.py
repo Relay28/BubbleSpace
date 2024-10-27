@@ -10,4 +10,5 @@ urlpatterns = [
     path('logout/', logout_view, name='logout'),
     path('delete-account/', delete_account_view, name='delete_account'),  # Add this line
      path('notes/', include('notes.urls')),
+     path('tasks/', include('Tasks.urls')),
 ]

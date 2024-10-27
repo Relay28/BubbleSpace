@@ -1,0 +1,82 @@
+/* delete_note.css */
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    margin: 0;
+    padding: 0;
+}
+
+.content {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    text-align: center;
+}
+
+.content h1 {
+    color: #d9534f;
+    margin-bottom: 10px;
+}
+
+.content p {
+    color: #555;
+    margin-bottom: 20px;
+}
+
+.note-details {
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.note-details h2 {
+    font-size: 20px;
+    color: #333;
+}
+
+.note-details p {
+    color: #666;
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+.delete-form {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.delete-form .delete-btn,
+.delete-form .cancel-btn {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+    text-align: center;
+    color: #fff;
+    transition: background-color 0.3s;
+}
+
+.delete-form .delete-btn {
+    background-color: #d9534f;
+}
+
+.delete-form .delete-btn:hover {
+    background-color: #c9302c;
+}
+
+.delete-form .cancel-btn {
+    background-color: #5bc0de;
+}
+
+.delete-form .cancel-btn:hover {
+    background-color: #31b0d5;
+}
