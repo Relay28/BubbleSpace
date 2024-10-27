@@ -1,5 +1,6 @@
 # views.py
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
 from .models import Note
 from .forms import NoteForm
 
@@ -9,8 +10,9 @@ from .forms import NoteForm
 
 
 
+@login_required
 def notes_list(request):
-    notes = Note.objects.all()  # Retrieve all notes
+    notes = Note.objects.filter(user=request.user)  # Only display notes for the logged-in user
     return render(request, 'notes/notes_list.html', {'notes': notes})
 
 
@@ -27,11 +29,14 @@ def note_detail(request, pk):
 #     else:
 #         form = NoteForm()
 #     return render(request, 'notes/add_note.html', {'form': form})
+@login_required
 def add_note(request):
     if request.method == 'POST':
         form = NoteForm(request.POST)
         if form.is_valid():
-            form.save()
+            note = form.save(commit=False)  # Create the note instance without saving to the database
+            note.user = request.user       # Set the user field to the current logged-in user
+            note.save()                    # Now save the note with the user field
             return redirect('notes_list')
     else:
         form = NoteForm()

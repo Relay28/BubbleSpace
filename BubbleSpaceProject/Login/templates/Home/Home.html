@@ -1,68 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    {% load static %}
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bubble Space Home</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="{% static 'Home/homeStyle.css' %}">
-</head>
-<body>
-    <div class="container">
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <h2>Bubble Space</h2>
-            </div>
-            <div class="sidebar-content">
-                <h3>Workspace</h3>
-                <ul>
-                    <li><i class="icon">👥</i> Teams</li>
-                    <li><i class="icon">📋</i> Tasks</li>
-                    <li><i class="icon">📘</i> Notes</li>
-                    <li><i class="icon">📁</i> Projects</li>
-                    <li><i class="icon">✉️</i> Messages</li>
-                    <li><i class="icon">❓</i> Help</li>
-                </ul>
-            </div>
-        </aside>
+{% extends 'base.html' %}
 
-        <!-- Main Content -->
-        <main class="main-content">
-            <!-- Search Bar -->
-            <header class="header">
-                <input type="text" class="search-bar" placeholder="Hinted search text">
-                <div class="header-icons">
-                    <span>🔔</span>
-                    <a href="{% url 'profile' %}">  <span>👤</span></a>
-                    <span>☰</span>
-                </div>
-            </header>
+{% block title %}Bubble Space Home{% endblock %}
 
-            <!-- Task and Notes Sections -->
-            <section class="workspace">
-                <div class="tasks-section">
-                    <h3>Tasks</h3>
-                    <div class="task-list">
-                        <div class="task-item"><span class="circle">●</span></div>
-                        <div class="task-item"><span class="circle">●</span></div>
-                        <div class="task-item"><span class="circle">●</span></div>
-                        <a href="#" class="see-all">See all..</a>
-                    </div>
-                </div>
-
-                <div class="notes-section">
-                    <h3>Notes</h3>
-                    <div class="note-list">
-                        <div class="note-item"><span class="circle">●</span></div>
-                        <div class="note-item"><span class="circle">●</span></div>
-                        <div class="note-item"><span class="circle">●</span></div>
-                        <a href="#" class="see-all">See all..</a>
-                    </div>
-                </div>
-            </section>
-        </main>
+{% block content %}
+<section class="workspace">
+    <div class="tasks-section">
+        <h3>Tasks</h3>
+        <div class="task-list">
+            <div class="task-item"><span class="circle">●</span></div>
+            <div class="task-item"><span class="circle">●</span></div>
+            <div class="task-item"><span class="circle">●</span></div>
+            <a href="#" class="see-all">See all..</a>
+        </div>
     </div>
-</body>
-</html>
+
+    <div class="notes-section">
+        <h3>Notes</h3>
+        <div class="note-list">
+            <div class="note-item"><span class="circle">●</span></div>
+            <div class="note-item"><span class="circle">●</span></div>
+            <div class="note-item"><span class="circle">●</span></div>
+            <a href="#" class="see-all">See all..</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

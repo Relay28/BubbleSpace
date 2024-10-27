@@ -6,6 +6,7 @@ from .models import Users_Account
 import json
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import check_password
+from django.views.decorators.http import require_POST
 
 @csrf_exempt
 def register_view(request):
@@ -45,19 +46,29 @@ def custom_authenticate(username, password):
     return None
 
 def login_view(request):
+    errors = {"username": None, "password": None}
+
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
-        
+
         user = authenticate(request, username=username, password=password)
-        
+
         if user is not None:
             login(request, user)
-            return redirect('home')
+            return redirect('home')  # Redirect to the home page after login
         else:
-            return render(request, 'Login/login_account.html', {"error": "Invalid credentials"})
-    
-    return render(request, 'Login/login_account.html')
+            # Set error messages for invalid fields
+            if not username:
+                errors["username"] = "Username is required."
+            if not password:
+                errors["password"] = "Password is required."
+            else:
+                errors["username"] = "Invalid credentials."  # Generic error for invalid username/password
+
+    return render(request, 'Login/login_account.html', {"errors": errors})
+
+
 
 def home_view(request):
     return render(request, 'Home/Home.html')
@@ -110,8 +121,18 @@ def edit_profile_view(request):
     }
     return render(request, 'Profile/edit_profile.html', context)
 
+
 def logout_view(request):
-    if request.method == 'POST' and request.user.is_authenticated:
+    if request.user.is_authenticated:
         logout(request)
         return redirect('login')
-    return JsonResponse({"error": "User not authenticated or invalid request method"}, status=403)
+    else:
+        return JsonResponse({"error": "User not authenticated or invalid request method"}, status=403)
+    
+@login_required
+@require_POST
+def delete_account_view(request):
+    user = request.user
+    user.delete()  # Delete the user account
+    logout(request)  # Log out the user
+    return redirect('login')  # Redirect to the login page

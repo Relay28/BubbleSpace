@@ -123,3 +123,9 @@ input[type="password"]:focus {
 .login-button:hover {
     background-color: #96c893;
 }
+
+.error-message {
+    color: red !important;
+    font-size: 12px !important;
+    margin-top: 2px !important;
+}

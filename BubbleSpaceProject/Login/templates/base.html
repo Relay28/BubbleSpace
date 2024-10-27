@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Bubble Space{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'base.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>Bubble Space</h2>
+            </div>
+            <div class="sidebar-content">
+                <h3>Workspace</h3>
+                <ul>
+                    <li><i class="icon">👥</i> Teams</li>
+                    <li><i class="icon">📋</i> Tasks</li>
+                    <li><i class="icon">📘</i> Notes</li>
+                    <li><i class="icon">📁</i> Projects</li>
+                    <li><i class="icon">✉️</i> Messages</li>
+                    <li><i class="icon">❓</i> Help</li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <input type="text" class="search-bar" placeholder="Hinted search text">
+                <div class="header-icons">
+                    <span>🔔</span>
+                    <a href="{% url 'profile' %}"><span>👤</span></a>
+                    <span class="menu" onclick="togglePopup()">☰</span>
+
+                    <!-- Popup for Logout -->
+                    <div class="popup" id="popup">
+                        <a href="{% url 'logout' %}">Logout</a>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main Page Content -->
+            <div class="content">
+                {% block content %}{% endblock %}
+            </div>
+        </main>
+    </div>
+
+    <script src="{% static 'js/popup.js' %}"></script>
+</body>
+</html>

@@ -22,15 +22,22 @@
                 
                 <label for="username">Username</label>
                 <input type="text" name="username" id="username" placeholder="Enter your username">
-
+                {% if errors.username %}
+                    <div class="error-message">{{ errors.username }}</div>
+                {% endif %}
+            
                 <label for="password">Password</label>
                 <div class="password-container">
                     <input type="password" name="password" id="password" placeholder="Enter your password">
                     <span class="toggle-password" onclick="togglePassword()">👁️ Show</span>
                 </div>
-
+                {% if errors.password %}
+                    <div class="error-message">{{ errors.password }}</div>
+                {% endif %}
+            
                 <button type="submit" class="login-button">Log in</button>
             </form>
+            
         </div>
     </div>
     <script>

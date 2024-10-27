@@ -59,6 +59,12 @@
     </div>
 
     <script>
+        // Set the max attribute of the birthdate input to today’s date
+        window.onload = function() {
+            const today = new Date().toISOString().split('T')[0]; // Get current date in YYYY-MM-DD format
+            document.getElementById('birthdate').setAttribute('max', today);
+        };
+
         function togglePassword() {
             const passwordField = document.getElementById("password");
             const toggleText = document.querySelector(".toggle-password");

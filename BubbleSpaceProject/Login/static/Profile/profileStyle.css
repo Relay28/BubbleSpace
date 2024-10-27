@@ -141,3 +141,20 @@
       text-decoration: none;
       cursor: pointer;
     }
+
+    .edit-profile-button {
+      display: inline-block;
+      padding: 0.5em 1.5em;
+      font-size: 1em;
+      background-color: #007bff; /* Adjust color as needed */
+      color: white;
+      border: none;
+      border-radius: 5px;
+      text-decoration: none;
+      transition: background-color 0.3s;
+  }
+  
+  .edit-profile-button:hover {
+      background-color: #0056b3; /* Darker shade for hover effect */
+  }
+  
