@@ -1,0 +1,41 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="{% static 'css/notes_list.css' %}">
+    <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
+    <title>Notes</title>
+</head>
+<body>
+    {% include "sidebar.html" %}
+    
+    <div class="main-content">
+        <!-- <div class="header">
+            <input type="text" placeholder="Hinted search text" class="search-bar">
+            <div class="header-icons">
+                <span class="icon-bell"></span>
+                <span class="icon-user"></span>
+                <span class="icon-menu"></span>
+            </div>
+        </div>  -->
+        
+        <div class="header-row">
+            <h1>Notes</h1>
+            <div class="button-container">
+                <a href="{% url 'add_note' %}" class="btn">Add New Note</a>
+            </div>
+        </div>
+        
+        
+        <div class="note-list">
+            {% for note in notes %}
+                <div class="note-item">
+                    <a href="{% url 'note_detail' note.pk %}">{{ note.title }}</a>
+                </div>
+            {% empty %}
+                <p>No notes available. Click "Add New Note" to create one!</p>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

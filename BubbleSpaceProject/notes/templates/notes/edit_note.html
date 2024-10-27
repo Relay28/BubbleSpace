@@ -1,0 +1,43 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Note</title>
+    <link rel="stylesheet" href="{% static 'css/edit_note.css' %}">
+    <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
+</head>
+<body>
+    <!-- Include Sidebar -->
+    <div class="sidebar-wrapper">
+        {% include "sidebar.html" %}
+    </div>
+    
+    <!-- Main Content Wrapper -->
+    <div class="content">
+        <h1>Edit Note</h1>
+        
+        <!-- Edit Note Form -->
+        <form method="post" class="edit-note-form">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="id_title">Title:</label>
+                {{ form.title }}
+            </div>
+            <div class="form-group">
+                <label for="id_description">Description:</label>
+                {{ form.description }}
+            </div>
+            <div class="form-group">
+                <label for="id_content">Content:</label>
+                {{ form.content }}
+            </div>
+            <div class="button-group">
+                <button type="submit" class="save-btn">Save Changes</button>
+                <a href="{% url 'notes_list' %}" class="cancel-btn">Cancel</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

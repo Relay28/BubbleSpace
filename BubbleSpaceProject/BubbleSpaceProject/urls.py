@@ -20,4 +20,5 @@ from django.urls import include, path
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('Login.urls')),  # Include Login.urls without a prefix for direct access
+    path('notes/', include('notes.urls')),
 ]

@@ -1,0 +1,64 @@
+/* General body and main content styling */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #ffffff; /* White background */
+    margin: 0;
+    padding: 0;
+}
+
+/* Content wrapper styling for Note Detail page */
+.content {
+    max-width: 800px;
+    margin: 20px auto; /* Center the content and add top margin */
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    margin-top: 40px; /* Move content further down from the search bar */
+}
+
+/* Header styling */
+.content h1 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+/* Paragraph styling */
+.content p {
+    font-size: 16px;
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+/* Action links styling */
+.content a {
+    text-decoration: none;
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 16px;
+    margin-right: 10px;
+    display: inline-block; /* Ensures button-like appearance */
+    transition: background-color 0.3s;
+}
+
+/* Edit button */
+.content a[href*="edit_note"] {
+    background-color: #4CAF50;
+}
+
+.content a[href*="edit_note"]:hover {
+    background-color: #45a049;
+}
+
+/* Delete button */
+.content a[href*="delete_note"] {
+    background-color: #f44336;
+}
+
+.content a[href*="delete_note"]:hover {
+    background-color: #d32f2f;
+}
