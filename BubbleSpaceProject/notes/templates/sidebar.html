@@ -2,17 +2,17 @@
   
     <aside class="sidebar">
         <div class="sidebar-header">
-            <h2>Bubble Space</h2>
+            <a href="{% url 'home' %}"><h2>Bubble Space</h2></a>
         </div>
         <div class="sidebar-content">
             <h3>Workspace</h3>
             <ul>
                 <li><i class="icon">👥</i> Teams</li>
-                <li><i class="icon">📋</i> Tasks</li>
-                <li><i class="icon">📘</i> Notes</li>
-                <li><i class="icon">📁</i> Projects</li>
-                <li><i class="icon">✉️</i> Messages</li>
-                <li><i class="icon">❓</i> Help</li>
+                <a href="{% url 'task_list' %}"><li><i class="icon">📋</i> Tasks</li></a> 
+                 <a href="{% url 'notes_list' %}"><li><i class="icon">📘</i> Notes</li></a>
+                 <li><i class="icon">📁</i> Projects</li>
+                 <a href="{% url 'chat_list' %}"><li><i class="icon">✉️</i> Messages</li></a>
+                 <li><i class="icon">❓</i> Help</li>
             </ul>
         </div>
     </aside>
