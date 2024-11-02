@@ -7,22 +7,54 @@
     <title>{% block title %}Bubble Space{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'base.css' %}">
     {% block extra_css %}{% endblock %}
+    <style>
+        /* Popup styling */
+        .popup {
+            display: none;
+            position: absolute;
+            top: 70px;
+            right: 40px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+        }
+
+        .popup.show {
+            display: block;
+        }
+
+        .popup a {
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+            display: block;
+            padding: 5px 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        .popup a:hover {
+            background-color: #f1f1f1;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <!-- Sidebar -->
         <aside class="sidebar">
             <div class="sidebar-header">
-                <h2>Bubble Space</h2>
+                <a href="{% url 'home' %}"><h2>Bubble Space</h2></a>
             </div>
             <div class="sidebar-content">
                 <h3>Workspace</h3>
                 <ul>
                     <li><i class="icon">👥</i> Teams</li>
-                    <li><i class="icon">📋</i> Tasks</li>
-                    <li><i class="icon">📘</i> Notes</li>
+                   <a href="{% url 'task_list' %}"><li><i class="icon">📋</i> Tasks</li></a> 
+                    <a href="{% url 'notes_list' %}"><li><i class="icon">📘</i> Notes</li></a>
                     <li><i class="icon">📁</i> Projects</li>
-                    <li><i class="icon">✉️</i> Messages</li>
+                    <a href="{% url 'chat_list' %}"><li><i class="icon">✉️</i> Messages</li></a>
                     <li><i class="icon">❓</i> Help</li>
                 </ul>
             </div>
@@ -37,11 +69,10 @@
                     <span>🔔</span>
                     <a href="{% url 'profile' %}"><span>👤</span></a>
                     <span class="menu" onclick="togglePopup()">☰</span>
-
-                    <!-- Popup for Logout -->
-                    <div class="popup" id="popup">
-                        <a href="{% url 'logout' %}">Logout</a>
-                    </div>
+                </div>
+                <!-- Popup for Logout -->
+                <div class="popup" id="popup">
+                    <a href="{% url 'logout' %}">Logout</a>
                 </div>
             </header>
 
@@ -53,5 +84,20 @@
     </div>
 
     <script src="{% static 'js/popup.js' %}"></script>
+    <script>
+        function togglePopup() {
+            const popup = document.getElementById("popup");
+            popup.classList.toggle("show");
+        }
+
+        document.addEventListener("click", function(event) {
+            const popup = document.getElementById("popup");
+            const menuIcon = document.querySelector(".menu");
+
+            if (!menuIcon.contains(event.target) && !popup.contains(event.target)) {
+                popup.classList.remove("show");
+            }
+        });
+    </script>
 </body>
 </html>

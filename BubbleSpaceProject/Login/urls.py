@@ -8,8 +8,8 @@ urlpatterns = [
     path('profile/', profile_view, name='profile'),
     path('edit-profile/', edit_profile_view, name='edit_profile'),
     path('logout/', logout_view, name='logout'),
-    path('delete-account/', delete_account_view, name='delete_account'),  # Add this line
-     path('notes/', include('notes.urls')),
-     path('tasks/', include('Tasks.urls')),
-     path('messages/', include('Messages.urls')),
+    path('delete-account/', delete_account_view, name='delete_account'),  
+    path('notes/', include('notes.urls'), name="notes"), # Notes App
+    path('tasks/', include('Tasks.urls')), #Tasks App
+    path('messages/', include('Messages.urls')), #messages App
 ]

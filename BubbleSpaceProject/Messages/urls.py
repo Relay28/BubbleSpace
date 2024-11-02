@@ -5,7 +5,7 @@ from .views import (
 )
 
 urlpatterns = [
-    path('chat_list/', chat_list, name='chat_list'),
+    path('', chat_list, name='chat_list'),
     path('chat/<int:chat_id>/', chat_detail, name='chat_detail'),
     path('search_users/', search_users, name='search_users'),
     path('get_new_messages/<int:chat_id>/', get_new_messages, name='get_new_messages'),

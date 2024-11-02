@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'notes',
     'Tasks',
     'Messages',
+    'Teams',
 ]
 
 MIDDLEWARE = [
