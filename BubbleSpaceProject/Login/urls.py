@@ -12,4 +12,5 @@ urlpatterns = [
     path('notes/', include('notes.urls'), name="notes"), # Notes App
     path('tasks/', include('Tasks.urls')), #Tasks App
     path('messages/', include('Messages.urls')), #messages App
+    path('projects/', include('Projects.urls')), #projects App
 ]

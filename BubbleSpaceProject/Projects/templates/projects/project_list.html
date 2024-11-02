@@ -1,0 +1,42 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Project List</title>
+    <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+
+<body>
+    {% include "sidebar.html" %}
+    <h1 style="float: left; margin-left: 325px;">Projects</h1>
+
+    <a href="{% url 'project_create' %}" style="float: right; margin-right: 30px; margin-top: 25px;">
+        Create New Project
+    </a>
+
+    <div style="clear: both; margin-top: 20px; margin-left: 325px;">
+        {% for project in projects %}
+        <div style="border: 1px solid #ddd; padding: 10px; margin: 10px; border-radius: 8px;">
+            <a href="{% url 'project_detail' project.pk %}">
+                {{ project.Title }}
+            </a>
+
+            <span class="{% if project.Status == 'Ongoing' %}status-ongoing{% elif project.Status == 'Completed' %}status-completed{% else %}status-cancelled{% endif %}" style="float: right;">
+                {{ project.Status }}
+            </span>
+
+            <a href="{% url 'project_update' project.pk %}" style="float: right; margin-left: 10px;">
+                Edit
+            </a>
+
+            <a href="{% url 'project_delete' project.pk %}" style="float: right;">
+                Delete
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</body>
+
+</html>

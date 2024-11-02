@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'Tasks',
     'Messages',
     'Teams',
+    'Projects',
 ]
 
 MIDDLEWARE = [

@@ -1,0 +1,44 @@
+{% load static %}
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <title>Project Details</title>
+    <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
+</head>
+
+<body>
+    {% include "sidebar.html" %}
+
+    <div style="margin-left: 325px;">
+        <a href="{% url 'project_list' %}">
+            Back
+        </a>
+
+        <h1>Project Details</h1>
+
+        <p>
+            <strong>Title:</strong>
+            {{ project.Title }}
+        </p>
+
+        <p>
+            <strong>Description:</strong>
+            {{ project.Description }}
+        </p>
+
+        <p>
+            <strong>Status:</strong>
+            <span class="{% if project.Status == 'Ongoing' %}status-ongoing{% elif project.Status == 'Completed' %}status-completed{% else %}status-cancelled{% endif %}">
+                {{ project.Status }}
+            </span>
+        </p>
+
+        <a href="{% url 'project_update' project.pk %}">Edit</a>
+
+        <a href="{% url 'project_delete' project.pk %}" style="margin-left: 25px;">
+            Delete
+        </a>
+    </div>
+</body>
+</html>
