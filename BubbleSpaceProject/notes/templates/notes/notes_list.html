@@ -10,15 +10,6 @@
     {% include "sidebar.html" %}
     
     <div class="main-content">
-        <!-- <div class="header">
-            <input type="text" placeholder="Hinted search text" class="search-bar">
-            <div class="header-icons">
-                <span class="icon-bell"></span>
-                <span class="icon-user"></span>
-                <span class="icon-menu"></span>
-            </div>
-        </div>  -->
-        
         <div class="header-row">
             <h1>Notes</h1>
             <div class="button-container">
@@ -26,11 +17,16 @@
             </div>
         </div>
         
-        
         <div class="note-list">
             {% for note in notes %}
                 <div class="note-item">
-                    <a href="{% url 'note_detail' note.pk %}">{{ note.title }}</a>
+                    <div class="note-content">
+                        <a href="{% url 'note_detail' note.pk %}">{{ note.title }}</a>
+                    </div>
+                    <div class="note-actions">
+                        <a href="{% url 'edit_note' note.pk %}" class="btn edit-btn">Edit</a>
+                        <a href="{% url 'delete_note' note.pk %}" class="btn delete-btn">Delete</a>
+                    </div>
                 </div>
             {% empty %}
                 <p>No notes available. Click "Add New Note" to create one!</p>

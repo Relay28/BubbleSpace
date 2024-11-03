@@ -1,19 +1,97 @@
 {% extends "base.html" %}
 
 {% block content %}
+<style>
+    /* General Styling */
+    h1, h2 {
+        color: #333;
+        font-family: Arial, sans-serif;
+        margin-bottom: 20px;
+    }
 
-<h1>{{ team.team_name }}
-    {% if request.user == team.creator %}
-        <a href="{% url 'team_edit' team.pk %}" class="btn btn-sm btn-warning">
-            <i class="fa fa-edit"></i> Edit
-        </a>
-    {% endif %}
-</h1>
+    .btn {
+        padding: 8px 12px;
+        border-radius: 5px;
+        color: #fff;
+        text-decoration: none;
+    }
 
-<!-- Add New Member Button -->
-<a href="{% url 'add_team_member' team.pk %}" class="btn btn-success">
-    Add New Member
-</a>
+    .btn-success { background-color: #28a745; }
+    .btn-warning { background-color: #ffc107; color: #212529; }
+    .btn-primary { background-color: #007bff; }
+    .btn-info { background-color: #17a2b8; }
+
+    /* Team Name and Buttons */
+    h1 {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 24px;
+    }
+    h1 a {
+        font-size: 14px;
+        padding: 4px 8px;
+    }
+
+    /* Members Table */
+    table {
+        width: 100%;
+        margin-bottom: 20px;
+        border-collapse: collapse;
+    }
+    th, td {
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+        text-align: left;
+        font-family: Arial, sans-serif;
+    }
+    th {
+        background-color: #f8f9fa;
+        color: #495057;
+        font-weight: bold;
+    }
+    td {
+        font-size: 14px;
+        color: #333;
+    }
+
+    /* Projects Section */
+    .project-item {
+        padding: 15px;
+        border-radius: 5px;
+        color: #fff;
+        font-family: Arial, sans-serif;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .bg-yellow { background-color: #ffc107; color: #212529; }
+    .bg-green { background-color: #28a745; }
+    .bg-red { background-color: #dc3545; }
+
+    /* Alignment and Spacing */
+    .action-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 15px;
+    }
+</style>
+
+<div class="action-bar">
+    <h1>{{ team.team_name }}
+        {% if request.user == team.creator %}
+            <a href="{% url 'team_edit' team.pk %}" class="btn btn-warning">
+                <i class="fa fa-edit"></i> Edit
+            </a>
+        {% endif %}
+    </h1>
+
+    <!-- Add New Member Button -->
+    <a href="{% url 'add_team_member' team.pk %}" class="btn btn-success">
+        Add New Member
+    </a>
+</div>
 
 <!-- Team Members Section -->
 <h2>Members</h2>
@@ -21,27 +99,34 @@
     <thead>
         <tr>
             <th>Name</th>
+            <th>Role</th>
         </tr>
     </thead>
     <tbody>
         {% for member in members %}
         <tr>
             <td>{{ member.fname }} {{ member.lname }}</td>
+            <td>
+                {% if member == team.creator %}
+                    Owner
+                {% else %}
+                    Member
+                {% endif %}
+            </td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
 
 <!-- Team Projects Section -->
-<div style="display: flex; align-items: center; justify-content: space-between;">
+<div class="action-bar">
     <h2>Projects</h2>
     <a href="{% url 'project_create' team.pk %}" class="btn btn-primary">Add Project</a>
 </div>
 
 {% for project in projects %}
 <div class="project-item 
-            {% if project.Status == 'Ongoing' %}bg-yellow{% elif project.Status == 'Completed' %}bg-green{% elif project.Status == 'Cancelled' %}bg-red{% endif %}" 
-     style="border: 1px solid #ddd; padding: 10px; margin-bottom: 10px;">
+            {% if project.Status == 'Ongoing' %}bg-yellow{% elif project.Status == 'Completed' %}bg-green{% elif project.Status == 'Cancelled' %}bg-red{% endif %}">
     <span>{{ project.Title }}</span> - <span>Status: {{ project.Status }}</span>
     <a href="{% url 'project_detail' project.ProjectId %}" class="btn btn-info">
         View Details

@@ -1,21 +1,51 @@
-/* Styles specific to Note Detail page */
-.content {
+.main-content {
     margin-left: 260px;
     padding: 20px;
 }
 
-.content h1 {
-    font-size: 24px;
-    font-weight: bold;
+.header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
 }
 
-.content a {
-    text-decoration: none;
+.note-list {
+    margin-top: 20px;
+}
+
+.note-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.note-content a {
+    font-size: 18px;
     color: #333;
-    padding: 5px 10px;
-    background-color: #eee;
-    border-radius: 3px;
-    margin-right: 5px;
+    text-decoration: none;
 }
 
+.note-content a:hover {
+    text-decoration: underline;
+}
 
+.note-actions .btn {
+    text-decoration: none;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 3px;
+    margin-left: 5px;
+}
+
+.edit-btn {
+    background-color: #28a745; /* Green for edit */
+}
+
+.delete-btn {
+    background-color: #dc3545; /* Red for delete */
+}

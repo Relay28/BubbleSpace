@@ -1,13 +1,41 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>Edit Team Name</h2>
+<style>
+    h2 {
+        color: #333;
+        font-family: Arial, sans-serif;
+        margin-bottom: 20px;
+    }
 
+    /* Form Styling (reuses same styles as above) */
+    form {
+        max-width: 500px;
+        margin: 0 auto;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background-color: #f8f9fa;
+    }
+
+    /* Button Styling */
+    .btn {
+        padding: 10px 15px;
+        border-radius: 5px;
+        font-size: 16px;
+        color: #fff;
+        text-decoration: none;
+    }
+
+    .btn-primary { background-color: #007bff; border: none; }
+    .btn-secondary { background-color: #6c757d; border: none; color: #fff; }
+</style>
+
+<h2>Edit Team Name</h2>
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit" class="btn btn-primary">Save Changes</button>
     <a href="{% url 'team_detail' team.pk %}" class="btn btn-secondary">Cancel</a>
 </form>
-
 {% endblock %}
