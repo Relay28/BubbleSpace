@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>{{ team.team_name }}
+    {% if request.user == team.creator %}
+        <a href="{% url 'team_edit' team.pk %}" class="btn btn-sm btn-warning">
+            <i class="fa fa-edit"></i> Edit
+        </a>
+    {% endif %}
+</h1>
+
+<!-- Add New Member Button -->
+<a href="{% url 'add_team_member' team.pk %}" class="btn btn-success">
+    Add New Member
+</a>
+
+<!-- Team Members Section -->
+<h2>Members</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for member in members %}
+        <tr>
+            <td>{{ member.fname }} {{ member.lname }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Team Projects Section -->
+<div style="display: flex; align-items: center; justify-content: space-between;">
+    <h2>Projects</h2>
+    <a href="{% url 'project_create' team.pk %}" class="btn btn-primary">Add Project</a>
+</div>
+
+{% for project in projects %}
+<div class="project-item 
+            {% if project.Status == 'Ongoing' %}bg-yellow{% elif project.Status == 'Completed' %}bg-green{% elif project.Status == 'Cancelled' %}bg-red{% endif %}" 
+     style="border: 1px solid #ddd; padding: 10px; margin-bottom: 10px;">
+    <span>{{ project.Title }}</span> - <span>Status: {{ project.Status }}</span>
+    <a href="{% url 'project_detail' project.ProjectId %}" class="btn btn-info">
+        View Details
+    </a>
+</div>
+{% endfor %}
+
+{% endblock %}

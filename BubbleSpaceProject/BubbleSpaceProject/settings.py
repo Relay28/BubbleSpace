@@ -35,6 +35,8 @@ STATICFILES_DIRS = [
 
 # settings.py
 AUTH_USER_MODEL = 'Login.Users_Account'  # Replace 'yourapp' with your actual app name
+# Redirect to this URL if a user tries to access a login-required page without being logged in
+LOGIN_URL = 'login'  # Replace 'login' with the name of your actual login view URL pattern
 
 # Application definition
 
@@ -51,6 +53,7 @@ INSTALLED_APPS = [
     'Messages',
     'Teams',
     'Projects',
+    'django_select2',
 ]
 
 MIDDLEWARE = [

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <title>Bubble Space</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+  <link href="{% static 'css/base.css' %}" rel="stylesheet"/>
+ </head>
+ <body>
+  <div class="container">
+   <div class="sidebar">
+    <a href="{% url 'home' %}"><h2>Bubble Space</h2></a>
+    <ul>
+        <li><i class="icon">👥</i> Teams</li>
+        <a href="{% url 'task_list' %}"><li><i class="icon">📋</i> Tasks</li></a> 
+         <a href="{% url 'notes_list' %}"><li><i class="icon">📘</i> Notes</li></a>
+         <li><i class="icon">📁</i> Projects</li>
+         <a href="{% url 'chat_list' %}"><li><i class="icon">✉️</i> Messages</li></a>
+         <li><i class="icon">❓</i> Help</li>
+    </ul>
+   </div>
+   <div class="main-content">
+    <div class="header">
+     <input placeholder="Hinted search text" type="text"/>
+     <div class="icons">
+      <i class="fas fa-search"></i>
+      <i class="fas fa-bell"></i>
+      <i class="fas fa-bars"></i>
+     </div>
+    </div>
+    <div class="content">
+     <div class="messages-list">
+      <input placeholder="Search Messages" type="text"/>
+      <div class="message-item">
+       <img alt="User profile picture" height="40" src="https://storage.googleapis.com/a1aa/image/CJpgRgDO9vonEZZ9i4efiTVkGW3kp8fLo9hXxVfRPEflESkdC.jpg" width="40"/>
+       <div class="message-text">
+        <strong>Rae Addison Duque</strong>
+        <p>Message here.</p>
+       </div>
+      </div>
+      <!-- Repeat message-item as needed -->
+     </div>
+     <div class="message-view">
+      <div class="message-header">
+       <img alt="User profile picture" height="40" src="https://storage.googleapis.com/a1aa/image/CJpgRgDO9vonEZZ9i4efiTVkGW3kp8fLo9hXxVfRPEflESkdC.jpg" width="40"/>
+       <strong>Rae Addison Duque</strong>
+      </div>
+      <!-- Repeat message-content as needed -->
+      <div class="message-input">
+       <input placeholder="Message here." type="text"/>
+       <i class="fas fa-paper-plane"></i>
+      </div>
+     </div>
+    </div>
+   </div>
+  </div>
+ </body>
+</html>

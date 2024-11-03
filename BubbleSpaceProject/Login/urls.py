@@ -13,4 +13,5 @@ urlpatterns = [
     path('tasks/', include('Tasks.urls')), #Tasks App
     path('messages/', include('Messages.urls')), #messages App
     path('projects/', include('Projects.urls')), #projects App
+    path('teams/',include("Teams.urls")),
 ]
