@@ -53,7 +53,7 @@ INSTALLED_APPS = [
     'Messages',
     'Teams',
     'Projects',
-    'django_select2',
+    
 ]
 
 MIDDLEWARE = [

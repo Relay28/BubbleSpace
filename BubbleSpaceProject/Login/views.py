@@ -73,6 +73,9 @@ def login_view(request):
 def home_view(request):
     return render(request, 'Home/Home.html')
 
+def help_view(request):
+    return render(request, 'Help/helppage.html')
+
 def profile_view(request):
     if request.user.is_authenticated:
         user = request.user
