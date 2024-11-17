@@ -19,7 +19,18 @@
     .btn-success { background-color: #28a745; }
     .btn-warning { background-color: #ffc107; color: #212529; }
     .btn-primary { background-color: #007bff; }
-    .btn-info { background-color: #17a2b8; }
+    .btn-info { 
+        background-color: #17a2b8; 
+    }
+    .btn-back { 
+        background-color: #28a745;
+        padding-top: 10px;
+        padding: 5px 8px;
+        border-radius: 5px;
+        color: #fff;
+        margin-top: 10px;
+        text-decoration: none;
+    }
 
     /* Team Name and Buttons */
     h1 {
@@ -63,6 +74,7 @@
         font-family: Arial, sans-serif;
         display: flex;
         align-items: center;
+        margin: 8px;
         justify-content: space-between;
     }
     .bg-yellow { background-color: #ffc107; color: #212529; }
@@ -76,7 +88,18 @@
         justify-content: space-between;
         margin-bottom: 15px;
     }
+
+    /* Delete Icon Styling */
+    .delete-icon {
+        cursor: pointer;
+        color: #dc3545;
+        font-size: 18px;
+        margin-left: 10px;
+    }
 </style>
+
+<!-- Back Button -->
+<a href="{% url 'team_list' %}" class="btn btn-back"> < Back </a>
 
 <div class="action-bar">
     <h1>{{ team.team_name }}
@@ -100,6 +123,7 @@
         <tr>
             <th>Name</th>
             <th>Role</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -111,6 +135,14 @@
                     Owner
                 {% else %}
                     Member
+                {% endif %}
+            </td>
+            <td>
+                {% if member != team.creator %}
+                    <!-- Delete Icon for non-owner members -->
+                    <a href="{% url 'remove_team_member' team.pk member.pk %}" class="delete-icon">
+                        <i class="fa fa-trash">Remove</i>
+                    </a>
                 {% endif %}
             </td>
         </tr>

@@ -139,3 +139,20 @@ def search_member(request):
 
     # Return the JSON response
     return JsonResponse(user_data, safe=False)
+
+
+
+@login_required
+def remove_team_member(request, team_id, member_id):
+    team = get_object_or_404(Team, pk=team_id)
+    member = get_object_or_404(User, pk=member_id)
+
+    # Ensure the user is the creator (owner) of the team
+    if request.user == team.creator:
+        # Remove the member from the team
+        team.members.remove(member)
+        # Optionally, redirect back to the team details page
+        return redirect('team_detail', pk=team.id)
+    else:
+        # If the user is not the creator, redirect or show an error
+        return redirect('team_detail', pk=team.id)

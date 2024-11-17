@@ -6,11 +6,7 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 class TeamForm(forms.ModelForm):
-    members = forms.ModelMultipleChoiceField(
-        queryset=User.objects.all(),
-        widget=forms.CheckboxSelectMultiple(),
-        required=False,  # Make the field optional
-    )
+   
 
     def __init__(self, *args, **kwargs):
         self.creator = kwargs.pop('creator', None)
@@ -35,11 +31,8 @@ class TeamForm(forms.ModelForm):
 
     class Meta:
         model = Team
-        fields = ['team_name', 'members']
-        widgets = {
-            'members': forms.CheckboxSelectMultiple(),
-        }
-
+        fields = ['team_name',]
+      
 class AddTeamMemberForm(forms.ModelForm):
     members = forms.ModelMultipleChoiceField(
         queryset=User.objects.none(),
@@ -50,17 +43,23 @@ class AddTeamMemberForm(forms.ModelForm):
         team = kwargs.pop('team', None)
         super().__init__(*args, **kwargs)
         if team:
-            self.fields['members'].queryset = User.objects.exclude(id=team.creator.id)
+            # Exclude the creator and current team members from the queryset
+            self.fields['members'].queryset = User.objects.exclude(id__in=team.members.values_list('id', flat=True))
         self.team = team  # Save the team instance for later use in save()
 
     def save(self, commit=True):
-        team = super().save(commit=False)
+        team = self.team  # Use the provided team instance
+        new_members = self.cleaned_data.get('members', [])
+
+        # Add the new members to the team without removing existing ones
         if commit:
-            team.save()
-            self.save_m2m()
-            # Ensure creator is always part of the team
-            if self.team and self.team.creator:
-                team.members.add(self.team.creator)
+            for member in new_members:
+                team.members.add(member)
+
+        # Ensure creator is always part of the team
+        if team.creator and team.creator not in team.members.all():
+            team.members.add(team.creator)
+
         return team
 
     class Meta:
