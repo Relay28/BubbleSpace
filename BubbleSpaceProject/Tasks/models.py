@@ -29,7 +29,13 @@ class Task(models.Model):
         related_name='tasks',
         
     )
+    project = models.ForeignKey(
+        'Projects.Project',
+        on_delete=models.CASCADE,
+        related_name='tasks',
+        null=True,
+        blank=True
+    )
 
     def __str__(self):
         return self.title
-

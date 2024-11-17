@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from .models import Task
+from Projects.models import Project
 from .forms import TaskForm
 
 ## views.py
@@ -10,7 +11,7 @@ from django.http import HttpResponseForbidden
 
 @login_required
 def task_list(request):
-    tasks = Task.objects.filter(created_by=request.user)
+    tasks = Task.objects.filter(created_by=request.user, project__isnull=True)
     return render(request, 'tasks/task_list.html', {'tasks': tasks})
 
 @login_required

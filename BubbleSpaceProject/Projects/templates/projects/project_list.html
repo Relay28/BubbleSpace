@@ -3,39 +3,53 @@
 <html lang="en">
 
 <head>
-    <title>Project List</title>
+    <title>Task List</title>
     <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
     <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <style>
+        .status-green { color: #28a745; }
+        .status-yellow { color: #ffc107; }
+        .status-red { color: #dc3545; }
+        .task-item {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin: 10px;
+            border-radius: 8px;
+        }
+    </style>
 </head>
 
 <body>
     {% include "sidebar.html" %}
-    <h1 style="float: left; margin-left: 325px;">Projects</h1>
+    <h1 style="float: left; margin-left: 325px;">Tasks in {{ project.Title }}</h1>
 
-    <a href="{% url 'project_create' %}" style="float: right; margin-right: 30px; margin-top: 25px;">
-        Create New Project
+    <a href="{% url 'task_create_for_project' project.ProjectId %}" style="float: right; margin-right: 30px; margin-top: 25px;">
+        Add New Task
     </a>
 
     <div style="clear: both; margin-top: 20px; margin-left: 325px;">
-        {% for project in projects %}
-        <div style="border: 1px solid #ddd; padding: 10px; margin: 10px; border-radius: 8px;">
-            <a href="{% url 'project_detail' project.pk %}">
-                {{ project.Title }}
-            </a>
+        {% if tasks %}
+            {% for task in tasks %}
+            <div class="task-item">
+                <strong>{{ task.title }}</strong>
+                <span class="status-{{ task.status|lower }}" style="float: right;">
+                    {{ task.get_status_display }}
+                </span>
+                <p><strong>Category:</strong> {{ task.category }}</p>
+                <p><strong>Due Date:</strong> {{ task.due_date }}</p>
+                <p><strong>Assigned To:</strong> {{ task.assigned_to }}</p>
 
-            <span class="{% if project.Status == 'Ongoing' %}status-ongoing{% elif project.Status == 'Completed' %}status-completed{% else %}status-cancelled{% endif %}" style="float: right;">
-                {{ project.Status }}
-            </span>
-
-            <a href="{% url 'project_update' project.pk %}" style="float: right; margin-left: 10px;">
-                Edit
-            </a>
-
-            <a href="{% url 'project_delete' project.pk %}" style="float: right;">
-                Delete
-            </a>
-        </div>
-        {% endfor %}
+                <a href="{% url 'task_update' task.pk %}" style="float: right; margin-left: 10px;">
+                    Edit
+                </a>
+                <a href="{% url 'task_delete' task.pk %}" style="float: right;">
+                    Delete
+                </a>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p>No tasks found for this project.</p>
+        {% endif %}
     </div>
 </body>
 

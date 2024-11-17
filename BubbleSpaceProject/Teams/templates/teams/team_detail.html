@@ -127,7 +127,10 @@
 {% for project in projects %}
 <div class="project-item 
             {% if project.Status == 'Ongoing' %}bg-yellow{% elif project.Status == 'Completed' %}bg-green{% elif project.Status == 'Cancelled' %}bg-red{% endif %}">
-    <span>{{ project.Title }}</span> - <span>Status: {{ project.Status }}</span>
+    <a href="{% url 'project_tasks' project.ProjectId %}" class="btn">
+        <span>{{ project.Title }}</span>
+    </a>
+    - <span>Status: {{ project.Status }}</span>
     <a href="{% url 'project_detail' project.ProjectId %}" class="btn btn-info">
         View Details
     </a>
