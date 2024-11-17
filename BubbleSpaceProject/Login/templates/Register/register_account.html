@@ -4,8 +4,9 @@
     {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BubbleSpace Register</title>
+    <title>Register</title>
     <link rel="stylesheet" href="{% static 'Register/registerStyle.css' %}">
+    <script src="{% static 'Register/registerScript.js' %}" defer></script>
 </head>
 <body>
     <div class="container">
@@ -13,7 +14,6 @@
             <h1>Signup</h1>
         </header>
         <div class="register-box">
-            <div class="logo-circle"></div>
             <h1>Create an account</h1>
             <p>Already have an account? <a href="{% url 'login' %}">Log in</a></p>
             <form method="POST" action="{% url 'register' %}">
@@ -53,29 +53,9 @@
                 </select>
 
                 <p>By creating an account, you agree to the <a href="#">Terms of Use and Privacy Policy</a>.</p>
-                <button type="submit" class="register-button">Create an account</button>
+                <button type="submit" id="submit-btn" class="register-button" disabled>Create an account</button>
             </form>
         </div>
     </div>
-
-    <script>
-        // Set the max attribute of the birthdate input to today’s date
-        window.onload = function() {
-            const today = new Date().toISOString().split('T')[0]; // Get current date in YYYY-MM-DD format
-            document.getElementById('birthdate').setAttribute('max', today);
-        };
-
-        function togglePassword() {
-            const passwordField = document.getElementById("password");
-            const toggleText = document.querySelector(".toggle-password");
-            if (passwordField.type === "password") {
-                passwordField.type = "text";
-                toggleText.textContent = "👁️ Hide";
-            } else {
-                passwordField.type = "password";
-                toggleText.textContent = "👁️ Show";
-            }
-        }
-    </script>
 </body>
 </html>
