@@ -1,160 +1,108 @@
-*{
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
-    }
-    
-    body {
-      display: flex;
-      background-color: #f5f5f5;
-    }
-   /* Sidebar */
-.sidebar {
-    width: 220px;
-    height: 100vh;
-    background-color: #ffffff;
-    padding: 20px;
-    border-right: 2px solid #e0e0e0;
-    border-radius: 0 20px 20px 0;
+/* Global Styles */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Arial', sans-serif;
+  background-color: #f8f9fa;
+  color: #333;
 }
 
-.sidebar-header h2 {
-    font-size: 18px;
-    color: #333;
-    font-weight: 600;
+/* Profile Page Styles */
+.profile-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f8f9fa;
+  padding: 20px;
 }
 
-.sidebar-content h3 {
-    font-size: 16px;
-    color: #4caf50;
-    font-weight: 600;
-    margin-top: 20px;
-    margin-bottom: 15px;
+.profile-card {
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
 }
 
-.sidebar-content ul {
-    list-style: none;
+.profile-header {
+  margin-bottom: 20px;
 }
 
-.sidebar-content ul li {
-    font-size: 14px;
-    color: #333;
-    padding: 10px 0;
-    display: flex;
-    align-items: center;
-    cursor: pointer;
+.profile-image .placeholder {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background-color: #e9ecef;
+  margin: 0 auto 15px;
 }
 
-.sidebar-content ul li i.icon {
-    margin-right: 8px;
+.profile-name {
+  font-size: 1.5em;
+  color: #333;
+  margin-bottom: 10px;
 }
 
-    
-    .logo {
-      font-size: 1.5em;
-      font-weight: bold;
-      margin-bottom: 20px;
-    }
-    
-    .workspace h2 {
-      font-size: 1.2em;
-      color: #3d6e4f;
-      margin-bottom: 10px;
-    }
-    
-    .workspace ul {
-      list-style-type: none;
-      width: 100%;
-    }
-    
-    .workspace li {
-      font-size: 1em;
-      margin: 10px 0;
-      color: #3d6e4f;
-    }
-    
-    .main-content {
-      width: 100%;
-      padding: 20px;
-    }
-    
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    
-    header h1 {
-      font-size: 1.5em;
-    }
-    
-    .header-icons {
-      font-size: 1em;
-      color: #3d6e4f;
-      cursor: pointer;
-    }
-    
-    .profile-info {
-      margin-top: 20px;
-    }
-    
-    .profile-image .placeholder {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      background-color: #c7d3c0;
-      margin-bottom: 15px;
-    }
-    
-    .name {
-      font-size: 1.2em;
-      font-weight: bold;
-      color: #3d6e4f;
-      text-align: center;
-    }
-    
-    .personal-info {
-      margin-top: 20px;
-    }
-    
-    .personal-info h3 {
-      font-size: 1.2em;
-      color: #3d6e4f;
-      margin-bottom: 10px;
-    }
-    
-    .info-box {
-      padding: 15px;
-      border: 1px solid #c7d3c0;
-      border-radius: 5px;
-      margin-bottom: 15px;
-    }
-    
-    .info-box div {
-      margin-bottom: 10px;
-    }
-    
-    .delete-account {
-      color: #d9534f;
-      font-size: 0.9em;
-      text-decoration: none;
-      cursor: pointer;
-    }
+.edit-profile-button {
+  display: inline-block;
+  padding: 10px 20px;
+  font-size: 1em;
+  background-color: #007bff;
+  color: #ffffff;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+  margin-top: 10px;
+}
 
-    .edit-profile-button {
-      display: inline-block;
-      padding: 0.5em 1.5em;
-      font-size: 1em;
-      background-color: #007bff; /* Adjust color as needed */
-      color: white;
-      border: none;
-      border-radius: 5px;
-      text-decoration: none;
-      transition: background-color 0.3s;
-  }
-  
-  .edit-profile-button:hover {
-      background-color: #0056b3; /* Darker shade for hover effect */
-  }
-  
+.edit-profile-button:hover {
+  background-color: #0056b3;
+}
+
+/* Profile Details */
+.profile-details h3 {
+  font-size: 1.2em;
+  color: #495057;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #dee2e6;
+  padding-bottom: 5px;
+  text-align: left;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  text-align: left;
+  font-size: 0.95em;
+  color: #495057;
+}
+
+.info-grid div {
+  padding: 10px;
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 4px;
+}
+
+/* Delete Account Button */
+.delete-account-form {
+  margin-top: 20px;
+}
+
+.delete-account-button {
+  padding: 10px 20px;
+  background-color: #dc3545;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.95em;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.delete-account-button:hover {
+  background-color: #c82333;
+}
