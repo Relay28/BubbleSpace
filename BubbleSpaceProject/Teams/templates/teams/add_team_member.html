@@ -2,41 +2,139 @@
 
 {% block content %}
 <style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f8f9fa; /* Light grey background for better contrast */
+        color: #333;
+    }
+
+    h1 {
+        text-align: center;
+        margin: 20px 0;
+        color: #333; /* Darker color for the title */
+    }
+
     #search-box {
         width: 100%;
-        max-width: 400px;
-        padding: 10px;
+        max-width: 500px;
+        padding: 12px 15px;
         margin: 20px auto;
-        border: 1px solid #ccc;
-        border-radius: 5px;
+        display: block;
+        border: 1px solid #d1e0e0; /* Light grey border */
+        border-radius: 8px;
         font-size: 16px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        transition: border-color 0.3s ease;
+    }
+
+    #search-box:focus {
+        border-color: #28a745; /* Lighter green */
+        outline: none;
     }
 
     #suggestions {
-        max-width: 400px;
-        margin: 0 auto;
+        max-width: 500px;
+        margin: 10px auto;
         list-style: none;
         padding: 0;
         border: 1px solid #ddd;
         background-color: #fff;
-        border-radius: 5px;
+        border-radius: 8px;
+        box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
     }
 
     #suggestions li {
         padding: 10px;
         cursor: pointer;
-        border-bottom: 1px solid #eee;
+        border-bottom: 1px solid #f0f0f0;
+        transition: background-color 0.3s ease;
+    }
+
+    #suggestions li:last-child {
+        border-bottom: none;
     }
 
     #suggestions li:hover {
-        background-color: #f0f0f0;
+        background-color: #f1f1f1; /* Subtle hover effect */
     }
 
-    #selected-members {
+    #selected-members-container {
         width: 100%;
-        height: 150px;
-        margin-bottom: 20px;
+        max-width: 500px;
+        margin: 20px auto;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background-color: #fff;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        text-align: left;
+    }
+
+    #selected-members-container h3 {
+        margin: 0 0 10px 0;
+        color: #28a745; /* Lighter green for the heading */
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    .selected-member {
+        display: inline-flex;
+        align-items: center;
+        margin: 5px;
+        padding: 5px 10px;
+        background-color: #e9f7e1; /* Very light green background for chips */
+        color: #28a745; /* Lighter green text */
+        border-radius: 20px;
         font-size: 14px;
+        font-weight: bold;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .selected-member .remove-btn {
+        margin-left: 10px;
+        padding: 0 5px;
+        background: none;
+        border: none;
+        color: #28a745;
+        font-size: 14px;
+        cursor: pointer;
+    }
+
+    .selected-member .remove-btn:hover {
+        color: #dc3545; /* Red color for the remove button on hover */
+    }
+
+    .btn {
+        display: inline-block;
+        margin: 10px 5px;
+        padding: 10px 20px;
+        font-size: 14px;
+        font-weight: bold;
+        color: #fff;
+        background-color: #28a745; /* Light green button */
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn:hover {
+        background-color: #218838; /* Slightly darker green on hover */
+    }
+
+    .btn-secondary {
+        background-color: #dc3545; /* Red color for the secondary button */
+        color: #fff;
+    }
+
+    .btn-secondary:hover {
+        background-color: #c82333; /* Slightly darker red on hover */
+    }
+
+    form {
+        max-width: 500px;
+        margin: 0 auto;
+        text-align: center;
     }
 </style>
 
@@ -52,13 +150,15 @@
     <ul id="suggestions"></ul>
 </div>
 
+<div id="selected-members-container">
+    <h3>Selected Members</h3>
+    <div id="selected-members"></div>
+</div>
+
 <form method="post">
     {% csrf_token %}
-    <h3>Selected Members</h3>
-    <select name="members" id="selected-members" multiple>
-        <!-- Selected members will be dynamically added here -->
-    </select>
-    <button type="submit" class="btn btn-primary">Add Members</button>
+    <input type="hidden" name="members" id="members-input"> <!-- Hidden input for selected members -->
+    <button type="submit" class="btn">Add Members</button>
     <a href="{% url 'team_detail' team.pk %}" class="btn btn-secondary">Back to Team</a>
 </form>
 
@@ -66,62 +166,73 @@
     document.addEventListener('DOMContentLoaded', function() {
         const searchBox = document.getElementById('search-box');
         const suggestions = document.getElementById('suggestions');
-        const selectedMembers = document.getElementById('selected-members');
+        const selectedMembersContainer = document.getElementById('selected-members');
+        const membersInput = document.getElementById('members-input');
         const teamId = "{{ team.id|safe }}";
+
+        let selectedMembers = [];
+
         searchBox.addEventListener('input', function() {
-    const query = searchBox.value.trim();
-
-    if (query.length > 0) {
-        fetch(`/bubblespace/teams/search-members/?q=${encodeURIComponent(query)}&team_id=${teamId}`)
-            .then(response => {
-                if (!response.ok) {
-                    console.error(`Error fetching users: ${response.statusText}`);
-                    throw new Error('Failed to fetch user suggestions');
-                }
-                return response.json();
-            })
-            .then(data => {
-                suggestions.innerHTML = '';
-                if (data.length > 0) {
-                    data.forEach(user => {
-                        const li = document.createElement('li');
-                        li.textContent = user.username;
-                        li.dataset.id = user.id;
-                        li.addEventListener('click', function() {
-                            addMember(user);
-                        });
-                        suggestions.appendChild(li);
+            const query = searchBox.value.trim();
+            if (query.length > 0) {
+                fetch(`/bubblespace/teams/search-members/?q=${encodeURIComponent(query)}&team_id=${teamId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        suggestions.innerHTML = '';
+                        if (data.length > 0) {
+                            data.forEach(user => {
+                                const li = document.createElement('li');
+                                li.textContent = user.username;
+                                li.dataset.id = user.id;
+                                li.addEventListener('click', function() {
+                                    addMember(user);
+                                });
+                                suggestions.appendChild(li);
+                            });
+                        } else {
+                            suggestions.innerHTML = '<li>No users found</li>';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching user suggestions:', error);
+                        suggestions.innerHTML = `<li>Error: ${error.message}</li>`;
                     });
-                } else {
-                    suggestions.innerHTML = '<li>No users found</li>';
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching user suggestions:', error);
-                suggestions.innerHTML = `<li>Error: ${error.message}</li>`;
-            });
-    } else {
-        suggestions.innerHTML = '';
-    }
-});
-
+            } else {
+                suggestions.innerHTML = '';
+            }
+        });
 
         function addMember(user) {
-            // Check if the user is already added
-            const existingOption = Array.from(selectedMembers.options).find(option => option.value == user.id);
-            if (!existingOption) {
-                const option = document.createElement('option');
-                option.value = user.id;
-                option.textContent = user.username;
-                option.selected = true;
-                selectedMembers.appendChild(option);
-            } else {
-                console.warn(`User ${user.username} is already added.`);
+            if (!selectedMembers.some(member => member.id === user.id)) {
+                selectedMembers.push(user);
+                updateSelectedMembers();
             }
-
-            // Clear suggestions and search box
             searchBox.value = '';
             suggestions.innerHTML = '';
+        }
+
+        function removeMember(userId) {
+            selectedMembers = selectedMembers.filter(member => member.id !== userId);
+            updateSelectedMembers();
+        }
+
+        function updateSelectedMembers() {
+            selectedMembersContainer.innerHTML = '';
+            selectedMembers.forEach(member => {
+                const chip = document.createElement('div');
+                chip.className = 'selected-member';
+                chip.textContent = member.username;
+
+                const removeBtn = document.createElement('button');
+                removeBtn.className = 'remove-btn';
+                removeBtn.textContent = '×';
+                removeBtn.addEventListener('click', () => removeMember(member.id));
+
+                chip.appendChild(removeBtn);
+                selectedMembersContainer.appendChild(chip);
+            });
+
+            membersInput.value = selectedMembers.map(member => member.id).join(',');
         }
     });
 </script>
