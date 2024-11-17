@@ -11,23 +11,21 @@
     
     <div class="main-content">
         <div class="header-row">
-            <h1>Notes</h1>
-            <div class="button-container">
+            <h1 style="margin-left: 10px;">Notes</h1>
+            <div class="button-container" style="margin-right: 10px;">
                 <a href="{% url 'add_note' %}" class="btn">Add New Note</a>
             </div>
         </div>
         
         <div class="note-list">
             {% for note in notes %}
-                <div class="note-item">
-                    <div class="note-content">
-                        <a href="{% url 'note_detail' note.pk %}">{{ note.title }}</a>
+                <a href="{% url 'note_detail' note.pk %}" style="text-decoration: none;">
+                    <div class="note-item">
+                        <div class="note-content">
+                            {{ note.title }}
+                        </div>
                     </div>
-                    <div class="note-actions">
-                        <a href="{% url 'edit_note' note.pk %}" class="btn edit-btn">Edit</a>
-                        <a href="{% url 'delete_note' note.pk %}" class="btn delete-btn">Delete</a>
-                    </div>
-                </div>
+                </a>
             {% empty %}
                 <p>No notes available. Click "Add New Note" to create one!</p>
             {% endfor %}

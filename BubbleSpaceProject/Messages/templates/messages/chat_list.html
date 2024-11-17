@@ -1,32 +1,91 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container">
-    <div class="chat-section" style="display: flex; height: 80vh;">
-        <div class="chat-list" style="border: 1px solid black; width: 60vh; position: relative;">
+<style>
+    #chat-window {
+        display: flex;
+        flex-direction: column; /* Arrange messages in a column */
+        gap: 10px; /* Adds spacing between messages */
+        padding: 10px;
+        max-height: 400px; /* Set a max height for the chat window */
+        overflow-y: auto; /* Enable scrolling if content exceeds the height */
+        background-color: #ffffff; /* Light background for the chat window */
+        border: 1px solid #ddd;
+        border-radius: 8px;
+    }
+
+    .chat-message {
+        padding: 10px;
+        border-radius: 10px;
+        max-width: 75%; /* Prevents messages from being too wide */
+        word-wrap: break-word; /* Ensures long words are wrapped */
+        white-space: pre-wrap; /* Preserves line breaks */
+        font-size: 14px;
+    }
+
+    .chat-message.sender {
+        background-color: #DCF8C6; /* Light green for sender messages */
+        align-self: flex-end; /* Align sender messages to the right */
+        text-align: right; /* Align sender text to the right */
+    }
+
+    .chat-message.receiver {
+        background-color: #b0f3b9; /* Light grey for receiver messages */
+        align-self: flex-start; /* Align receiver messages to the left */
+        text-align: left; /* Align receiver text to the left */
+    }
+
+    .sent-message {
+        align-self: flex-end; /* Align to the right */
+        background-color: #DCF8C6; /* Light green for the user's messages */
+        text-align: right; /* Align text inside the box to the right */
+    }
+
+    .received-message {
+        align-self: flex-start; /* Align to the left */
+        background-color: #E5E5EA; /* Light grey for received messages */
+        text-align: left; /* Align text inside the box to the left */
+        justify-content: flex-start;
+    }
+
+    .chat-message .text {
+        font-size: 14px;
+    }
+
+    .chat-message .timestamp {
+        font-size: 10px;
+        color: #888;
+        margin-top: 5px;
+    }
+</style>
+
+<div class="container" style="display: flex; flex-direction: column; height: 76vh; padding: 20px;">
+    <div class="chat-section" style="display: flex; flex: 1; gap: 20px;">
+        <!-- Chat List -->
+        <div class="chat-list" style="flex: 1; border: 1px solid #ccc; border-radius: 8px; overflow-y: auto; padding: 15px;">
             <input type="text" id="search-input" placeholder="Search User" 
-                   style="padding: 10px; width: 50vh; margin-left: 35px; margin-top: 20px;" 
+                   style="width: 50vh; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px;" 
                    oninput="searchUsers()">
-            <ul id="user-suggestions" style="list-style-type: none; padding: 0; margin: 0; display: none; border: 1px solid #ccc; max-height: 200px; overflow-y: auto; position: absolute; z-index: 100; background-color: white;">
+            <ul id="user-suggestions" style="list-style-type: none; padding: 0; margin: 0; display: none; border: 1px solid #ccc; border-radius: 4px; max-height: 150px; overflow-y: auto; position: absolute; z-index: 100; background-color: #fff;">
                 <!-- Suggestions will be populated here -->
             </ul>
-
-            <!-- Chat list -->
-            <div id="chat-items" style="margin-top: 25px;">
-                <!-- Chat items will be added here dynamically -->
+            <div id="chat-items" style="margin-top: 30px;">
+                <p style="text-align: center; color: #777;">No chats available</p>
             </div>
         </div>
         
-        <div class="chat-window" style="border: 1px solid black; margin-left: 10vh; width: 100vh;">
-            <div class="chat-header">
-                <h4 id="chat-header" style="border-bottom: 1px solid black; padding: 25px;">Chat with User</h4>
+        <!-- Chat Window -->
+        <div class="chat-window" style="flex: 2; border: 1px solid #ccc; border-radius: 8px; display: flex; flex-direction: column;">
+            <div class="chat-header" style="border-bottom: 1px solid #ccc; padding: 15px; background-color: #f9f9f9; border-top-left-radius: 8px; border-top-right-radius: 8px;">
+                <h4 id="chat-header" style="margin: 0;">Chat with User</h4>
             </div>
-            <div id="chat-window" style="overflow-y: auto; height: 60vh; padding: 10px;">
+            <div id="chat-window" style="flex: 1; overflow-y: auto; padding: 15px;">
                 <!-- Chat history messages will be added here dynamically -->
             </div>
-            <div class="chat-input">
-                <input type="text" id="message-input" placeholder="Message here." style="padding: 10px; margin-top: 20px; margin-left: 25px; height: 35px; width: 84vh;">
-                <button onclick="sendMessage()" style="padding: 10px;">Send</button>
+            <div class="chat-input" style="display: flex; padding: 10px; border-top: 1px solid #ccc;">
+                <input type="text" id="message-input" placeholder="Message here." 
+                       style="flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+                <button onclick="sendMessage()" style="margin-left: 10px; padding: 10px 15px; background-color: #007BFF; color: white; border: none; border-radius: 4px; cursor: pointer;">Send</button>
             </div>
         </div>
     </div>
@@ -65,47 +124,54 @@
     }
 
     function selectUser(userId, username) {
-    currentChatUserId = userId;
-    document.getElementById('search-input').value = username;
-    document.getElementById('user-suggestions').style.display = 'none';
-    document.getElementById('chat-header').innerText = `Chat with ${username}`;
-    document.getElementById('message-input').value = '';
+        currentChatUserId = userId;
+        document.getElementById('search-input').value = username;
+        document.getElementById('user-suggestions').style.display = 'none';
+        document.getElementById('chat-header').innerText = `Chat with ${username}`;
+        document.getElementById('message-input').value = '';
 
-    loadChatHistory(userId);
-}
+        loadChatHistory(userId);
+    }
 
     async function loadChatHistory(userId) {
-        try {
-            const response = await fetch(`${baseChatUrl}${userId}/`);
-            if (!response.ok) throw new Error('Failed to load chat history.');
+    try {
+        const response = await fetch(`${baseChatUrl}${userId}/`);
+        if (!response.ok) throw new Error('Failed to load chat history.');
 
-            const data = await response.json();
-            const chatWindow = document.getElementById('chat-window');
-            chatWindow.innerHTML = ''; // Clear existing messages
+        const data = await response.json();
+        const chatWindow = document.getElementById('chat-window');
+        chatWindow.innerHTML = ''; // Clear existing messages
 
-            if (data.status === 'success' && data.messages.length > 0) {
-                data.messages.forEach((message) => {
-                    const messageElement = document.createElement('div');
-                    messageElement.classList.add('chat-message');
-                    messageElement.setAttribute('data-message-id', message.id);
+        if (data.status === 'success' && data.messages.length > 0) {
+            data.messages.forEach((message) => {
+                const messageElement = document.createElement('div');
+                messageElement.classList.add('chat-message');
+                messageElement.setAttribute('data-message-id', message.id);
 
-                    messageElement.innerHTML = `
-                        <span class="username">${message.sender__username}:</span>
-                        <span class="text">${message.message}</span>
-                        <span class="timestamp">${new Date(message.date_sent).toLocaleTimeString()}</span>
-                        <button onclick="editMessage(${message.id})">Edit</button>
-                        <button onclick="deleteMessage(${message.id})">Delete</button>
-                    `;
-                    
-                    chatWindow.appendChild(messageElement);
-                });
+                // Determine the alignment and styling based on the sender
+                if (message.sender__username === data.current_user) {
+                    // User's message (sent by the logged-in user)
+                    messageElement.classList.add('sent-message');
+                } else {
+                    // Other user's message (received)
+                    messageElement.classList.add('received-message');
+                }
 
-                chatWindow.scrollTop = chatWindow.scrollHeight; // Scroll to the bottom
-            }
-        } catch (error) {
-            console.error('Error loading chat history:', error);
+                messageElement.innerHTML = `
+                    <span class="text">${message.message}</span>
+                    <span class="timestamp">${new Date(message.date_sent).toLocaleTimeString()}</span>
+                `;
+
+                chatWindow.appendChild(messageElement);
+            });
+
+            chatWindow.scrollTop = chatWindow.scrollHeight; // Scroll to the bottom
         }
+    } catch (error) {
+        console.error('Error loading chat history:', error);
     }
+}
+
 
     async function sendMessage() {
         if (currentChatUserId === null) {
@@ -212,40 +278,35 @@
         }
     }
 
- // In your template script
- // Updated loadUserChats function to pass recipient_id correctly
-async function loadUserChats() {
-    try {
-        const response = await fetch('/bubblespace/messages/get_user_chats/');
-        const data = await response.json();
+    async function loadUserChats() {
+        try {
+            const response = await fetch('/bubblespace/messages/get_user_chats/');
+            const data = await response.json();
 
-        const chatItems = document.getElementById('chat-items');
-        chatItems.innerHTML = '';  // Clear existing chat items
+            const chatItems = document.getElementById('chat-items');
+            chatItems.innerHTML = '';  // Clear existing chat items
 
-        if (data.status === 'success' && data.chats.length > 0) {
-            data.chats.forEach(chat => {
-                const chatElement = document.createElement('div');
-                chatElement.classList.add('chat-item');
-                chatElement.style.cursor = 'pointer';
-                
-                // Pass recipient_id to selectUser for correct user ID
-                chatElement.onclick = () => selectUser(chat.recipient_id, chat.username);
+            if (data.status === 'success' && data.chats.length > 0) {
+                data.chats.forEach(chat => {
+                    const chatElement = document.createElement('div');
+                    chatElement.classList.add('chat-item');
+                    chatElement.style.cursor = 'pointer';
+                    
+                    chatElement.onclick = () => selectUser(chat.recipient_id, chat.username);
 
-                chatElement.innerHTML = `<strong>${chat.username}</strong>`;
-                chatItems.appendChild(chatElement);
-            });
-        } else {
-            chatItems.innerHTML = '<p>No chats available</p>';
+                    chatElement.innerHTML = `<strong>${chat.username}</strong>`;
+                    chatItems.appendChild(chatElement);
+                });
+            } else {
+                chatItems.innerHTML = '<p>No chats available</p>';
+            }
+        } catch (error) {
+            console.error('Error loading user chats:', error);
         }
-    } catch (error) {
-        console.error('Error loading user chats:', error);
     }
-}
 
-// Call the function to load chats when the page loads
-window.onload = loadUserChats;
-
-
+    // Call the function to load chats when the page loads
+    window.onload = loadUserChats;
 
 </script>
 

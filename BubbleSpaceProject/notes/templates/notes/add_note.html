@@ -8,14 +8,14 @@
 </head>
 <body>
     {% include "sidebar.html" %}
-    <div class="main-content">
+    <div class="main-content" style="margin-left: 50vh; ">
        
-            <h1>Add Note</h1>
-            <form method="post">
+            <h2>Add Note</h2>
+            <form method="post" style="width: 96%;">
                 {% csrf_token %}
                 {{ form.as_p }}
                 <button type="submit">Save Note</button>
-                <a href="{% url 'notes_list' %}">Cancel</a>
+                <a href="{% url 'notes_list' %}" style="margin-left: 10px; color: red;">Cancel</a>
             </form>
     </div>
 </body>

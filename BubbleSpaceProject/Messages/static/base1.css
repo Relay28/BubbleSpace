@@ -1,0 +1,249 @@
+/* Sidebar styling */
+.sidebar {
+    width: 250px;
+    background-color: #eef5e6;
+    position: fixed;
+    height: 100%;
+    padding: 20px;
+    color: #333;
+    font-family: Arial;
+}
+
+.sidebar h2 {
+    font-weight: bold;
+    font-size: 24px;
+    color: #333;
+}
+
+.sidebar h3 {
+    font-weight: bold;
+    font-size: 18px;
+    color: #666;
+    margin-top: 30px;
+    margin-bottom: 15px;
+}
+
+.sidebar ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    margin: 20px 0; /* More space between items */
+    font-size: 16px;
+    color: #666;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+/* Anchor tag styling for sidebar links */
+.sidebar ul li a {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    align-items: center;
+    transition: color 0.3s ease;
+}
+
+.sidebar ul li a .icon {
+    margin-right: 10px;
+}
+
+.sidebar ul li a:hover {
+    color: #3cb371; /* Change color on hover */
+}
+
+/* Main content styling */
+.main-content {
+    margin-left: 290px; /* Slightly larger to create more space */
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    color: #333;
+}
+
+/* Header styling */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    border-bottom: 1px solid #ddd;
+}
+
+.search-bar {
+    width: 60% !important; /* Adjusted to a smaller, more compact size */
+    padding: 1dvh; /* Reduced padding */
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px; /* Reduced font size */
+    outline: none;
+}
+
+.header-icons {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.button-container .btn {
+    padding: 10px 15px;
+    background-color: #88c399;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 16px;
+    text-align: center;
+}
+
+.button-container .btn:hover {
+    background-color: #76af88;
+}
+
+/*sss*/
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f2f5;
+}
+
+.chat-container {
+    display: flex;
+    height: 85%;
+    width: 95%;
+    max-width: 1400px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    background-color: #ffffff;
+}
+
+.sidebar {
+    width: 30%;
+    background-color: #f7f8fa;
+    border-right: 1px solid #ddd;
+    display: flex;
+    flex-direction: column;
+}
+
+.search-bar {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+}
+
+.search-bar input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 20px;
+    border: 1px solid #ccc;
+    outline: none;
+}
+
+.user-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    overflow-y: auto;
+    flex-grow: 1;
+}
+
+.user-list li {
+    padding: 15px;
+    border-bottom: 1px solid #e6e6e6;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.user-list li img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.user-list li:hover {
+    background-color: #ebebeb;
+}
+
+.chat-main {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+}
+
+.chat-header {
+    padding: 15px;
+    background-color: #f7f8fa;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.chat-history {
+    flex-grow: 1;
+    padding: 20px;
+    overflow-y: auto;
+    background-color: #f9fafb;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.chat-message {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.chat-message .message-content {
+    max-width: 70%;
+    padding: 10px 15px;
+    border-radius: 15px;
+    background-color: #e0f7ff;
+    word-wrap: break-word;
+}
+
+.chat-message.self .message-content {
+    background-color: #d1ffd7;
+    align-self: flex-end;
+}
+
+.chat-input {
+    display: flex;
+    padding: 10px;
+    border-top: 1px solid #ddd;
+    background-color: #f7f8fa;
+}
+
+.chat-input textarea {
+    flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    resize: none;
+    outline: none;
+}
+
+.chat-input button {
+    padding: 10px 20px;
+    margin-left: 10px;
+    border: none;
+    border-radius: 20px;
+    background-color: #007bff;
+    color: #fff;
+    cursor: pointer;
+}
+
+.chat-input button:hover {
+    background-color: #0056b3;
+}

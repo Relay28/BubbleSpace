@@ -1,57 +1,103 @@
 <!DOCTYPE html>
-<html>
- <head>
-  <title>Bubble Space</title>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
-  <link href="{% static 'css/base.css' %}" rel="stylesheet"/>
- </head>
- <body>
-  <div class="container">
-   <div class="sidebar">
-    <a href="{% url 'home' %}"><h2>Bubble Space</h2></a>
-    <ul>
-        <a href="{% url 'team_list' %}"> <li><i class="icon">👥</i> Teams</li></a>
-        <a href="{% url 'task_list' %}"><li><i class="icon">📋</i> Tasks</li></a> 
-         <a href="{% url 'notes_list' %}"><li><i class="icon">📘</i> Notes</li></a>
-         <li><i class="icon">📁</i> Projects</li>
-         <a href="{% url 'chat_list' %}"><li><i class="icon">✉️</i> Messages</li></a>
-         <li><i class="icon">❓</i> Help</li>
-    </ul>
-   </div>
-   <div class="main-content">
-    <div class="header">
-     <input placeholder="Hinted search text" type="text"/>
-     <div class="icons">
-      <i class="fas fa-search"></i>
-      <i class="fas fa-bell"></i>
-      <i class="fas fa-bars"></i>
-     </div>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Bubble Space{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'base1.css' %}">
+    {% block extra_css %}{% endblock %}
+    <style>
+        /* Popup styling */
+        .popup {
+            display: none;
+            position: absolute;
+            top: 70px;
+            right: 40px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+        }
+
+        .popup.show {
+            display: block;
+        }
+
+        .popup a {
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+            display: block;
+            padding: 5px 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        .popup a:hover {
+            background-color: #f1f1f1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="{% url 'home' %}"><h2>Bubble Space</h2></a>
+            </div>
+            <div class="sidebar-content">
+                <h3>Workspace</h3>
+                <ul>
+                   <a href="{% url 'team_list' %}"> <li><i class="icon">👥 </i> Teams</li></a>
+                   <a href="{% url 'task_list' %}"><li><i class="icon">📋 </i> Tasks</li></a> 
+                    <a href="{% url 'notes_list' %}"><li><i class="icon">📘 </i> Notes</li></a>
+                    <li><i class="icon">📁</i> Projects</li>
+                    <a href="{% url 'chat_list' %}"><li><i class="icon">✉️ </i> Messages</li></a>
+                    <li><a href="{% url 'help' %}"><i class="icon">❓</i> Help</a></li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <input type="text" class="search-bar" placeholder="Hinted search text">
+                <div class="header-icons">
+                    <span>🔔</span>
+                    <a href="{% url 'profile' %}"><span>👤</span></a>
+                    <span class="menu" onclick="togglePopup()">☰</span>
+                </div>
+                <!-- Popup for Logout -->
+                <div class="popup" id="popup">
+                    <a href="{% url 'logout' %}">Logout</a>
+                </div>
+            </header>
+
+            <!-- Main Page Content -->
+            <div class="content">
+                {% block content %}{% endblock %}
+            </div>
+        </main>
     </div>
-    <div class="content">
-     <div class="messages-list">
-      <input placeholder="Search Messages" type="text"/>
-      <div class="message-item">
-       <img alt="User profile picture" height="40" src="https://storage.googleapis.com/a1aa/image/CJpgRgDO9vonEZZ9i4efiTVkGW3kp8fLo9hXxVfRPEflESkdC.jpg" width="40"/>
-       <div class="message-text">
-        <strong>Rae Addison Duque</strong>
-        <p>Message here.</p>
-       </div>
-      </div>
-      <!-- Repeat message-item as needed -->
-     </div>
-     <div class="message-view">
-      <div class="message-header">
-       <img alt="User profile picture" height="40" src="https://storage.googleapis.com/a1aa/image/CJpgRgDO9vonEZZ9i4efiTVkGW3kp8fLo9hXxVfRPEflESkdC.jpg" width="40"/>
-       <strong>Rae Addison Duque</strong>
-      </div>
-      <!-- Repeat message-content as needed -->
-      <div class="message-input">
-       <input placeholder="Message here." type="text"/>
-       <i class="fas fa-paper-plane"></i>
-      </div>
-     </div>
-    </div>
-   </div>
-  </div>
- </body>
+
+    <script src="{% static 'js/popup.js' %}"></script>
+    <script>
+        function togglePopup() {
+            const popup = document.getElementById("popup");
+            popup.classList.toggle("show");
+        }
+
+        document.addEventListener("click", function(event) {
+            const popup = document.getElementById("popup");
+            const menuIcon = document.querySelector(".menu");
+
+            if (!menuIcon.contains(event.target) && !popup.contains(event.target)) {
+                popup.classList.remove("show");
+            }
+        });
+    </script>
+</body>
 </html>

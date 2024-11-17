@@ -10,6 +10,7 @@ from Login.models import Users_Account  # Import your custom user model if neede
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
+import json
 
 
 User = get_user_model()  # Get the custom user model
@@ -52,6 +53,34 @@ def chat_detail(request, chat_id):
     messages = chat.messages.all()
     return render(request, 'messages/chat_detail.html', {'chat': chat, 'messages': messages})
 
+@csrf_exempt
+@login_required
+def send_message(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            recipient_id = data.get("recipient_id")
+            message_text = data.get("message")
+
+            # Validate recipient
+            try:
+                recipient = User.objects.get(id=recipient_id)
+            except User.DoesNotExist:
+                return JsonResponse({"status": "error", "message": "Recipient not found."})
+
+            # Save message to the database
+            Message.objects.create(
+                sender=request.user,
+                recipient=recipient,
+                message=message_text,
+            )
+
+            return JsonResponse({"status": "success", "message": "Message sent successfully."})
+        except Exception as e:
+            return JsonResponse({"status": "error", "message": str(e)})
+
+    return JsonResponse({"status": "error", "message": "Invalid request method."})
+
 @login_required
 @require_POST
 def edit_message(request, message_id):
@@ -79,7 +108,6 @@ def load_chat_history(request, recipient_id):
     try:
         recipient = Users_Account.objects.get(id=recipient_id)
 
-        # Retrieve all messages between the current user and the recipient, ordered by date_sent
         messages = Message.objects.filter(
             Q(sender=request.user, recipient=recipient) |
             Q(sender=recipient, recipient=request.user)
@@ -87,7 +115,11 @@ def load_chat_history(request, recipient_id):
             'id', 'sender__username', 'message', 'date_sent'
         )
 
-        return JsonResponse({'status': 'success', 'messages': list(messages)})
+        return JsonResponse({
+            'status': 'success',
+            'messages': list(messages),
+            'current_user': request.user.username  # Add the current user's username
+        })
 
     except Users_Account.DoesNotExist:
         return JsonResponse({'status': 'error', 'message': 'Recipient not found.'}, status=404)

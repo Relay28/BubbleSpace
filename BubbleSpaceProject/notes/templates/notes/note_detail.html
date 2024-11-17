@@ -4,20 +4,25 @@
 <head>
     <link rel="stylesheet" href="{% static 'css/note_detail.css' %}">
     <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
-    <title>Note Detail</title>
 </head>
 <body>
     {% include "sidebar.html" %}
-    <div class = "main-content">
-    <div class="content">
-        <h1>{{ note.title }}</h1>
-        <p>{{ note.description }}</p>
-        <p>{{ note.content }}</p>
-        
-        <!-- Action buttons for editing and deleting the note -->
-        <a href="{% url 'edit_note' note.pk %}">Edit</a>
-        <a href="{% url 'delete_note' note.pk %}">Delete</a>
+    <div class="main-content">
+        <div style="margin-left: 20px;">
+        <a href="{% url 'notes_list' %}" style="text-decoration: none;"><</a>
     </div>
-</div>
+        
+        <div class="content">
+            <h1>{{ note.title }}</h1>
+            <p class="description" style="margin-top: 20px;">{{ note.description }}</p>
+            <p class="content-text" style="margin-top: 40px;">{{ note.content }}</p>
+
+            <!-- Action buttons for editing and deleting the note -->
+            <div class="actions" style="margin-top: 50px;margin-left: 130vh;">
+                <a href="{% url 'edit_note' pk=note.pk %}" class="edit-button">Edit</a>
+                <a href="{% url 'delete_note' pk=note.pk %}" class="delete-button">Delete</a>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

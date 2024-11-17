@@ -43,19 +43,24 @@ def add_note(request):
     return render(request, 'notes/add_note.html', {'form': form})
 
 def edit_note(request, pk):
-    note = get_object_or_404(Note, pk=pk)
+    note = get_object_or_404(Note, pk=pk)  # Fetch the note
     if request.method == 'POST':
         form = NoteForm(request.POST, instance=note)
         if form.is_valid():
             form.save()
-            return redirect('notes_list')
+            return redirect('note_detail', pk=note.pk)  # Ensure note.pk is passed here
     else:
         form = NoteForm(instance=note)
-    return render(request, 'notes/edit_note.html', {'form': form})
+    
+    # Ensure 'note' is included in the context
+    return render(request, 'notes/edit_note.html', {'form': form, 'note': note})
+
 
 def delete_note(request, pk):
-    note = get_object_or_404(Note, pk=pk)
+    note = get_object_or_404(Note, pk=pk)  
     if request.method == 'POST':
         note.delete()
-        return redirect('notes_list')
-    return render(request, 'notes/delete_note.html', {'note': note})
+        return redirect('notes_list')  
+    return render(request, 'notes/delete_note.html', {'note': note})  
+
+

@@ -1,8 +1,16 @@
-.main-content {
+.main-content{
+    
     margin-left: 290px; /* Slightly larger to create more space */
     padding: 20px;
     font-family: Arial, sans-serif;
     color: #333;
+}
+
+.main-content h1 {
+    font-size: 28px;
+    color: #3cb371;
+    margin-bottom: 20px;
+    text-align: center; /* Center-align title */
 }
 
 form button[type="submit"] {
@@ -13,21 +21,43 @@ form button[type="submit"] {
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    transform: scale(1.05);
 }
 
 form button[type="submit"]:hover {
     background-color: #2e8b57; /* Darker shade on hover */
 }
 
+
+
 input[type="text"], textarea {
-    width: 100%;
+    width: 100%; /* Adjust width for full responsiveness */
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 5px;
-    margin-bottom: 15px;
+ 
+    font-size: 16px;
+    box-sizing: border-box; /* Prevent overflow due to padding */
 }
 
+/* Focus styling for input and textarea */
 input[type="text"]:focus, textarea:focus {
-    border-color: #3cb371; /* Highlighted border on focus */
+    border-color: #3cb371;
     outline: none;
+    box-shadow: 0 0 5px rgba(60, 179, 113, 0.5); /* Subtle glow effect */
 }
+
+.cancel-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: red;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 16px;
+  }
+
+.cancel-button:hover {
+    background-color: darkred;
+  }

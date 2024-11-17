@@ -2,17 +2,18 @@
 body {
     font-family: Arial, sans-serif;
     background-color: #ffffff; /* White background */
-    margin: 0;
-    padding: 0;
+   
 }
 
 /* Content wrapper styling */
 .content {
-    max-width: 800px;
+    max-width: 900px;
+    max-height: 900px;
     margin: 10px auto; /* Reduced top margin to bring content closer to the search bar */
     padding: 10px 20px; /* Reduced padding for a tighter layout */
     background-color: #fff;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid #80b68d;
     border-radius: 8px;
 }
 
@@ -20,6 +21,7 @@ body {
     text-align: center;
     color: #333;
     margin: 10px 0; /* Reduced margin for header */
+
 }
 
 /* Form styling */
@@ -69,6 +71,8 @@ body {
     justify-content: flex-end;
     gap: 10px;
     padding-top: 15px;
+    text-decoration: none;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .button-group .save-btn,
@@ -77,23 +81,28 @@ body {
     font-size: 16px;
     border: none;
     border-radius: 4px;
+    text-decoration: none;
     cursor: pointer;
     color: #fff;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .button-group .save-btn {
     background-color: #4CAF50;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .button-group .save-btn:hover {
     background-color: #45a049;
+    transform: scale(1.05);
 }
 
 .button-group .cancel-btn {
     background-color: #f44336;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .button-group .cancel-btn:hover {
     background-color: #d32f2f;
+    transform: scale(1.05);
 }

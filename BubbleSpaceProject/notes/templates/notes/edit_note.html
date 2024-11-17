@@ -15,7 +15,7 @@
     </div>
     
     <!-- Main Content Wrapper -->
-    <div class="content">
+    <div class="content" style="padding: 40px; margin-left: 60vh;">
         <h1>Edit Note</h1>
         
         <!-- Edit Note Form -->
@@ -33,9 +33,11 @@
                 <label for="id_content">Content:</label>
                 {{ form.content }}
             </div>
-            <div class="button-group">
+            <div class="button-group" style="margin-left: 90vh;">
                 <button type="submit" class="save-btn">Save Changes</button>
-                <a href="{% url 'notes_list' %}" class="cancel-btn">Cancel</a>
+                <!-- Cancel Button as an Anchor -->
+                <a href="{% url 'note_detail' pk=note.pk %}" class="cancel-btn">Cancel</a>
+                
             </div>
         </form>
     </div>
