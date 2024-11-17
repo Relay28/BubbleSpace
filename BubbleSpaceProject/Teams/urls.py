@@ -9,6 +9,7 @@ urlpatterns = [
     path('teams/<int:pk>/delete/', views.team_delete, name='team_delete'),
     path('detail/<int:pk>/add_member/', views.add_team_member, name='add_team_member'), 
       path('team/<int:pk>/edit/', views.team_edit, name='team_edit'), 
-    # path('search-users/', views.search_users, name='search_users'),# New URL
+    path('search-members/', views.search_member, name='search_member'),
+
    
 ]

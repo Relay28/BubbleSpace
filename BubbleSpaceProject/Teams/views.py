@@ -6,7 +6,10 @@ from .models import Team
 from .forms import TeamForm, AddTeamMemberForm
 from django.contrib import messages
 from django.db import IntegrityError
-
+from django.http import JsonResponse
+from django.contrib.auth import get_user_model
+from django.db.models import Q
+User = get_user_model()
 @login_required
 def add_team_member(request, pk):
     team = get_object_or_404(Team, pk=pk)
@@ -40,22 +43,16 @@ def team_detail(request, pk):
 @login_required
 def team_create(request):
     if request.method == 'POST':
-        form = TeamForm(request.POST, creator=request.user)
+        form = TeamForm(request.POST, creator=request.user, is_creation=True)
         if form.is_valid():
-            # Use commit=False to modify before the save
             team = form.save(commit=False)
-            team.creator = request.user  # Set the creator to the current user
-            try:
-                team.save()  # Save to DB, satisfying NOT NULL constraint for creator
-                form.save_m2m()  # Save many-to-many data (members)
-                team.members.add(request.user)  # Ensure creator is part of the team
-                messages.success(request, "Team created successfully.")
-                return redirect('team_list')
-            except IntegrityError:
-                messages.error(request, "Error creating the team. Please try again.")
-                return redirect('team_create')
+            team.creator = request.user  # Set the creator
+            team.save()
+            team.members.add(request.user)  # Add the creator as a member
+            messages.success(request, "Team created successfully.")
+            return redirect('team_list')
     else:
-        form = TeamForm(creator=request.user)
+        form = TeamForm(creator=request.user, is_creation=True)
     return render(request, 'teams/team_form.html', {'form': form})
 
 @login_required
@@ -113,3 +110,32 @@ def team_edit(request, pk):
     
     return render(request, 'teams/team_edit_form.html', {'form': form, 'team': team})
 
+@login_required
+def search_member(request):
+    query = request.GET.get('q', '').strip()
+    team_id = request.GET.get('team_id', '').strip()
+    
+    # Log the inputs for debugging
+    print(f"Search query: '{query}', Team ID: '{team_id}'")
+
+    if not query:
+        return JsonResponse([], safe=False)
+
+    # Validate the team ID
+    try:
+        team = Team.objects.get(id=team_id)
+    except Team.DoesNotExist:
+        print(f"Team with ID {team_id} does not exist.")  # Debugging
+        return JsonResponse({'error': 'Invalid team ID'}, status=400)
+
+    # Exclude current team members and the requesting user from the results
+    existing_member_ids = team.members.values_list('id', flat=True)
+    users = User.objects.filter(
+        Q(username__icontains=query) & ~Q(id__in=existing_member_ids)
+    ).exclude(id=request.user.id)[:10]  # Limit results to 10
+
+    # Prepare data for the response
+    user_data = [{'id': user.id, 'username': user.username} for user in users]
+
+    # Return the JSON response
+    return JsonResponse(user_data, safe=False)

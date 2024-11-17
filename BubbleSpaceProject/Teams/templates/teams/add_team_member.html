@@ -2,70 +2,127 @@
 
 {% block content %}
 <style>
-    /* Heading Styling */
-    h1, h3 {
-        color: #333;
-        font-family: Arial, sans-serif;
-    }
-
-    h1 {
-        margin-bottom: 15px;
-        text-align: center;
-        font-size: 24px;
-    }
-
-    h3 {
-        margin-bottom: 15px;
-        font-size: 18px;
-    }
-
-    /* Form Container */
-    form {
-        max-width: 600px;
-        margin: 0 auto;
-        padding: 20px;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        background-color: #f8f9fa;
-    }
-
-    /* Field and Label Styling */
-    label {
-        font-weight: bold;
-        color: #495057;
-        display: block;
-        margin-bottom: 8px;
-    }
-
-    select {
+    #search-box {
         width: 100%;
-        padding: 8px;
-        border-radius: 4px;
+        max-width: 400px;
+        padding: 10px;
+        margin: 20px auto;
         border: 1px solid #ccc;
-        font-size: 14px;
-        margin-bottom: 15px;
-    }
-
-    /* Buttons */
-    .btn {
-        padding: 10px 15px;
         border-radius: 5px;
         font-size: 16px;
-        color: #fff;
-        text-decoration: none;
-        margin-right: 10px;
     }
 
-    .btn-primary { background-color: #007bff; border: none; }
-    .btn-secondary { background-color: #6c757d; border: none; color: #fff; }
+    #suggestions {
+        max-width: 400px;
+        margin: 0 auto;
+        list-style: none;
+        padding: 0;
+        border: 1px solid #ddd;
+        background-color: #fff;
+        border-radius: 5px;
+    }
+
+    #suggestions li {
+        padding: 10px;
+        cursor: pointer;
+        border-bottom: 1px solid #eee;
+    }
+
+    #suggestions li:hover {
+        background-color: #f0f0f0;
+    }
+
+    #selected-members {
+        width: 100%;
+        height: 150px;
+        margin-bottom: 20px;
+        font-size: 14px;
+    }
 </style>
 
 <h1>Add Members to {{ team.team_name }}</h1>
+
+<div>
+    <input 
+        type="text" 
+        id="search-box" 
+        placeholder="Search for a username..." 
+        autocomplete="off"
+    >
+    <ul id="suggestions"></ul>
+</div>
+
 <form method="post">
     {% csrf_token %}
-    <h3>Select Members to Add</h3>
-    {{ form.members }}
+    <h3>Selected Members</h3>
+    <select name="members" id="selected-members" multiple>
+        <!-- Selected members will be dynamically added here -->
+    </select>
     <button type="submit" class="btn btn-primary">Add Members</button>
     <a href="{% url 'team_detail' team.pk %}" class="btn btn-secondary">Back to Team</a>
 </form>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchBox = document.getElementById('search-box');
+        const suggestions = document.getElementById('suggestions');
+        const selectedMembers = document.getElementById('selected-members');
+        const teamId = "{{ team.id|safe }}";
+        searchBox.addEventListener('input', function() {
+    const query = searchBox.value.trim();
+
+    if (query.length > 0) {
+        fetch(`/bubblespace/teams/search-members/?q=${encodeURIComponent(query)}&team_id=${teamId}`)
+            .then(response => {
+                if (!response.ok) {
+                    console.error(`Error fetching users: ${response.statusText}`);
+                    throw new Error('Failed to fetch user suggestions');
+                }
+                return response.json();
+            })
+            .then(data => {
+                suggestions.innerHTML = '';
+                if (data.length > 0) {
+                    data.forEach(user => {
+                        const li = document.createElement('li');
+                        li.textContent = user.username;
+                        li.dataset.id = user.id;
+                        li.addEventListener('click', function() {
+                            addMember(user);
+                        });
+                        suggestions.appendChild(li);
+                    });
+                } else {
+                    suggestions.innerHTML = '<li>No users found</li>';
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching user suggestions:', error);
+                suggestions.innerHTML = `<li>Error: ${error.message}</li>`;
+            });
+    } else {
+        suggestions.innerHTML = '';
+    }
+});
+
+
+        function addMember(user) {
+            // Check if the user is already added
+            const existingOption = Array.from(selectedMembers.options).find(option => option.value == user.id);
+            if (!existingOption) {
+                const option = document.createElement('option');
+                option.value = user.id;
+                option.textContent = user.username;
+                option.selected = true;
+                selectedMembers.appendChild(option);
+            } else {
+                console.warn(`User ${user.username} is already added.`);
+            }
+
+            // Clear suggestions and search box
+            searchBox.value = '';
+            suggestions.innerHTML = '';
+        }
+    });
+</script>
 {% endblock %}
