@@ -5,7 +5,7 @@
 
 <!-- Create Team Button at the top-right -->
 <div style="display: flex; justify-content: flex-end; margin-bottom: 10px;">
-    <button class="btn btn-primary" onclick="openModal('createTeamModal')">Join or Create Team</button>
+    <button class="btn-primary" onclick="openModal('createTeamModal')">Join or Create Team</button>
 </div>
 
 <!-- Teams Card Layout -->
@@ -15,10 +15,13 @@
         <div class="team-card-header">
             <button class="options-button" onclick="toggleOptions(this)">⋮</button>
             <!-- Delete button shown only when options button is clicked -->
-            <form method="post" action="{% url 'team_delete' team.pk %}" class="delete-form" style="display: none;">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this team?');">Delete</button>
-            </form>
+            <div class="delete-form" style="display: none;">
+                <button 
+                    class="btn btn-danger delete-team-button" 
+                    onclick="openDeleteModal('{{ team.pk }}', '{{ team.team_name|escapejs }}')">
+                    Delete
+                </button>
+            </div>
         </div>
         <div class="team-card-content">
             <h2 class="team-name">{{ team.team_name }}</h2>
@@ -38,77 +41,153 @@
         <form method="post" action="{% url 'team_create' %}">
             {% csrf_token %}
             {{ form.as_p }}
-            <button type="submit" class="btn btn-success">Create</button>
+            <button type="submit" class="btn-success">Create</button>
         </form>
     </div>
 </div>
 
-<!-- CSS Styling for Card Layout -->
+<!-- Modal Structure for Confirm Deletion -->
+<div id="deleteTeamModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('deleteTeamModal')">&times;</span>
+        <h2>Confirm Deletion</h2>
+        <p>Are you sure you want to delete the team "<span id="deleteTeamName"></span>"?</p>
+        <form id="deleteTeamForm" method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Yes, Delete</button>
+        </form>
+        <button type="button" class="btn btn-secondary" onclick="closeModal('deleteTeamModal')">Cancel</button>
+    </div>
+</div>
+
+
 <style>
+
     .teams-container {
         display: flex;
         flex-wrap: wrap;
-        gap: 20px;
+        gap: 16px;
+        justify-content: flex-start; 
+        margin: 20px auto;
+        margin-left: 5px;
+        max-width: 1400px;
+        padding: 10px;
     }
+
+    /* Team Card Styles */
     .team-card {
-        width: 250px;  /* Increased the card width */
-        background-color: #f9f9f9;
+        background-color: #f8f9fa;
+        border: 1px solid #ddd;
         border-radius: 8px;
-        padding: 20px;  /* Increased padding for a larger appearance */
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        padding: 16px;
+        width: 250px;
+        height: 100px;
         position: relative;
-        text-align: center;  /* Center the content inside the card */
     }
+
     .team-card-header {
         display: flex;
-        justify-content: flex-end;
-        position: relative;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
     }
-    .team-name {
-        font-size: 1.25em;
-        font-weight: bold;
-        margin: 10px 0;  /* Add spacing around the team name */
-    }
+
     .options-button {
         background: none;
         border: none;
         cursor: pointer;
-        font-size: 18px;
+        font-size: 1.5em;
+        line-height: 1;
+        color: #333;
     }
+
+    .options-button:hover {
+        color: #555;
+    }
+
+    /* Delete Form Styles */
     .delete-form {
         position: absolute;
-        top: 30px;
+        top: 10px;
         right: 10px;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 8px;
+        z-index: 10;
     }
+
+    .delete-team-button {
+        background-color: #dc3545;
+        color: #fff;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .delete-team-button:hover {
+        background-color: #bd2130;
+    }
+
+    /* Team Card Content */
     .team-card-content {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
+        text-align: center;
     }
+
+    .team-name {
+        font-size: 1.25em;
+        font-weight: bold;
+        margin: 10px 0;
+    }
+
     .team-link {
         text-decoration: none;
         color: #007bff;
         font-weight: bold;
-        margin-top: 10px;
     }
+
+    .team-link:hover {
+        text-decoration: underline;
+    }
+
+    /* Modal Styles */
     .modal {
         display: none;
         position: fixed;
         top: 0;
-        left: 0;
-        width: 100%;
+        left: 100px;
+        width: 150%;
         height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
+        background-color: rgba(0, 0, 0, 0.6);
         justify-content: center;
         align-items: center;
+        z-index: 1000;
     }
+
     .modal-content {
         background-color: #fff;
+        border-radius: 12px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        width: 90%;
+        max-width: 400px;
         padding: 20px;
-        border-radius: 8px;
-        width: 400px;
         position: relative;
+        animation: slideIn 0.3s ease-out;
     }
+
+    @keyframes slideIn {
+        from {
+            transform: translateY(-30px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
     .close {
         position: absolute;
         top: 10px;
@@ -116,9 +195,18 @@
         font-size: 24px;
         cursor: pointer;
     }
+    .btn-success,
+    .btn-primary{
+        background-color: #3d6e4f;
+        color: #fff;
+        border: none;
+        padding: 11px 15px;
+        border-radius: 4px;
+        cursor: pointer;
+    }
 </style>
 
-<!-- JavaScript for Modal and Options Toggle -->
+<!-- Embedded JavaScript -->
 <script>
     function openModal(modalId) {
         document.getElementById(modalId).style.display = 'flex';
@@ -129,12 +217,19 @@
     }
 
     function toggleOptions(button) {
-        // Toggle the display of the delete form
         const deleteForm = button.nextElementSibling;
         deleteForm.style.display = deleteForm.style.display === 'none' ? 'block' : 'none';
     }
 
-    // Close modal when clicking outside of it
+    function openDeleteModal(teamId, teamName) {
+        const modal = document.getElementById('deleteTeamModal');
+        modal.style.display = 'flex';
+        document.getElementById('deleteTeamName').textContent = teamName;
+        const deleteForm = document.getElementById('deleteTeamForm');
+        const deleteUrl = `{% url 'team_delete' 0 %}`.replace('0', teamId);
+        deleteForm.action = deleteUrl;
+    }
+
     window.onclick = function(event) {
         const modals = document.getElementsByClassName('modal');
         for (let modal of modals) {
