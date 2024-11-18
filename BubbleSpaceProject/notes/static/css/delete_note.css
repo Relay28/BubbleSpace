@@ -66,7 +66,7 @@ body {
 /* Delete form layout */
 .delete-form {
     display: flex;
-    margin-left: 100vh; /* Center align the buttons */
+    margin-left: 90vh; /* Center align the buttons */
     gap: 15px; /* Space between buttons */
     margin-top: 20px; /* Add space above buttons */
 }

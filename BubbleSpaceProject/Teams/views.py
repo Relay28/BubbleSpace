@@ -10,6 +10,7 @@ from django.http import JsonResponse
 from django.contrib.auth import get_user_model
 from django.db.models import Q
 User = get_user_model()
+
 @login_required
 def add_team_member(request, pk):
     team = get_object_or_404(Team, pk=pk)
@@ -100,13 +101,15 @@ def team_edit(request, pk):
         return HttpResponseForbidden("You do not have permission to edit this team.")
     
     if request.method == 'POST':
-        form = TeamForm(request.POST, instance=team)
+        # Pass is_edit=True to exclude the members field
+        form = TeamForm(request.POST, instance=team, is_edit=True)
         if form.is_valid():
             form.save()
             messages.success(request, "Team updated successfully.")
             return redirect('team_detail', pk=team.pk)
     else:
-        form = TeamForm(instance=team)
+        # Pass is_edit=True to exclude the members field
+        form = TeamForm(instance=team, is_edit=True)
     
     return render(request, 'teams/team_edit_form.html', {'form': form, 'team': team})
 

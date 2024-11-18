@@ -40,11 +40,12 @@
 
 /* Anchor tag styling for sidebar links */
 .sidebar ul li a {
-    text-decoration: none;
+   
     color: inherit;
     display: flex;
     align-items: center;
     transition: color 0.3s ease;
+    text-decoration: none;
 }
 
 .sidebar ul li a .icon {
