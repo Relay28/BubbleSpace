@@ -103,7 +103,15 @@
 
         <form method="post">
             {% csrf_token %}
-            {{ form.as_p }}
+            {{ form.non_field_errors }}
+            <div>
+                {{ form.Title.label_tag }}
+                {{ form.Title }}
+            </div>
+            <div>
+                {{ form.Description.label_tag }}
+                {{ form.Description }}
+            </div>
             <button type="submit">Save</button>
         </form>
     </div>
