@@ -9,4 +9,7 @@ urlpatterns = [
     path('project/<int:pk>/delete/', views.project_delete, name='project_delete'),
     path('project/<int:project_id>/tasks/new/', views.task_create_for_project, name='task_create_for_project'),
     path('<int:pk>/tasks/', views.project_tasks, name='project_tasks'),
+    path('project/<int:pk>/start/', views.start_project, name='project_start'),
+    path('project/<int:pk>/complete/', views.complete_project, name='project_complete'),
+    path('project/<int:pk>/cancel/', views.cancel_project, name='project_cancel'),
 ]

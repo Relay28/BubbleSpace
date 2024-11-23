@@ -80,6 +80,7 @@
     .bg-yellow { background-color: #ffc107; color: #212529; }
     .bg-green { background-color: #28a745; }
     .bg-red { background-color: #dc3545; }
+    .bg-grey { background-color: #808080}
 
     /* Alignment and Spacing */
     .action-bar {
@@ -158,10 +159,17 @@
 
 {% for project in projects %}
 <div class="project-item 
-            {% if project.Status == 'Ongoing' %}bg-yellow{% elif project.Status == 'Completed' %}bg-green{% elif project.Status == 'Cancelled' %}bg-red{% endif %}">
-    <a href="{% url 'project_tasks' project.ProjectId %}" class="btn">
-        <span>{{ project.Title }}</span>
-    </a>
+            {% if project.Status == 'Ongoing' %}bg-yellow
+            {% elif project.Status == 'Completed' %}bg-green
+            {% elif project.Status == 'Cancelled' %}bg-red
+            {% else %}bg-grey{% endif %}">
+    {% if project.Status != 'Pending' %}
+        <a href="{% url 'project_tasks' project.ProjectId %}" class="btn">
+            <span>{{ project.Title }}</span>
+        </a>
+    {% else %}
+        <span>{{ project.Title }}</span> <!-- Non-clickable for Pending -->
+    {% endif %}
     - <span>Status: {{ project.Status }}</span>
     <a href="{% url 'project_detail' project.ProjectId %}" class="btn btn-info">
         View Details

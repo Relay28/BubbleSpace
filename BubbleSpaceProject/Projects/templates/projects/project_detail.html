@@ -183,25 +183,105 @@
         .modal-content .btn-cancel:hover {
             background-color: #5a6268;
         }
+
+        .project-header {
+            display: flex;
+            justify-content: space-between; /* Distribute items to far left and right */
+            align-items: center; /* Vertically align items */
+            margin-bottom: 20px;
+        }
+
+        .project-header h1 {
+            font-size: 28px;
+            margin: 0;
+            color: #333;
+        }
+
+        .project-actions {
+            display: flex;
+            gap: 10px; /* Space between buttons */
+        }
+
+        .btn-status {
+            padding: 10px 15px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .btn-start {
+            background-color: #ffc107; /* Yellow */
+        }
+
+        .btn-complete {
+            background-color: #28a745; /* Green */
+        }
+
+        .btn-cancel {
+            background-color: #dc3545; /* Red */
+        }
+
+        .btn-start:hover {
+            background-color: #e0a800; /* Darker yellow */
+        }
+
+        .btn-complete:hover {
+            background-color: #218838; /* Darker green */
+        }
+
+        .btn-cancel:hover {
+            background-color: #bd2130; /* Darker red */
+        }
     </style>
 </head>
 <body>
     {% include "sidebar.html" %}
 
     <div class="main-content1">
-        <a href="{% url 'team_detail' team.pk %}" class="btn-back">Back</a>
-
-        <h1>Project Details</h1>
+        <p>
+            <a href="{% url 'team_detail' team.pk %}" class="btn-back">Back</a>
+        </p>
+        <!-- Flex Container for Project Details and Buttons -->
+        <div class="project-header">
+            <h1>Project Details</h1>
+            <div class="project-actions">
+                {% if project.Status == "Pending" %}
+                    <form method="post" action="{% url 'project_start' project.pk %}" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-status btn-start">Start Project</button>
+                    </form>
+                {% elif project.Status == "Ongoing" %}
+                    <form method="post" action="{% url 'project_complete' project.pk %}" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-status btn-complete">Complete Project</button>
+                    </form>
+                    <form method="post" action="{% url 'project_cancel' project.pk %}" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-status btn-cancel">Cancel Project</button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
 
         <p><strong>Title:</strong> {{ project.Title }}</p>
         <p><strong>Description:</strong> {{ project.Description }}</p>
         <p>
             <strong>Status:</strong>
-            <span class="{% if project.Status == 'Ongoing' %}status-ongoing{% elif project.Status == 'Completed' %}status-completed{% else %}status-cancelled{% endif %}">
-                {{ project.Status }}
-            </span>
+            {% if project.Status == 'Pending' %}
+                <span class="status status-pending">{{ project.Status }}</span>
+            {% elif project.Status == 'Ongoing' %}
+                <span class="status status-ongoing">{{ project.Status }}</span>
+            {% elif project.Status == 'Completed' %}
+                <span class="status status-completed">{{ project.Status }}</span>
+            {% elif project.Status == 'Cancelled' %}
+                <span class="status status-cancelled">{{ project.Status }}</span>
+            {% endif %}
         </p>
 
+        <!-- Button Group -->
         <div class="button-group">
             <a href="{% url 'project_update' project.pk %}" class="btn-edit">Edit</a>
             <button class="btn-delete" onclick="showModal()">Delete</button>

@@ -8,7 +8,6 @@ from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
-
 # Project List View
 def project_list(request):
     project_id = request.GET.get('project_id')  # Get project_id from query parameters
@@ -127,3 +126,21 @@ def task_delete(request, pk):
         return redirect('project_list') + f"?project_id={project.id}"
     
     return render(request, 'Projects/task_confirm_delete.html', {'task': task, 'project': project})
+
+def start_project(request, pk):
+    project = get_object_or_404(Project, pk=pk)
+    if request.method == "POST" and project.Status == "Pending":
+        project.start_project()
+    return redirect('project_detail', pk=pk)
+
+def complete_project(request, pk):
+    project = get_object_or_404(Project, pk=pk)
+    if request.method == "POST" and project.Status == "Ongoing":
+        project.complete_project()
+    return redirect('project_detail', pk=pk)
+
+def cancel_project(request, pk):
+    project = get_object_or_404(Project, pk=pk)
+    if request.method == "POST" and project.Status == "Ongoing":
+        project.cancel_project()
+    return redirect('project_detail', pk=pk)
