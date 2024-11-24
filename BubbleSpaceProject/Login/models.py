@@ -28,6 +28,7 @@ class Users_Account(AbstractBaseUser, PermissionsMixin):
     lname = models.CharField(max_length=50)
     gender = models.CharField(max_length=20)
     birthDate = models.DateField()
+    profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
@@ -46,3 +47,9 @@ class Users_Account(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.username
+    def delete(self, *args, **kwargs):
+        # Delete the profile picture from storage when deleting the user
+        if self.profile_picture and self.profile_picture.name != 'profile_pictures/default.jpg':
+            if os.path.isfile(self.profile_picture.path):
+                os.remove(self.profile_picture.path)
+        super().delete(*args, **kwargs)

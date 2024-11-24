@@ -5,59 +5,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Bubble Space{% endblock %}</title>
-    <link rel="stylesheet" href="{% static 'base.css' %}">
+    <link rel="stylesheet" href="{% static 'base2.css' %}">
     {% block extra_css %}{% endblock %}
-    <style>
-        /* Popup styling */
-        .popup {
-            display: none;
-            position: absolute;
-            top: 70px;
-            right: 40px;
-            background-color: #fff;
-            border: 1px solid #ddd;
-            padding: 10px;
-            border-radius: 5px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            z-index: 100;
-        }
-
-        .popup.show {
-            display: block;
-        }
-
-        .popup a {
-            text-decoration: none;
-            color: #333;
-            font-weight: bold;
-            display: block;
-            padding: 5px 10px;
-            transition: background-color 0.3s ease;
-        }
-
-        .popup a:hover {
-            background-color: #f1f1f1;
-        }
-    </style>
 </head>
 <body>
     <div class="container">
         <!-- Sidebar -->
         <aside class="sidebar">
             <div class="sidebar-header">
-                <a href="{% url 'home' %}"><h2>Bubble Space</h2></a>
+                <a href="{% url 'home' %}">
+                    <h2>Bubble Space</h2>
+                </a>
             </div>
             <div class="sidebar-content">
-                <h3>Workspace</h3>
                 <ul>
-                   <li><a href="{% url 'team_list' %}"><i class="icon">👥</i> Teams</a></li>
-                   <li><a href="{% url 'task_list' %}"><i class="icon">📋</i> Tasks</a></li> 
-                   <li><a href="{% url 'notes_list' %}"><i class="icon">📘</i> Notes</a></li>
-                   <li><i class="icon">📁</i>  &nbsp;&nbsp;Projects</li>
-                   <li><a href="{% url 'chat_list' %}"><i class="icon">✉️ </i> Messages</a></li>
-                   <li><a href="{% url 'help' %}"><i class="icon">❓</i> Help</a></li>
-
-                    
+                    <li><a href="{% url 'team_list' %}"><i class="icon">👥</i> Teams</a></li>
+                    <li><a href="{% url 'task_list' %}"><i class="icon">📋</i> Tasks</a></li>
+                    <li><a href="{% url 'notes_list' %}"><i class="icon">📘</i> Notes</a></li>
+                    <li><a href="#"><i class="icon">📁</i> Projects</a></li>
+                    <li><a href="{% url 'chat_list' %}"><i class="icon">✉️</i> Messages</a></li>
+                    <li><a href="{% url 'help' %}"><i class="icon">❓</i> Help</a></li>
                 </ul>
             </div>
         </aside>
@@ -66,15 +33,37 @@
         <main class="main-content">
             <!-- Header -->
             <header class="header">
-                <input type="text" class="search-bar" placeholder="Hinted search text">
+                <input type="text" class="search-bar" placeholder="Search...">
                 <div class="header-icons">
                     <span>🔔</span>
-                    <a href="{% url 'profile' %}"><span>👤</span></a>
-                    <span class="menu" onclick="togglePopup()">☰</span>
+                    <div class="menu" onclick="togglePopup()">
+                        {% if user.profile_picture %}
+                            <img src="{{ user.profile_picture.url }}" alt="Profile Picture" class="profile-icon">
+                        {% else %}
+                            <div class="profile-placeholder">👤</div>
+                        {% endif %}
+                        <span class="user-name">
+                            {{ user.first_name }} {{ user.last_name }}
+                        </span>
+                    </div>
                 </div>
-                <!-- Popup for Logout -->
-                <div class="popup" id="popup">
-                    <a href="{% url 'logout' %}">Logout</a>
+                <!-- Profile Popup -->
+                <div class="profile-popup" id="profilePopup">
+                    <div class="popup-header">
+                        {% if user.profile_picture %}
+                            <img src="{{ user.profile_picture.url }}" alt="Profile Picture" class="popup-profile-pic">
+                        {% else %}
+                            <div class="profile-placeholder">👤</div>
+                        {% endif %}
+                        <div class="popup-profile-info">
+                            <p class="profile-name">{{ user.first_name }} {{ user.last_name }}</p>
+                            <p class="profile-email">{{ user.email }}</p>
+                        </div>
+                    </div>
+                    <div class="popup-actions">
+                        <a href="{% url 'profile' %}" class="action-link">Manage Your Account</a>
+                        <a href="{% url 'logout' %}" class="action-link">Logout</a>
+                    </div>
                 </div>
             </header>
 
@@ -88,12 +77,12 @@
     <script src="{% static 'js/popup.js' %}"></script>
     <script>
         function togglePopup() {
-            const popup = document.getElementById("popup");
+            const popup = document.getElementById("profilePopup");
             popup.classList.toggle("show");
         }
 
-        document.addEventListener("click", function(event) {
-            const popup = document.getElementById("popup");
+        document.addEventListener("click", function (event) {
+            const popup = document.getElementById("profilePopup");
             const menuIcon = document.querySelector(".menu");
 
             if (!menuIcon.contains(event.target) && !popup.contains(event.target)) {

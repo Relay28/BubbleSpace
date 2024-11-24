@@ -7,6 +7,7 @@ import json
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import check_password
 from django.views.decorators.http import require_POST
+from django.core.files.storage import default_storage
 
 @csrf_exempt
 def register_view(request):
@@ -73,6 +74,12 @@ def login_view(request):
 def home_view(request):
     return render(request, 'Home/Home.html')
 
+@login_required
+def appbar_view(request):
+    return render(request, 'base.html', {
+        'user': request.user  # Ensure user data is passed
+    })
+
 def help_view(request):
     return render(request, 'Help/helppage.html')
 
@@ -85,7 +92,8 @@ def profile_view(request):
             "lname": user.lname,
             "gender": user.gender,
             "birthDate": user.birthDate.strftime('%d/%m/%Y'),  # Format as needed
-            "age": user.age
+            "age": user.age,
+             "profile_picture": user.profile_picture.url if user.profile_picture else None  # Add profile picture URL
         }
         return render(request, 'Profile/profile_account.html', user_data)
     return redirect('login')
@@ -95,32 +103,33 @@ def edit_profile_view(request):
     user = request.user
 
     if request.method == 'POST':
-        # Get updated data from the form
         fname = request.POST.get('fname')
         lname = request.POST.get('lname')
         gender = request.POST.get('gender')
         birthDate = request.POST.get('birthDate')
         password = request.POST.get('password')
 
-        # Update the user's data
+        profile_picture = request.FILES.get('profile_picture')
+
         user.fname = fname
         user.lname = lname
         user.gender = gender
         user.birthDate = birthDate
         if password:
             user.set_password(password)
+        if profile_picture:
+            user.profile_picture = profile_picture
         user.save()
 
-        # Redirect back to profile page after saving changes
         return redirect('profile')
 
-    # Pass user data to the template
     context = {
         'username': user.username,
         'fname': user.fname,
         'lname': user.lname,
         'gender': user.gender,
-        'birthDate': user.birthDate
+        'birthDate': user.birthDate,
+        'profile_picture': user.profile_picture.url if user.profile_picture else None,
     }
     return render(request, 'Profile/edit_profile.html', context)
 
