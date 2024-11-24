@@ -1,244 +1,108 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Your Teams</h1>
+<div class="container my-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1>Your Teams</h1>
+        <!-- Create/Join Team Button -->
+        <button class="btn btn-success d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#createTeamModal">
+            <i class="bi bi-plus-circle me-2"></i> Join or Create Team
+        </button>
+    </div>
 
-<!-- Create Team Button at the top-right -->
-<div style="display: flex; justify-content: flex-end; margin-bottom: 10px;">
-    <button class="btn-primary" onclick="openModal('createTeamModal')">Join or Create Team</button>
-</div>
-
-<!-- Teams Card Layout -->
-<div class="teams-container">
-    {% for team in teams %}
-    <div class="team-card">
-        <div class="team-card-header">
-            <button class="options-button" onclick="toggleOptions(this)">⋮</button>
-            <!-- Delete button shown only when options button is clicked -->
-            <div class="delete-form" style="display: none;">
-                <button 
-                    class="btn btn-danger delete-team-button" 
-                    onclick="openDeleteModal('{{ team.pk }}', '{{ team.team_name|escapejs }}')">
-                    Delete
-                </button>
+    <!-- Teams Card Layout -->
+    <div class="row gy-4">
+        {% for team in teams %}
+        <div class="col-md-4 col-lg-3">
+            <!-- Clickable Card -->
+            <div class="card shadow-sm border-0 h-100 clickable-card">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                    <button class="btn btn-sm btn-outline-secondary p-0 d-flex align-items-center" onclick="toggleOptions(this); event.stopPropagation();">
+                        <i class="bi bi-three-dots"></i>
+                    </button>
+                    <!-- Delete Button Shown When Options Clicked -->
+                    <div class="delete-form position-absolute" style="display: none; z-index: 10; left: 1rem; top: 2.5rem;">
+                        <button 
+                            class="btn btn-danger btn-sm" 
+                            onclick="openDeleteModal('{{ team.pk }}', '{{ team.team_name|escapejs }}'); event.stopPropagation();">
+                            <i class="bi bi-trash3 me-1"></i> Delete
+                        </button>
+                    </div>
+                </div>
+                <!-- Team Name Section as Clickable -->
+                <a href="{% url 'team_detail' team.pk %}" class="text-decoration-none">
+                    <div class="card-body d-flex justify-content-center align-items-center clickable-section">
+                        <h5 class="card-title text-center mb-0 text-dark" title="{{ team.team_name }}">{{ team.team_name }}</h5>
+                    </div>
+                </a>
             </div>
         </div>
-        <div class="team-card-content">
-            <h2 class="team-name">{{ team.team_name }}</h2>
-            <a href="{% url 'team_detail' team.pk %}" class="team-link">View Team</a>
+        {% empty %}
+        <p class="text-muted text-center">No teams found. Create or join a team to get started!</p>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Modal for Create Team -->
+<div id="createTeamModal" class="modal fade" tabindex="-1" aria-labelledby="createTeamModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createTeamModalLabel">Create a New Team</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="{% url 'team_create' %}">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-success w-100">
+                        <i class="bi bi-check-circle me-2"></i> Create
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
-    {% endfor %}
 </div>
 
-<!-- Modal Structure for Create Team Form -->
-<div id="createTeamModal" class="modal">
-    <div class="modal-content">
-        <span class="close" onclick="closeModal('createTeamModal')">&times;</span>
-        <h2>Create a New Team</h2>
-        
-        <!-- Create Team Form -->
-        <form method="post" action="{% url 'team_create' %}">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" class="btn-success">Create</button>
-        </form>
+<!-- Modal for Confirm Deletion -->
+<div id="deleteTeamModal" class="modal fade" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirm Deletion</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete the team "<span id="deleteTeamName"></span>"?</p>
+                <form id="deleteTeamForm" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger w-100">
+                        <i class="bi bi-trash3 me-2"></i> Yes, Delete
+                    </button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            </div>
+        </div>
     </div>
 </div>
 
-<!-- Modal Structure for Confirm Deletion -->
-<div id="deleteTeamModal" class="modal">
-    <div class="modal-content">
-        <span class="close" onclick="closeModal('deleteTeamModal')">&times;</span>
-        <h2>Confirm Deletion</h2>
-        <p>Are you sure you want to delete the team "<span id="deleteTeamName"></span>"?</p>
-        <form id="deleteTeamForm" method="post">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-danger">Yes, Delete</button>
-        </form>
-        <button type="button" class="btn btn-secondary" onclick="closeModal('deleteTeamModal')">Cancel</button>
-    </div>
-</div>
-
-
-<style>
-
-    .teams-container {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 16px;
-        justify-content: flex-start; 
-        margin: 20px auto;
-        margin-left: 5px;
-        max-width: 1400px;
-        padding: 10px;
-    }
-
-    /* Team Card Styles */
-    .team-card {
-        background-color: #f8f9fa;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        padding: 16px;
-        width: 250px;
-        height: 100px;
-        position: relative;
-    }
-
-    .team-card-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 8px;
-    }
-
-    .options-button {
-        background: none;
-        border: none;
-        cursor: pointer;
-        font-size: 1.5em;
-        line-height: 1;
-        color: #333;
-    }
-
-    .options-button:hover {
-        color: #555;
-    }
-
-    /* Delete Form Styles */
-    .delete-form {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        background-color: #fff;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        padding: 8px;
-        z-index: 10;
-    }
-
-    .delete-team-button {
-        background-color: #dc3545;
-        color: #fff;
-        border: none;
-        padding: 8px 12px;
-        border-radius: 4px;
-        cursor: pointer;
-    }
-
-    .delete-team-button:hover {
-        background-color: #bd2130;
-    }
-
-    /* Team Card Content */
-    .team-card-content {
-        text-align: center;
-    }
-
-    .team-name {
-        font-size: 1.25em;
-        font-weight: bold;
-        margin: 10px 0;
-    }
-
-    .team-link {
-        text-decoration: none;
-        color: #007bff;
-        font-weight: bold;
-    }
-
-    .team-link:hover {
-        text-decoration: underline;
-    }
-
-    /* Modal Styles */
-    .modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0; /* Align from the top-left corner */
-    width: 100%;
-    height: 100%; /* Cover the entire viewport */
-    background-color: rgba(0, 0, 0, 0.6); /* Dim the background */
-    justify-content: center; /* Horizontally center */
-    align-items: center; /* Vertically center */
-    z-index: 1000;
-}
-
-
-    .modal-content {
-        background-color: #fff;
-        border-radius: 12px;
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-        width: 90%;
-        max-width: 400px;
-        
-        padding: 20px;
-        position: relative;
-        animation: slideIn 0.3s ease-out;
-    }
-
-    @keyframes slideIn {
-        from {
-            transform: translateY(-30px);
-            opacity: 0;
-        }
-        to {
-            transform: translateY(0);
-            opacity: 1;
-        }
-    }
-
-    .close {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        font-size: 24px;
-        cursor: pointer;
-    }
-    .btn-success,
-    .btn-primary{
-        background-color: #3d6e4f;
-        color: #fff;
-        border: none;
-        padding: 11px 15px;
-        border-radius: 4px;
-        cursor: pointer;
-    }
-</style>
-
-<!-- Embedded JavaScript -->
 <script>
-    function openModal(modalId) {
-        document.getElementById(modalId).style.display = 'flex';
-    }
-
-    function closeModal(modalId) {
-        document.getElementById(modalId).style.display = 'none';
-    }
-
+    // Toggle the delete menu for the team
     function toggleOptions(button) {
         const deleteForm = button.nextElementSibling;
         deleteForm.style.display = deleteForm.style.display === 'none' ? 'block' : 'none';
     }
 
+    // Open delete modal and populate it with team details
     function openDeleteModal(teamId, teamName) {
-        const modal = document.getElementById('deleteTeamModal');
-        modal.style.display = 'flex';
+        const modal = new bootstrap.Modal(document.getElementById('deleteTeamModal'));
         document.getElementById('deleteTeamName').textContent = teamName;
         const deleteForm = document.getElementById('deleteTeamForm');
-        const deleteUrl = `{% url 'team_delete' 0 %}`.replace('0', teamId);
-        deleteForm.action = deleteUrl;
+        deleteForm.action = `{% url 'team_delete' 0 %}`.replace('0', teamId);
+        modal.show();
     }
-
-    window.onclick = function(event) {
-        const modals = document.getElementsByClassName('modal');
-        for (let modal of modals) {
-            if (event.target === modal) {
-                modal.style.display = 'none';
-            }
-        }
-    };
 </script>
 {% endblock %}
+    

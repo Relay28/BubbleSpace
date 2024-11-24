@@ -1,18 +1,23 @@
 /* Sidebar styling */
-.sidebar {
-    width: 250px;
-    background-color: #eef5e6;
-    position: fixed;
-    height: 100%;
-    padding: 20px;
-    color: #333;
-    font-family: Arial;
+/* Sidebar Customization */
+#sidebar {
+    background-color: #f8f9fa; /* Bootstrap's light background color */
 }
 
-.sidebar h2 {
+#sidebar h2 {
+    font-size: 1.5rem;
     font-weight: bold;
-    font-size: 24px;
-    color: #333;
+}
+
+.nav-link {
+    font-size: 1rem;
+    font-weight: 500;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.nav-link:hover {
+    background-color: #e9ecef;
+    color: #378938;
 }
 
 .sidebar h3 {
