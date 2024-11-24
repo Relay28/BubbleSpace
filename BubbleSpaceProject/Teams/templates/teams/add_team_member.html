@@ -2,165 +2,88 @@
 
 {% block content %}
 <style>
-    body {
-        font-family: Arial, sans-serif;
-        background-color: #f8f9fa; /* Light grey background for better contrast */
-        color: #333;
-    }
-
-    h1 {
-        text-align: center;
-        margin: 20px 0;
-        color: #333; /* Darker color for the title */
-    }
-
-    #search-box {
-        width: 100%;
-        max-width: 500px;
-        padding: 12px 15px;
-        margin: 20px auto;
-        display: block;
-        border: 1px solid #d1e0e0; /* Light grey border */
-        border-radius: 8px;
-        font-size: 16px;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    .search-box {
         transition: border-color 0.3s ease;
     }
 
-    #search-box:focus {
-        border-color: #28a745; /* Lighter green */
-        outline: none;
+    .search-box:focus {
+        border-color: #28a745;
+        box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
     }
 
-    #suggestions {
-        max-width: 500px;
-        margin: 10px auto;
+    .suggestions {
         list-style: none;
         padding: 0;
-        border: 1px solid #ddd;
+        margin: 0;
+        border: 1px solid #dee2e6;
+        border-radius: 0.375rem;
         background-color: #fff;
-        border-radius: 8px;
-        box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
     }
 
-    #suggestions li {
-        padding: 10px;
+    .suggestions li {
+        padding: 0.75rem 1rem;
         cursor: pointer;
-        border-bottom: 1px solid #f0f0f0;
         transition: background-color 0.3s ease;
     }
 
-    #suggestions li:last-child {
-        border-bottom: none;
-    }
-
-    #suggestions li:hover {
-        background-color: #f1f1f1; /* Subtle hover effect */
-    }
-
-    #selected-members-container {
-        width: 100%;
-        max-width: 500px;
-        margin: 20px auto;
-        padding: 10px;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        background-color: #fff;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        text-align: left;
-    }
-
-    #selected-members-container h3 {
-        margin: 0 0 10px 0;
-        color: #28a745; /* Lighter green for the heading */
-        font-size: 16px;
-        font-weight: bold;
+    .suggestions li:hover {
+        background-color: #f8f9fa;
     }
 
     .selected-member {
         display: inline-flex;
         align-items: center;
-        margin: 5px;
-        padding: 5px 10px;
-        background-color: #e9f7e1; /* Very light green background for chips */
-        color: #28a745; /* Lighter green text */
+        margin: 0.5rem;
+        padding: 0.5rem 0.75rem;
+        background-color: #e9f7e1;
+        color: #28a745;
         border-radius: 20px;
-        font-size: 14px;
-        font-weight: bold;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        font-size: 0.875rem;
+        font-weight: 500;
     }
 
     .selected-member .remove-btn {
-        margin-left: 10px;
-        padding: 0 5px;
+        margin-left: 0.5rem;
         background: none;
         border: none;
         color: #28a745;
-        font-size: 14px;
+        font-size: 1rem;
         cursor: pointer;
     }
 
     .selected-member .remove-btn:hover {
-        color: #dc3545; /* Red color for the remove button on hover */
-    }
-
-    .btn {
-        display: inline-block;
-        margin: 10px 5px;
-        padding: 10px 20px;
-        font-size: 14px;
-        font-weight: bold;
-        color: #fff;
-        background-color: #28a745; /* Light green button */
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-    }
-
-    .btn:hover {
-        background-color: #218838; /* Slightly darker green on hover */
-    }
-
-    .btn-secondary {
-        background-color: #dc3545; /* Red color for the secondary button */
-        color: #fff;
-    }
-
-    .btn-secondary:hover {
-        background-color: #c82333; /* Slightly darker red on hover */
-    }
-
-    form {
-        max-width: 500px;
-        margin: 0 auto;
-        text-align: center;
+        color: #dc3545;
     }
 </style>
 
-<h1>Add Members to {{ team.team_name }}</h1>
+<div class="container mt-5">
+    <h1 class="text-center text-dark">Add Members to {{ team.team_name }}</h1>
 
-<div>
-    <input 
-        type="text" 
-        id="search-box" 
-        placeholder="Search for a username..." 
-        autocomplete="off"
-    >
-    <ul id="suggestions"></ul>
+    <div class="my-4">
+        <input 
+            type="text" 
+            id="search-box" 
+            class="form-control search-box" 
+            placeholder="Search for a username..." 
+            autocomplete="off"
+        >
+        <ul id="suggestions" class="suggestions mt-2"></ul>
+    </div>
+
+    <div id="selected-members-container" class="border rounded p-3 bg-white shadow-sm">
+        <h3 class="text-success">Selected Members</h3>
+        <div id="selected-members" class="d-flex flex-wrap"></div>
+    </div>
+
+    <form method="post" class="mt-4">
+        {% csrf_token %}
+        <input type="hidden" name="members" id="members-input"> <!-- Hidden input for selected members -->
+        <div class="d-flex justify-content-center">
+            <button type="submit" class="btn btn-success me-3">Add Members</button>
+            <a href="{% url 'team_detail' team.pk %}" class="btn btn-danger">Back to Team</a>
+        </div>
+    </form>
 </div>
-
-<div id="selected-members-container">
-    <h3>Selected Members</h3>
-    <div id="selected-members"></div>
-</div>
-
-<form method="post">
-    {% csrf_token %}
-    <input type="hidden" name="members" id="members-input"> <!-- Hidden input for selected members -->
-    <button type="submit" class="btn">Add Members</button>
-    <a href="{% url 'team_detail' team.pk %}" class="btn btn-secondary">Back to Team</a>
-</form>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -184,18 +107,19 @@
                                 const li = document.createElement('li');
                                 li.textContent = user.username;
                                 li.dataset.id = user.id;
+                                li.className = 'list-group-item';
                                 li.addEventListener('click', function() {
                                     addMember(user);
                                 });
                                 suggestions.appendChild(li);
                             });
                         } else {
-                            suggestions.innerHTML = '<li>No users found</li>';
+                            suggestions.innerHTML = '<li class="list-group-item text-muted">No users found</li>';
                         }
                     })
                     .catch(error => {
                         console.error('Error fetching user suggestions:', error);
-                        suggestions.innerHTML = `<li>Error: ${error.message}</li>`;
+                        suggestions.innerHTML = `<li class="list-group-item text-danger">Error: ${error.message}</li>`;
                     });
             } else {
                 suggestions.innerHTML = '';

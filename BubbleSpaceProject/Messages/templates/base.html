@@ -6,99 +6,151 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Bubble Space{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'base2.css' %}">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEJ3Q1r4jF6TMQv61fO9dzl9PU4Zj8BbnjajkZQ74ZcHdbRlUlJ8v2WwrK2Bp" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     {% block extra_css %}{% endblock %}
     <style>
-        /* Popup styling */
-        .popup {
-            display: none;
-            position: absolute;
-            top: 70px;
-            right: 40px;
-            background-color: #fff;
+        /* Sidebar Custom Colors */
+        aside {
+            background-color: #f8f9fa; /* Light gray theme */
+            min-height: 100vh;
+        }
+        aside h2 {
+            color: #3cb371; /* Existing green theme */
+        }
+        .nav-link {
+            color: #666; /* Neutral gray */
+            font-weight: 500;
+            transition: color 0.2s ease, background-color 0.2s ease;
+        }
+        .nav-link:hover {
+            color: #3cb371; /* Highlight with green */
+            background-color: #e9ecef; /* Light hover effect */
+        }
+
+        /* Header and Icon Colors */
+        .header {
+            background-color: #fff; /* White header */
+            border-bottom: 1px solid #ddd;
+        }
+        .search-bar {
             border: 1px solid #ddd;
-            padding: 10px;
             border-radius: 5px;
+        }
+        .bi-bell-fill, .bi-person-fill {
+            color: #666; /* Neutral gray for icons */
+        }
+        .bi-bell-fill:hover, .bi-person-fill:hover {
+            color: #3cb371; /* Green hover effect */
+        }
+
+        /* Profile Dropdown */
+        .dropdown-menu {
+            border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            z-index: 100;
         }
-
-        .popup.show {
-            display: block;
-        }
-
-        .popup a {
-            text-decoration: none;
-            color: #333;
-            font-weight: bold;
-            display: block;
-            padding: 5px 10px;
-            transition: background-color 0.3s ease;
-        }
-
-        .popup a:hover {
-            background-color: #f1f1f1;
+        .dropdown-item:hover {
+            color: #3cb371;
+            background-color: #e9ecef;
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="d-flex">
         <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <a href="{% url 'home' %}"><h2>Bubble Space</h2></a>
-            </div>
-            <div class="sidebar-content">
-                <h3>Workspace</h3>
-                <ul>
-                    <li><a href="{% url 'team_list' %}"><i class="icon">👥</i> Teams</a></li>
-                    <li><a href="{% url 'task_list' %}"><i class="icon">📋</i> Tasks</a></li> 
-                    <li><a href="{% url 'notes_list' %}"><i class="icon">📘</i> Notes</a></li>
-                    <li><i class="icon">📁</i> Projects</li>
-                    <li><a href="{% url 'chat_list' %}"><i class="icon">✉️ </i> Messages</a></li>
-                    <li><a href="{% url 'help' %}"><i class="icon">❓</i> Help</a></li>
-                </ul>
+        <aside class="bg-light border-end" style="width: 250px;">
+            <div class="p-3">
+                <div class="text-center mb-4">
+                    <a href="{% url 'home' %}" class="text-decoration-none">
+                        <h2 class="text-success">Bubble Space</h2>
+                    </a>
+                </div>
+                <nav>
+                    <ul class="nav flex-column">
+                        <li class="nav-item mb-3">
+                            <a href="{% url 'team_list' %}" class="nav-link d-flex align-items-center">
+                                <i class="bi bi-people-fill me-2"></i> Teams
+                            </a>
+                        </li>
+                        <li class="nav-item mb-3">
+                            <a href="{% url 'task_list' %}" class="nav-link d-flex align-items-center">
+                                <i class="bi bi-list-task me-2"></i> Tasks
+                            </a>
+                        </li>
+                        <li class="nav-item mb-3">
+                            <a href="{% url 'notes_list' %}" class="nav-link d-flex align-items-center">
+                                <i class="bi bi-journal-text me-2"></i> Notes
+                            </a>
+                        </li>
+                        <li class="nav-item mb-3">
+                            <a href="#" class="nav-link d-flex align-items-center">
+                                <i class="bi bi-folder-fill me-2"></i> Projects
+                            </a>
+                        </li>
+                        <li class="nav-item mb-3">
+                            <a href="{% url 'chat_list' %}" class="nav-link d-flex align-items-center">
+                                <i class="bi bi-chat-dots-fill me-2"></i> Messages
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'help' %}" class="nav-link d-flex align-items-center">
+                                <i class="bi bi-question-circle-fill me-2"></i> Help
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
             </div>
         </aside>
 
-        <!-- Main Content Area -->
-        <main class="main-content">
+        <!-- Main Content -->
+        <main class="flex-grow-1">
             <!-- Header -->
-            <header class="header">
-                <input type="text" class="search-bar" placeholder="Hinted search text">
-                <div class="header-icons">
-                    <span>🔔</span>
-                    <a href="{% url 'profile' %}"><span>👤</span></a>
-                    <span class="menu" onclick="togglePopup()">☰</span>
-                </div>
-                <!-- Popup for Logout -->
-                <div class="popup" id="popup">
-                    <a href="{% url 'logout' %}">Logout</a>
+            <header class="d-flex align-items-center justify-content-between px-4 py-3 header">
+                <input type="text" class="form-control w-50 search-bar" placeholder="Search...">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-bell-fill text-secondary me-3"></i>
+                    <div class="dropdown">
+                        <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            {% if user.profile_picture %}
+                                <img src="{{ user.profile_picture.url }}" alt="Profile Picture" class="rounded-circle" style="width: 35px; height: 35px;">
+                            {% else %}
+                                <span class="bg-secondary text-white rounded-circle d-inline-block text-center" style="width: 35px; height: 35px; line-height: 35px;">
+                                    <i class="bi bi-person-fill"></i>
+                                </span>
+                            {% endif %}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end text-small" aria-labelledby="profileDropdown">
+                            <li>
+                                <div class="d-flex align-items-center px-3 py-2">
+                                    {% if user.profile_picture %}
+                                        <img src="{{ user.profile_picture.url }}" alt="👤" class="rounded-circle me-2" style="width: 40px; height: 40px;">
+                                    {% else %}
+                                        <span class="bg-secondary text-white rounded-circle text-center d-inline-block me-2" style="width: 40px; height: 40px; line-height: 40px;">
+                                            <i class="bi bi-person-fill"></i>
+                                        </span>
+                                    {% endif %}
+                                    <div>
+                                        <p class="mb-0">{{ user.fname }} {{ user.lname }}</p>
+                                        <small>{{ user.email }}</small>
+                                    </div>
+                                </div>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a href="{% url 'profile' %}" class="dropdown-item">Manage Your Account</a></li>
+                            <li><a href="{% url 'logout' %}" class="dropdown-item">Logout</a></li>
+                        </ul>
+                    </div>
                 </div>
             </header>
 
-            <!-- Main Page Content -->
-            <div class="content">
+            <!-- Page Content -->
+            <div class="p-4">
                 {% block content %}{% endblock %}
             </div>
         </main>
     </div>
 
-    <script src="{% static 'js/popup.js' %}"></script>
-    <script>
-        function togglePopup() {
-            const popup = document.getElementById("popup");
-            popup.classList.toggle("show");
-        }
-
-        document.addEventListener("click", function(event) {
-            const popup = document.getElementById("popup");
-            const menuIcon = document.querySelector(".menu");
-
-            if (!menuIcon.contains(event.target) && !popup.contains(event.target)) {
-                popup.classList.remove("show");
-            }
-        });
-    </script>
+    <!-- Bootstrap Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
