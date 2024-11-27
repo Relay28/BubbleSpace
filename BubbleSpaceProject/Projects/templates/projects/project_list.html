@@ -20,7 +20,7 @@
 </head>
 
 <body>
-    {% include "sidebar.html" %}
+    {% include "base.html" %}
     <h1 style="float: left; margin-left: 325px;">Tasks in {{ project.Title }}</h1>
 
     <a href="{% url 'task_create_for_project' project.ProjectId %}" style="float: right; margin-right: 30px; margin-top: 25px;">

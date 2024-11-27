@@ -3,7 +3,7 @@ from django.urls import reverse
 from .models import Task
 from Projects.models import Project
 from .forms import TaskForm
-
+from django.http import JsonResponse
 ## views.py
 
 from django.contrib.auth.decorators import login_required
@@ -12,7 +12,10 @@ from django.http import HttpResponseForbidden
 @login_required
 def task_list(request):
     tasks = Task.objects.filter(created_by=request.user, project__isnull=True)
-    return render(request, 'tasks/task_list.html', {'tasks': tasks})
+    form = TaskForm()
+    return render(request, 'tasks/task_list.html', {'tasks': tasks,'form':form})
+
+
 
 @login_required
 def task_detail(request, pk):
@@ -27,10 +30,26 @@ def task_create(request):
             task = form.save(commit=False)
             task.created_by = request.user
             task.save()
+
+            # If the request is AJAX, send a JSON response
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                return JsonResponse({
+                    'id': task.id,
+                    'title': task.title,
+                    'description': task.description,
+                    'due_date': task.due_date.strftime('%Y-%m-%d') if task.due_date else None,
+                    'status': task.status,
+                }, status=201)
+            
+            # Redirect for non-AJAX requests
             return redirect('task_list')
+        else:
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                return JsonResponse({'errors': form.errors}, status=400)
     else:
         form = TaskForm()
     return render(request, 'tasks/task_form.html', {'form': form, 'title': 'Create New Task'})
+
 
 @login_required
 def task_update(request, pk):

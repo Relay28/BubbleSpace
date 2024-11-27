@@ -1,41 +1,116 @@
+{% extends "base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
 
-    <head>
-        <title>
-            Task List
-        </title>
-
-        <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
-    </head>
-
-    <body>
-        {% include "base.html" %}
-        <h1 style="float: left; margin-left: 325px;">
-            Tasks
-        </h1>
-
-        <a href="{% url 'task_create' %}" style="float: right; margin-right: 30px; margin-top: 25px;">
+{% block content %}
+<div style="margin-left: 2%; padding: 20px; background-color: #f8f9fa; min-height: 100vh; box-sizing: border-box;">
+    <!-- Task List Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 15px; background-color: #ffffff; border-radius: 5px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); border: 1px solid #eaeaea;">
+        <h1 style="font-size: 24px; color: #2c3e50; margin: 0;">Tasks</h1>
+        <button id="new-task-btn" style="background-color: #1abc9c; color: white; padding: 10px 15px; font-size: 14px; font-weight: bold; text-transform: uppercase; border-radius: 5px; cursor: pointer; border: none; transition: background-color 0.3s ease;">
             Create New Task
-        </a>
+        </button>
+    </div>
 
-        <div style="clear: both; margin-top: 20px; margin-left: 325px;">
-            {% for task in tasks %}
-            <div style="border: 1px solid #ddd; padding: 10px; margin: 10px; border-radius: 8px;">
-                <a href="{% url 'task_detail' task.pk %}">
+    <!-- Task Creation Form -->
+    <div id="task-form-container" style="display: none; margin-bottom: 20px; padding: 20px; background-color: #ffffff; border-radius: 5px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); border: 1px solid #eaeaea;">
+        <form id="task-form" method="POST" action="{% url 'task_create' %}">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <div style="text-align: right;">
+                <button type="submit" style="background-color: #1abc9c; color: white; padding: 10px 15px; font-size: 14px; font-weight: bold; text-transform: uppercase; border-radius: 5px; cursor: pointer; border: none; transition: background-color 0.3s ease;">
+                    Save Task
+                </button>
+                <button id="cancel-task-btn" type="button" style="background-color: #e74c3c; color: white; padding: 10px 15px; font-size: 14px; font-weight: bold; text-transform: uppercase; border-radius: 5px; cursor: pointer; border: none; margin-left: 10px; transition: background-color 0.3s ease;">
+                    Cancel
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Task List -->
+    <div id="task-list">
+        {% for task in tasks %}
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; margin-bottom: 15px; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); border: 1px solid #eaeaea; transition: transform 0.2s ease, box-shadow 0.2s ease;">
+            <div>
+                <a href="{% url 'task_detail' task.pk %}" style="font-size: 18px; color: #2c3e50; font-weight: bold; text-decoration: none; margin-right: 20px;">
                     {{ task.title }}
                 </a>
-                
-                <a href="{% url 'task_update' task.pk %}" style="float: right; margin-left: 10px;">
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <a href="{% url 'task_update' task.pk %}" style="background-color: #3498db; color: white; padding: 8px 12px; font-size: 14px; font-weight: bold; border-radius: 5px; text-transform: uppercase; text-decoration: none; cursor: pointer; transition: background-color 0.3s ease;">
                     Edit
                 </a>
-
-                <a href="{% url 'task_delete' task.pk %}" style="float: right;">
+                <a href="{% url 'task_delete' task.pk %}" style="background-color: #e74c3c; color: white; padding: 8px 12px; font-size: 14px; font-weight: bold; border-radius: 5px; text-transform: uppercase; text-decoration: none; cursor: pointer; transition: background-color 0.3s ease;">
                     Delete
                 </a>
             </div>
-            {% endfor %}
         </div>
-    </body>
-</html>
+        {% empty %}
+        <p style="text-align: center; font-size: 16px; color: #666; margin-top: 20px;">
+            No tasks found. Start by <a href="{% url 'task_create' %}" style="color: #1abc9c; font-weight: bold; text-decoration: none;">creating a new task</a>.
+        </p>
+        {% endfor %}
+    </div>
+</div>
+<script>
+    // Toggle task creation form visibility
+    document.getElementById('new-task-btn').addEventListener('click', function() {
+        document.getElementById('task-form-container').style.display = 'block';
+        this.style.display = 'none';  // Hide the "Create New Task" button
+    });
+
+    document.getElementById('cancel-task-btn').addEventListener('click', function() {
+        document.getElementById('task-form-container').style.display = 'none';
+        document.getElementById('new-task-btn').style.display = 'inline-block';  // Show the "Create New Task" button again
+    });
+
+    // Handle AJAX form submission
+    document.getElementById('task-form').addEventListener('submit', function(event) {
+        document.getElementById('task-form-container').style.display=none;
+        event.preventDefault();
+        
+        var form = this;
+        var formData = new FormData(form);
+
+        fetch("{% url 'task_create' %}", {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.errors) {
+                // Handle form errors if any
+                console.log('Errors:', data.errors);
+            } else {
+                // Dynamically add the new task to the list
+                var taskList = document.getElementById('task-list');
+                var taskItem = document.createElement('div');
+                taskItem.classList.add('task-item');
+                taskItem.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; margin-bottom: 15px; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); border: 1px solid #eaeaea;">
+                        <div>
+                            <a href="/task/${data.id}" style="font-size: 18px; color: #2c3e50; font-weight: bold; text-decoration: none;">${data.title}</a>
+                        </div>
+                    </div>
+                `;
+                taskList.appendChild(taskItem);
+
+                // Hide the form after successful task creation
+                document.getElementById('task-form-container').style.display = 'none';
+                document.getElementById('new-task-btn').style.display = 'inline-block'; // Show "Create New Task" button again
+
+                // Reload the page to reflect the new task in the list
+                window.location.reload();
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    });
+</script>
+
+
+{% endblock %}

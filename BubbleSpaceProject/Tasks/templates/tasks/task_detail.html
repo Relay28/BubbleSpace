@@ -1,82 +1,20 @@
 {% load static %}
 <!DOCTYPE html>
-
 <html lang="en">
-    <head>
-        <title>
-            Task Details
-        </title>
+<head>
+    <title>Task Detail</title>
+</head>
+<body>
+    {% include "base.html" %}
 
-        <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
-    </head>
+    <div class="container">
+        <h1>Task Details</h1>
+        <h3>{{ task.title }}</h3>
+        <p>{{ task.description }}</p>
+        <p><strong>Status:</strong> {{ task.status }}</p>
+        <p><strong>Due Date:</strong> {{ task.due_date }}</p>
 
-    <body>
-        {% include "base.html" %}
-
-        <div style="margin-left: 325px;">
-            <a href="{% url 'task_list' %}">
-                Back
-            </a>
-    
-            <h1>
-                Task Details
-            </h1>
-    
-            <p>
-                <strong>
-                    Title:
-                </strong>
-    
-                {{ task.title }}
-            </p>
-    
-            <p>
-                <strong>
-                    Category:
-                </strong>
-    
-                {{ task.category }}
-            </p>
-    
-            <p>
-                <strong>
-                    Due Date:
-                </strong>
-    
-                {{ task.due_date }}
-            </p>
-    
-            <p>
-                <strong>
-                    Description:
-                </strong>
-    
-                {{ task.description}}
-            </p>
-    
-            <p>
-                <strong>
-                    Status:
-                </strong>
-    
-                {{ task.get_status_display }}
-            </p>
-    
-            <p>
-                <strong>
-                    Assigned To:
-                </strong>
-    
-                {{ task.assigned_to }}
-            </p>
-    
-            <a href="{% url 'task_update' task.pk %}">
-                Edit
-            </a>
-    
-            <a href="{% url 'task_delete' task.pk %}" style="margin-left: 25px;">
-                Delete
-            </a>
-        </div>
-    </body>
+        <a href="{% url 'task_list' %}" class="btn btn-secondary">Back to List</a>
+    </div>
+</body>
 </html>
