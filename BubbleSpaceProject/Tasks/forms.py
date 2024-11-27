@@ -8,33 +8,34 @@ class TaskForm(forms.ModelForm):
         widgets = {
             'title': forms.TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Enter task title',
+                'placeholder': 'Task title',
                 'style': (
-                    'width: 100%; font-size: 16px; padding: 10px; border-radius: 5px; '
-                    'border: 1px solid #eaeaea; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);'
+                    'flex: 2; font-size: 14px; padding: 8px; border-radius: 5px; '
+                    'border: 1px solid #ddd; box-shadow: none;'
                 ),
             }),
-            'description': forms.Textarea(attrs={
+            'description': forms.TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Write a short description of the task...',
-                'rows': 3,
+                'placeholder': 'Description (optional)',
                 'style': (
-                    'width: 100%; font-size: 14px; padding: 10px; border-radius: 5px; '
-                    'border: 1px solid #eaeaea; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); resize: none;'
+                    'flex: 3; font-size: 14px; padding: 8px; border-radius: 5px; '
+                    'border: 1px solid #ddd; box-shadow: none;'
                 ),
             }),
             'due_date': forms.DateInput(attrs={
                 'class': 'form-control',
                 'type': 'date',
                 'style': (
-                    'width: 100%; font-size: 14px; padding: 10px; border-radius: 5px; '
-                    'border: 1px solid #eaeaea; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);'
+                    'flex: 1; font-size: 14px; padding: 8px; border-radius: 5px; '
+                    'border: 1px solid #ddd; box-shadow: none;'
                 ),
             }),
-            'status': forms.RadioSelect(attrs={
-                'class': 'form-radio-group',
+            'status': forms.Select(attrs={
+                'class': 'form-control',
                 'style': (
-                    'display: flex; gap: 15px; padding: 10px;'
+                    'flex: 1; font-size: 14px; padding: 8px; border-radius: 5px; '
+                    'border: 1px solid #ddd; box-shadow: none;'
                 ),
             }),
         }
+

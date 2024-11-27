@@ -5,6 +5,8 @@ from Projects.models import Project
 from .forms import TaskForm
 from django.http import JsonResponse
 ## views.py
+from django.shortcuts import render
+from .models import Task
 
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
@@ -13,7 +15,10 @@ from django.http import HttpResponseForbidden
 def task_list(request):
     tasks = Task.objects.filter(created_by=request.user, project__isnull=True)
     form = TaskForm()
-    return render(request, 'tasks/task_list.html', {'tasks': tasks,'form':form})
+    status_filter = request.GET.get('status')
+    if status_filter:
+        tasks = tasks.filter(status=status_filter) 
+    return render(request, 'tasks/task_list.html', {'tasks': tasks,'status_filter': status_filter,'form':form})
 
 
 
@@ -70,3 +75,17 @@ def task_delete(request, pk):
         task.delete()
         return redirect('task_list')
     return render(request, 'tasks/task_confirm_delete.html', {'task': task})
+def update_task_status(request, task_id):
+    if request.method == 'POST':
+        task = get_object_or_404(Task, pk=task_id)
+        
+        # Get the new status from the request body (assuming it comes in JSON format)
+        status = request.POST.get('status')
+        
+        # Validate the status
+        if status in ['green', 'yellow', 'red']:
+            task.status = status
+            task.save()
+            return JsonResponse({'status': 'success'})
+        else:
+            return JsonResponse({'status': 'error', 'message': 'Invalid status'})

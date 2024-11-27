@@ -1,116 +1,189 @@
 {% extends "base.html" %}
 {% load static %}
-
 {% block content %}
-<div style="margin-left: 2%; padding: 20px; background-color: #f8f9fa; min-height: 100vh; box-sizing: border-box;">
+<div class="container py-3">
     <!-- Task List Header -->
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 15px; background-color: #ffffff; border-radius: 5px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); border: 1px solid #eaeaea;">
-        <h1 style="font-size: 24px; color: #2c3e50; margin: 0;">Tasks</h1>
-        <button id="new-task-btn" style="background-color: #1abc9c; color: white; padding: 10px 15px; font-size: 14px; font-weight: bold; text-transform: uppercase; border-radius: 5px; cursor: pointer; border: none; transition: background-color 0.3s ease;">
-            Create New Task
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h4 text-primary">Tasks</h1>
+        <button id="new-task-btn" class="btn btn-success btn-sm d-flex align-items-center">
+            Add Task
         </button>
     </div>
 
-    <!-- Task Creation Form -->
-    <div id="task-form-container" style="display: none; margin-bottom: 20px; padding: 20px; background-color: #ffffff; border-radius: 5px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); border: 1px solid #eaeaea;">
-        <form id="task-form" method="POST" action="{% url 'task_create' %}">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <div style="text-align: right;">
-                <button type="submit" style="background-color: #1abc9c; color: white; padding: 10px 15px; font-size: 14px; font-weight: bold; text-transform: uppercase; border-radius: 5px; cursor: pointer; border: none; transition: background-color 0.3s ease;">
-                    Save Task
-                </button>
-                <button id="cancel-task-btn" type="button" style="background-color: #e74c3c; color: white; padding: 10px 15px; font-size: 14px; font-weight: bold; text-transform: uppercase; border-radius: 5px; cursor: pointer; border: none; margin-left: 10px; transition: background-color 0.3s ease;">
-                    Cancel
-                </button>
+    <!-- Task Filter (Status Dropdown) -->
+    <div class="mb-4">
+        <form method="GET" action="{% url 'task_list' %}" class="d-flex justify-content-start">
+            <div class="me-3">
+                <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
+                    <option value="">All Tasks</option>
+                    <option value="green" {% if request.GET.status == 'green' %}selected{% endif %}>Completed</option>
+                    <option value="yellow" {% if request.GET.status == 'yellow' %}selected{% endif %}>Ongoing</option>
+                    <option value="red" {% if request.GET.status == 'red' %}selected{% endif %}>To Do</option>
+                </select>
             </div>
         </form>
     </div>
 
     <!-- Task List -->
     <div id="task-list">
-        {% for task in tasks %}
-        <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; margin-bottom: 15px; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); border: 1px solid #eaeaea; transition: transform 0.2s ease, box-shadow 0.2s ease;">
-            <div>
-                <a href="{% url 'task_detail' task.pk %}" style="font-size: 18px; color: #2c3e50; font-weight: bold; text-decoration: none; margin-right: 20px;">
-                    {{ task.title }}
-                </a>
+        {% if request.GET.status == 'green' %}
+        <div>
+            <h5 class="text-success">Completed Tasks</h5>
+            <div class="d-flex justify-content-between mb-2">
+                <div class="fw-bold" style="width: 40%;">Name</div>
+                <div class="fw-bold" style="width: 30%;">Due Date</div>
+                <div class="fw-bold" style="width: 30%;">Actions</div>
             </div>
-            <div style="display: flex; gap: 10px;">
-                <a href="{% url 'task_update' task.pk %}" style="background-color: #3498db; color: white; padding: 8px 12px; font-size: 14px; font-weight: bold; border-radius: 5px; text-transform: uppercase; text-decoration: none; cursor: pointer; transition: background-color 0.3s ease;">
-                    Edit
-                </a>
-                <a href="{% url 'task_delete' task.pk %}" style="background-color: #e74c3c; color: white; padding: 8px 12px; font-size: 14px; font-weight: bold; border-radius: 5px; text-transform: uppercase; text-decoration: none; cursor: pointer; transition: background-color 0.3s ease;">
-                    Delete
-                </a>
+            {% for task in tasks %}
+            {% if task.status == 'green' %}
+            <div class="d-flex justify-content-between align-items-center p-3 mb-3 bg-white rounded shadow-sm border border-light">
+                <div class="d-flex align-items-center" style="width: 40%;">
+                    <!-- Editable Round Status Icon -->
+                    <div class="status-icon rounded-circle bg-success text-white d-flex justify-content-center align-items-center me-3" data-task-id="{{ task.pk }}" data-status="green" style="width: 30px; height: 30px; cursor: pointer;">
+                        <i class="bi bi-check-circle" style="font-size: 16px;"></i>
+                    </div>
+                    <a href="{% url 'task_detail' task.pk %}" class="text-decoration-none text-dark" style="font-size: 14px;">
+                        {{ task.title }}
+                    </a>
+                </div>
+                <div style="width: 30%;">{{ task.due_date|date:"M d, Y" }}</div>
+                <div class="d-flex align-items-center gap-2" style="width: 30%;">
+                    <a href="{% url 'task_update' task.pk %}" class="btn btn-link btn-sm">
+                        <i class="bi bi-pencil text-primary" style="font-size: 16px;"></i>
+                    </a>
+                    <a href="{% url 'task_delete' task.pk %}" class="btn btn-link btn-sm">
+                        <i class="bi bi-trash text-danger" style="font-size: 16px;"></i>
+                    </a>
+                </div>
             </div>
+            {% endif %}
+            {% empty %}
+            <p>No completed tasks found.</p>
+            {% endfor %}
         </div>
-        {% empty %}
-        <p style="text-align: center; font-size: 16px; color: #666; margin-top: 20px;">
-            No tasks found. Start by <a href="{% url 'task_create' %}" style="color: #1abc9c; font-weight: bold; text-decoration: none;">creating a new task</a>.
-        </p>
-        {% endfor %}
+        {% elif request.GET.status == 'yellow' %}
+        <div>
+            <h5 class="text-warning">Ongoing Tasks</h5>
+            <div class="d-flex justify-content-between mb-2">
+                <div class="fw-bold" style="width: 40%;">Name</div>
+                <div class="fw-bold" style="width: 30%;">Due Date</div>
+                <div class="fw-bold" style="width: 30%;">Actions</div>
+            </div>
+            {% for task in tasks %}
+            {% if task.status == 'yellow' %}
+            <div class="d-flex justify-content-between align-items-center p-3 mb-3 bg-white rounded shadow-sm border border-light">
+                <div class="d-flex align-items-center" style="width: 40%;">
+                    <!-- Editable Round Status Icon -->
+                    <div class="status-icon rounded-circle bg-warning text-dark d-flex justify-content-center align-items-center me-3" data-task-id="{{ task.pk }}" data-status="yellow" style="width: 30px; height: 30px; cursor: pointer;">
+                        <i class="bi bi-clock" style="font-size: 16px;"></i>
+                    </div>
+                    <a href="{% url 'task_detail' task.pk %}" class="text-decoration-none text-dark" style="font-size: 14px;">
+                        {{ task.title }}
+                    </a>
+                </div>
+                <div style="width: 30%;">{{ task.due_date|date:"M d, Y" }}</div>
+                <div class="d-flex align-items-center gap-2" style="width: 30%;">
+                    <a href="{% url 'task_update' task.pk %}" class="btn btn-link btn-sm">
+                        <i class="bi bi-pencil text-primary" style="font-size: 16px;"></i>
+                    </a>
+                    <a href="{% url 'task_delete' task.pk %}" class="btn btn-link btn-sm">
+                        <i class="bi bi-trash text-danger" style="font-size: 16px;"></i>
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+            {% empty %}
+            <p>No ongoing tasks found.</p>
+            {% endfor %}
+        </div>
+        {% elif request.GET.status == 'red' %}
+        <div>
+            <h5 class="text-danger">To Do Tasks</h5>
+            <div class="d-flex justify-content-between mb-2">
+                <div class="fw-bold" style="width: 40%;">Name</div>
+                <div class="fw-bold" style="width: 30%;">Due Date</div>
+                <div class="fw-bold" style="width: 30%;">Actions</div>
+            </div>
+            {% for task in tasks %}
+            {% if task.status == 'red' %}
+            <div class="d-flex justify-content-between align-items-center p-3 mb-3 bg-white rounded shadow-sm border border-light">
+                <div class="d-flex align-items-center" style="width: 40%;">
+                    <!-- Editable Round Status Icon -->
+                    <div class="status-icon rounded-circle bg-danger text-white d-flex justify-content-center align-items-center me-3" data-task-id="{{ task.pk }}" data-status="red" style="width: 30px; height: 30px; cursor: pointer;">
+                        <i class="bi bi-list-check" style="font-size: 16px;"></i>
+                    </div>
+                    <a href="{% url 'task_detail' task.pk %}" class="text-decoration-none text-dark" style="font-size: 14px;">
+                        {{ task.title }}
+                    </a>
+                </div>
+                <div style="width: 30%;">{{ task.due_date|date:"M d, Y" }}</div>
+                <div class="d-flex align-items-center gap-2" style="width: 30%;">
+                    <a href="{% url 'task_update' task.pk %}" class="btn btn-link btn-sm">
+                        <i class="bi bi-pencil text-primary" style="font-size: 16px;"></i>
+                    </a>
+                    <a href="{% url 'task_delete' task.pk %}" class="btn btn-link btn-sm">
+                        <i class="bi bi-trash text-danger" style="font-size: 16px;"></i>
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+            {% empty %}
+            <p>No tasks to do found.</p>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div>
+            <h5 class="text-dark">All Tasks</h5>
+            <div class="d-flex justify-content-between mb-2">
+                <div class="fw-bold" style="width: 40%;">Name</div>
+                <div class="fw-bold" style="width: 30%;">Due Date</div>
+                <div class="fw-bold" style="width: 30%;">Actions</div>
+            </div>
+            {% for task in tasks %}
+            <div class="d-flex justify-content-between align-items-center p-3 mb-3 bg-white rounded shadow-sm border border-light">
+                <div class="d-flex align-items-center" style="width: 40%;">
+                    <!-- Editable Round Status Icon -->
+                    <div class="status-icon rounded-circle {% if task.status == 'green' %}bg-success{% elif task.status == 'yellow' %}bg-warning{% else %}bg-danger{% endif %} text-white d-flex justify-content-center align-items-center me-3" data-task-id="{{ task.pk }}" data-status="{{ task.status }}" style="width: 30px; height: 30px; cursor: pointer;">
+                        {% if task.status == 'green' %}
+                        <i class="bi bi-check-circle" style="font-size: 16px;"></i>
+                        {% elif task.status == 'yellow' %}
+                        <i class="bi bi-clock" style="font-size: 16px;"></i>
+                        {% else %}
+                        <i class="bi bi-list-check" style="font-size: 16px;"></i>
+                        {% endif %}
+                    </div>
+                    <a href="{% url 'task_detail' task.pk %}" class="text-decoration-none text-dark" style="font-size: 14px;">
+                        {{ task.title }}
+                    </a>
+                </div>
+                <div style="width: 30%;">{{ task.due_date|date:"M d, Y" }}</div>
+                <div class="d-flex align-items-center gap-2" style="width: 30%;">
+                    <a href="{% url 'task_update' task.pk %}" class="btn btn-link btn-sm">
+                        <i class="bi bi-pencil text-primary" style="font-size: 16px;"></i>
+                    </a>
+                    <a href="{% url 'task_delete' task.pk %}" class="btn btn-link btn-sm">
+                        <i class="bi bi-trash text-danger" style="font-size: 16px;"></i>
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
     </div>
 </div>
+
 <script>
-    // Toggle task creation form visibility
     document.getElementById('new-task-btn').addEventListener('click', function() {
         document.getElementById('task-form-container').style.display = 'block';
-        this.style.display = 'none';  // Hide the "Create New Task" button
+        this.style.display = 'none';
     });
 
     document.getElementById('cancel-task-btn').addEventListener('click', function() {
         document.getElementById('task-form-container').style.display = 'none';
-        document.getElementById('new-task-btn').style.display = 'inline-block';  // Show the "Create New Task" button again
-    });
-
-    // Handle AJAX form submission
-    document.getElementById('task-form').addEventListener('submit', function(event) {
-        document.getElementById('task-form-container').style.display=none;
-        event.preventDefault();
-        
-        var form = this;
-        var formData = new FormData(form);
-
-        fetch("{% url 'task_create' %}", {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-CSRFToken': formData.get('csrfmiddlewaretoken')
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.errors) {
-                // Handle form errors if any
-                console.log('Errors:', data.errors);
-            } else {
-                // Dynamically add the new task to the list
-                var taskList = document.getElementById('task-list');
-                var taskItem = document.createElement('div');
-                taskItem.classList.add('task-item');
-                taskItem.innerHTML = `
-                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; margin-bottom: 15px; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); border: 1px solid #eaeaea;">
-                        <div>
-                            <a href="/task/${data.id}" style="font-size: 18px; color: #2c3e50; font-weight: bold; text-decoration: none;">${data.title}</a>
-                        </div>
-                    </div>
-                `;
-                taskList.appendChild(taskItem);
-
-                // Hide the form after successful task creation
-                document.getElementById('task-form-container').style.display = 'none';
-                document.getElementById('new-task-btn').style.display = 'inline-block'; // Show "Create New Task" button again
-
-                // Reload the page to reflect the new task in the list
-                window.location.reload();
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
+        document.getElementById('new-task-btn').style.display = 'inline-block';
     });
 </script>
-
-
 {% endblock %}
+
+
+    
