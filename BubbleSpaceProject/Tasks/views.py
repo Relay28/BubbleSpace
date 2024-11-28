@@ -10,15 +10,30 @@ from .models import Task
 
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
+from datetime import timedelta
+from django.utils.timezone import now
+
+from datetime import timedelta
+from django.utils.timezone import now
 
 @login_required
 def task_list(request):
     tasks = Task.objects.filter(created_by=request.user, project__isnull=True)
     form = TaskForm()
     status_filter = request.GET.get('status')
+
     if status_filter:
-        tasks = tasks.filter(status=status_filter) 
-    return render(request, 'tasks/task_list.html', {'tasks': tasks,'status_filter': status_filter,'form':form})
+        tasks = tasks.filter(status=status_filter)
+
+    # Tasks nearing deadline (24 hours or less)
+    nearing_deadline_tasks = tasks.filter(due_date__lte=now() + timedelta(days=1), due_date__gte=now())
+
+    return render(request, 'tasks/task_list.html', {
+        'tasks': tasks,
+        'status_filter': status_filter,
+        'form': form,
+        'nearing_deadline_tasks': nearing_deadline_tasks
+    })
 
 
 
