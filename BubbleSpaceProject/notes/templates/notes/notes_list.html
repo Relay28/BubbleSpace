@@ -3,31 +3,120 @@
 <html lang="en">
 <head>
     <link rel="stylesheet" href="{% static 'css/notes_list.css' %}">
-    <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
     <title>Notes</title>
+
+    <style>
+        .main-content { 
+            padding: 20px;
+            margin-left: 260px;
+            
+        }
+
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 10px 15px;
+            background-color: white;
+            border-bottom: 2px solid #e6e6e6;
+            padding-top: 0;
+            transition: all 0.3s ease;
+            flex-wrap: nowrap;
+        }
+
+        .header-row h1 {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 0;
+            color: #333; 
+        }
+
+        .header-row .button-container .btn {
+            font-size: 22px;
+            font-weight: bold;
+            color: #1e3d58; 
+            text-decoration: none;
+            cursor: pointer;
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .note-list {
+            display: flex;
+            flex-direction: column; 
+            gap: 15px; 
+        }
+
+
+        .note-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            background-color: white; 
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); 
+            transition: transform 0.2s, box-shadow 0.2s;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .note-item:hover {
+            transform: translateY(-2px); 
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); 
+        }
+
+        .note-content {
+            flex-grow: 1;
+            font-size: 18px;
+            color: #555;
+            margin-left: 40px;
+            top: 0;
+            white-space: nowrap; 
+            overflow: hidden; 
+            text-overflow: ellipsis; 
+        }
+        .note-content strong {
+            font-weight: bold; 
+        }
+        .note-circle {
+            width: 17px; 
+            height: 17px;
+            border-radius: 50%;
+            background-color: #1e3d58; 
+            position: absolute; 
+            top: 35px; 
+            left: 20px; 
+            flex-shrink: 0;
+        }
+    </style>
 </head>
 <body>
     {% include "base.html" %}
     
-    <div class="main-content">
+    <div class="main-content" style="padding-top: 0;">
+        <!-- Header Section -->
         <div class="header-row">
-            <h1 style="margin-left: 10px;">Notes</h1>
-            <div class="button-container" style="margin-right: 10px;">
-                <a href="{% url 'add_note' %}" class="btn">Add New Note</a>
+            <h1>Notes</h1>
+            <div class="button-container">
+                <a href="{% url 'add_note' %}" class="btn">+</a>
             </div>
         </div>
         
+        <!-- Note List -->
         <div class="note-list">
             {% for note in notes %}
-                <a href="{% url 'note_detail' note.pk %}" style="text-decoration: none;">
-                    <div class="note-item">
-                        <div class="note-content">
-                            {{ note.title }}
+            <a href="{% url 'note_detail' note.pk %}" style="text-decoration: none;">
+                <div class="note-item">
+                    <div class="note-circle"></div>
+                    <div class="note-content">
+                        <strong>{{ note.title }}</strong>
+                        <div>
+                            {{ note.description }}
                         </div>
                     </div>
-                </a>
+                </div>
             {% empty %}
-                <p>No notes available. Click "Add New Note" to create one!</p>
+                <p style="margin-left: 16px;">No notes available. Click the "+" button to create one!</p>
             {% endfor %}
         </div>
     </div>
