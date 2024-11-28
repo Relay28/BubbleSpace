@@ -145,6 +145,11 @@
         .terms a:hover {
             text-decoration: underline;
         }
+
+        /* Custom Gender Field */
+        #custom-gender-field {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -175,22 +180,26 @@
                 <div class="password-container">
                     <input type="password" id="password" name="password" placeholder="Enter your password" required>
                     <span class="toggle-password" onclick="togglePassword()">👁️ Show</span>
-                    <!-- <small>Use 8 or more characters with a mix of letters, numbers, and symbols.</small> -->
                 </div>
                
-
                 <!-- Birthdate Field -->
                 <label for="birthdate">Birthdate</label>
                 <input type="date" id="birthdate" name="birthDate" required>
 
                 <!-- Gender Field -->
                 <label for="sex">Gender</label>
-                <select id="sex" name="gender" required>
+                <select id="sex" name="gender" onchange="toggleCustomGenderField()" required>
                     <option value="" disabled selected>Select your gender</option>
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                    <option value="other">Other</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
                 </select>
+
+                <!-- Custom Gender Field (Hidden by Default) -->
+                <div id="custom-gender-field">
+                    <label for="custom-gender">Please specify</label>
+                    <input type="text" id="custom-gender" name="custom_gender" placeholder="Enter your gender" />
+                </div>
 
                 <p class="terms">By creating an account, you agree to the <a href="#">Terms of Use</a> and <a href="#">Privacy Policy</a>.</p>
                 <button type="submit" id="submit-btn" class="register-button">Create an Account</button>
@@ -207,6 +216,16 @@
             } else {
                 passwordField.type = "password";
                 toggleText.textContent = "👁️ Show";
+            }
+        }
+
+        function toggleCustomGenderField() {
+            const genderSelect = document.getElementById("sex");
+            const customGenderField = document.getElementById("custom-gender-field");
+            if (genderSelect.value === "Other") {
+                customGenderField.style.display = "block";
+            } else {
+                customGenderField.style.display = "none";
             }
         }
     </script>

@@ -21,6 +21,9 @@ def register_view(request):
             lname = data.get('lname')
             gender = data.get('gender')
             birthDate = data.get('birthDate')
+            custom_gender = request.POST.get('custom_gender')
+            if gender == 'Other':
+                gender = custom_gender
 
             # Check if the username already exists
             if Users_Account.objects.filter(username=username).exists():
@@ -108,12 +111,16 @@ def edit_profile_view(request):
         gender = request.POST.get('gender')
         birthDate = request.POST.get('birthDate')
         password = request.POST.get('password')
+        custom_gender = request.POST.get('custom_gender')
+        if gender == 'Other':
+            gender = custom_gender
 
         profile_picture = request.FILES.get('profile_picture')
 
         user.fname = fname
         user.lname = lname
         user.gender = gender
+
         user.birthDate = birthDate
         if password:
             user.set_password(password)

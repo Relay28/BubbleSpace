@@ -3,216 +3,100 @@
 {% block title %}Edit Profile{% endblock %}
 
 {% block content %}
-<section class="edit-profile-section">
-    <h2 class="section-title">Edit Your Profile</h2>
-    <div class="edit-profile-container">
-        <!-- Profile Picture Section -->
-        <div class="profile-picture-section">
-            <div class="profile-image">
-                {% if profile_picture %}
-            <img src="{{  user.profile_picture.url }}" alt="Profile Picture" class="profile-img">
-        {% else %}
-            <div class="profile-placeholder">👤</div>
-        {% endif %}
-            </div>
-            <p class="username"><strong>Username:</strong> {{ username }}</p>
-        </div>
-
-        <!-- Edit Profile Form -->
-        <form method="POST" enctype="multipart/form-data" class="edit-profile-form">
-            {% csrf_token %}
-            <div class="form-row">
-                <label for="fname">First Name</label>
-                <input type="text" id="fname" name="fname" value="{{ fname }}" placeholder="Enter your first name">
-            </div>
-            <div class="form-row">
-                <label for="lname">Last Name</label>
-                <input type="text" id="lname" name="lname" value="{{ lname }}" placeholder="Enter your last name">
-            </div>
-            <div class="form-row">
-                <label for="gender">Gender</label>
-                <select id="gender" name="gender">
-                    <option value="Male" {% if gender == "Male" %}selected{% endif %}>Male</option>
-                    <option value="Female" {% if gender == "Female" %}selected{% endif %}>Female</option>
-                </select>
-            </div>
-            <div class="form-row">
-                <label for="birthDate">Birthday</label>
-                <input type="date" id="birthDate" name="birthDate" value="{{ birthDate|date:'Y-m-d' }}">
-            </div>
-            <div class="form-row">
-                <label for="password">New Password</label>
-                <input type="password" id="password" name="password" placeholder="Enter a new password">
-            </div>
-            <div class="form-row">
-                <label for="profile_picture">Profile Picture</label>
-                <input type="file" id="profile_picture" name="profile_picture" accept="image/*">
-            </div>
-            <div class="form-actions">
-                <button type="submit" class="save-button">Save Changes</button>
-            </div>
-        </form>
-        
+<div class="container py-1">
+    <div class="text-center mb-3">
+        <h1 class="fw-bold text-primary">Edit Profile</h1>
+        <p class="text-muted">Update your personal information and preferences.</p>
     </div>
-</section>
 
-<style>
-    /* Global Styles */
-    body {
-        font-family: 'Roboto', sans-serif;
-        color: #333;
+    <div class="card shadow-lg border-0 rounded-4 mx-auto" style="max-width: 700px;">
+        <div class="card-body">
+            <div class="d-flex align-items-center mb-4 position-relative">
+                <div class="me-3 position-relative">
+                    {% if profile_picture %}
+                        <img src="{{ user.profile_picture.url }}" alt="Profile Picture" class="rounded-circle" style="width: 100px; height: 100px; object-fit: cover;">
+                    {% else %}
+                        <div class="bg-secondary rounded-circle text-white d-flex justify-content-center align-items-center" style="width: 100px; height: 100px;">
+                            <span class="fs-1">👤</span>
+                        </div>
+                    {% endif %}
+                    <label for="profile_picture" class="position-absolute bottom-0 end-0 bg-primary text-white rounded-circle d-flex justify-content-center align-items-center" style="width: 30px; height: 30px; cursor: pointer;">
+                        <i class="bi bi-camera-fill"></i>
+                    </label>
+                </div>
+                <div>
+                    <h3 class="fw-bold mb-0">{{ username }}</h3>
+                    <small class="text-muted">Profile Picture</small>
+                </div>
+            </div>
 
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label for="fname" class="form-label">First Name</label>
+                        <input type="text" id="fname" name="fname" value="{{ fname }}" class="form-control" placeholder="Enter first name">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="lname" class="form-label">Last Name</label>
+                        <input type="text" id="lname" name="lname" value="{{ lname }}" class="form-control" placeholder="Enter last name">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="gender" class="form-label">Gender</label>
+                        <select id="gender" name="gender" class="form-select" onchange="toggleOtherGenderField()">
+                            <option value="Other" {% if gender == "Other" %}selected{% endif %}>Other</option>
+                            <option value="Male" {% if gender == "Male" %}selected{% endif %}>Male</option>
+                            <option value="Female" {% if gender == "Female" %}selected{% endif %}>Female</option>
+                           
+                        </select>
+                    </div>
+                    <!-- Custom Gender Textbox (Hidden initially) -->
+                    <div class="col-md-6" id="custom-gender-field" {% if gender == 'Other' %}style="display: block;"{% else %}style="display: none;"{% endif %}>
+                        <label for="custom_gender" class="form-label">Specify Gender</label>
+                        <input type="text" id="custom_gender" name="custom_gender" class="form-control" placeholder="Enter custom gender" 
+                               value="{% if gender != 'Male' and gender != 'Female' %}{{ gender }}{% endif %}">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="birthDate" class="form-label">Birthday</label>
+                        <input type="date" id="birthDate" name="birthDate" value="{{ birthDate|date:'Y-m-d' }}" class="form-control">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="password" class="form-label">New Password</label>
+                        <input type="password" id="password" name="password" class="form-control" placeholder="Enter new password">
+                    </div>
+                    <div class="col-md-6">
+                        <input type="file" id="profile_picture" name="profile_picture" class="form-control d-none" accept="image/*">
+                    </div>
+                </div>
+
+                <div class="mt-4 text-center">
+                    <button type="submit" class="btn btn-primary px-5">Save Changes</button>
+                    <button class="btn btn-outline-secondary px-5"><a href="{% url 'profile' %}">Cancel</a></button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Function to toggle the display of the custom gender textbox
+  // Function to toggle the display of the custom gender textbox
+function toggleOtherGenderField() {
+    const genderSelect = document.getElementById('gender');
+    const customGenderField = document.getElementById('custom-gender-field');
+    
+    if (genderSelect.value === 'Other') {
+        customGenderField.style.display = 'block'; // Show custom gender field
+    } else {
+        customGenderField.style.display = 'none'; // Hide custom gender field
     }
-
-    /* Section Styles */
-    .edit-profile-section {
-        max-width: 600px;
-        margin: 50px auto;
-        padding: 20px;
-        background: #ffffff;
-        border-radius: 12px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        animation: fadeIn 0.5s ease-in-out;
-    }
-
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-            transform: translateY(-20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    .section-title {
-        font-size: 1.8rem;
-        text-align: center;
-        margin-bottom: 30px;
-        color: #3d6e4f;
-    }
-
-    /* Container Styles */
-    .edit-profile-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 30px;
-    }
-
-    /* Profile Picture Section */
-    .profile-picture-section {
-        text-align: center;
-    }
-
-    .profile-image {
-        margin-bottom: 10px;
-    }
-
-    .profile-placeholder {
-        width: 100px;
-        height: 100px;
-        border-radius: 50%;
-        background-color: #b0d8b7;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 2rem;
-        color: white;
-    }
-
-    .username {
-        font-size: 1.2rem;
-        color: #555;
-    }
-
-    /* Form Styles */
-    .edit-profile-form {
-        width: 100%;
-    }
-
-    .form-row {
-        margin-bottom: 20px;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .form-row label {
-        font-size: 1rem;
-        font-weight: bold;
-        margin-bottom: 8px;
-        color: #555;
-    }
-
-    .form-row input,
-    .form-row select {
-        padding: 12px;
-        font-size: 1rem;
-        border: 1px solid #ccc;
-        border-radius: 6px;
-        background: #f9f9f9;
-        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
-        transition: border-color 0.3s, box-shadow 0.3s;
-    }
-
-    .form-row input:focus,
-    .form-row select:focus {
-        border-color: #3d6e4f;
-        box-shadow: 0 0 8px rgba(61, 110, 79, 0.3);
-        outline: none;
-    }
-
-    /* Save Button */
-    .form-actions {
-        display: flex;
-        justify-content: center;
-    }
-
-    .save-button {
-        padding: 12px 24px;
-        font-size: 1rem;
-        color: white;
-        background: #3d6e4f;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-        transition: background-color 0.3s ease, transform 0.2s;
-    }
-
-    .save-button:hover {
-        background: #2e5539;
-        transform: translateY(-2px);
-    }
-
-    .save-button:active {
-        transform: translateY(0);
-    }
-
-    /* Responsive Design */
-    @media (max-width: 768px) {
-        .edit-profile-section {
-            margin: 30px 15px;
-            padding: 15px;
-        }
-
-        .form-row input,
-        .form-row select {
-            font-size: 0.9rem;
-            padding: 10px;
-        }
-
-        .save-button {
-            padding: 10px 20px;
-            font-size: 0.9rem;
-        }
-    }
-    .profile-img {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    object-fit: cover;
 }
 
-</style>
+// Call the function on page load to set the correct display state
+document.addEventListener('DOMContentLoaded', function() {
+    toggleOtherGenderField();
+});
+
+</script>
+
 {% endblock %}
