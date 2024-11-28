@@ -3,7 +3,7 @@ from .models import Project
 from Tasks.models import Task
 from Teams.models import Team
 from .forms import ProjectForm
-from Tasks.forms import TaskForm
+from Tasks.forms import TaskForm,ProjectTaskForm
 from django.contrib.auth.decorators import login_required
 
 # Create your views here.
@@ -49,7 +49,7 @@ def task_create_for_project(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
 
     if request.method == 'POST':
-        form = TaskForm(request.POST)
+        form = ProjectTaskForm(request.POST)
         if form.is_valid():
             task = form.save(commit=False)
             task.project = project  # Assign the task to the specified project
@@ -58,7 +58,7 @@ def task_create_for_project(request, project_id):
             # After saving the task, redirect to the project form for the same project
             return redirect('project_form', pk=project.pk)  # Use project.pk instead of project.id
     else:
-        form = TaskForm()
+        form = ProjectTaskForm()
 
     return render(request, 'Projects/task_form.html', {'form': form, 'project': project})
 
@@ -104,7 +104,7 @@ def task_update(request, pk):
     project = task.project  # Get the associated project
 
     if request.method == 'POST':
-        form = TaskForm(request.POST, instance=task)
+        form = ProjectTaskForm(request.POST, instance=task)
         if form.is_valid():
             form.save()
             # Redirect back to project_list with the specific project context

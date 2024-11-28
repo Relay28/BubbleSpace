@@ -5,6 +5,7 @@
     <!-- Task List Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h4 text-primary">Tasks</h1>
+        <!-- Create New Task Button (Text with background color) -->
         <button id="new-task-btn" class="btn btn-success btn-sm d-flex align-items-center">
             Add Task
         </button>
@@ -24,9 +25,44 @@
         </form>
     </div>
 
+    
+    <!-- Task Creation Form -->
+    <div id="task-form-container" class="p-3 bg-light rounded shadow-sm mb-3" style="display: none;">
+        <form id="task-form" class="row g-2 align-items-center" method="POST" action="{% url 'task_create' %}">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            <div class="col-4">
+                {{ form.title.label_tag }}
+                {{ form.title }}
+            </div>
+            <div class="col-4">
+                {{ form.description.label_tag }}
+                {{ form.description }}
+            </div>
+            <div class="col-3">
+                {{ form.due_date.label_tag }}
+                {{ form.due_date }}
+            </div>
+            <div class="col-1">
+                {{ form.status.label_tag }}
+                {{ form.status }}
+            </div>
+            <div class="text-end">
+                <!-- Save Task Button (with background color) -->
+                <button type="submit" class="btn btn-primary btn-sm me-2">
+                    <i class="bi bi-save"></i> Save
+                </button>
+                <!-- Cancel Button (with background color) -->
+                <button id="cancel-task-btn" type="button" class="btn btn-danger btn-sm">
+                    <i class="bi bi-x-circle"></i> Cancel
+                </button>
+            </div>
+        </form>
+    </div>
     <!-- Task List -->
     <div id="task-list">
         {% if request.GET.status == 'green' %}
+        <!-- Green Tasks (Completed) -->
         <div>
             <h5 class="text-success">Completed Tasks</h5>
             <div class="d-flex justify-content-between mb-2">
@@ -38,8 +74,8 @@
             {% if task.status == 'green' %}
             <div class="d-flex justify-content-between align-items-center p-3 mb-3 bg-white rounded shadow-sm border border-light">
                 <div class="d-flex align-items-center" style="width: 40%;">
-                    <!-- Editable Round Status Icon -->
-                    <div class="status-icon rounded-circle bg-success text-white d-flex justify-content-center align-items-center me-3" data-task-id="{{ task.pk }}" data-status="green" style="width: 30px; height: 30px; cursor: pointer;">
+                    <!-- Round Green Status Icon -->
+                    <div class="rounded-circle bg-success text-white d-flex justify-content-center align-items-center me-3" style="width: 30px; height: 30px;">
                         <i class="bi bi-check-circle" style="font-size: 16px;"></i>
                     </div>
                     <a href="{% url 'task_detail' task.pk %}" class="text-decoration-none text-dark" style="font-size: 14px;">
@@ -62,6 +98,7 @@
             {% endfor %}
         </div>
         {% elif request.GET.status == 'yellow' %}
+        <!-- Yellow Tasks (Ongoing) -->
         <div>
             <h5 class="text-warning">Ongoing Tasks</h5>
             <div class="d-flex justify-content-between mb-2">
@@ -73,8 +110,8 @@
             {% if task.status == 'yellow' %}
             <div class="d-flex justify-content-between align-items-center p-3 mb-3 bg-white rounded shadow-sm border border-light">
                 <div class="d-flex align-items-center" style="width: 40%;">
-                    <!-- Editable Round Status Icon -->
-                    <div class="status-icon rounded-circle bg-warning text-dark d-flex justify-content-center align-items-center me-3" data-task-id="{{ task.pk }}" data-status="yellow" style="width: 30px; height: 30px; cursor: pointer;">
+                    <!-- Round Yellow Status Icon -->
+                    <div class="rounded-circle bg-warning text-dark d-flex justify-content-center align-items-center me-3" style="width: 30px; height: 30px;">
                         <i class="bi bi-clock" style="font-size: 16px;"></i>
                     </div>
                     <a href="{% url 'task_detail' task.pk %}" class="text-decoration-none text-dark" style="font-size: 14px;">
@@ -97,6 +134,7 @@
             {% endfor %}
         </div>
         {% elif request.GET.status == 'red' %}
+        <!-- Red Tasks (To Do) -->
         <div>
             <h5 class="text-danger">To Do Tasks</h5>
             <div class="d-flex justify-content-between mb-2">
@@ -108,8 +146,8 @@
             {% if task.status == 'red' %}
             <div class="d-flex justify-content-between align-items-center p-3 mb-3 bg-white rounded shadow-sm border border-light">
                 <div class="d-flex align-items-center" style="width: 40%;">
-                    <!-- Editable Round Status Icon -->
-                    <div class="status-icon rounded-circle bg-danger text-white d-flex justify-content-center align-items-center me-3" data-task-id="{{ task.pk }}" data-status="red" style="width: 30px; height: 30px; cursor: pointer;">
+                    <!-- Round Red Status Icon -->
+                    <div class="rounded-circle bg-danger text-white d-flex justify-content-center align-items-center me-3" style="width: 30px; height: 30px;">
                         <i class="bi bi-list-check" style="font-size: 16px;"></i>
                     </div>
                     <a href="{% url 'task_detail' task.pk %}" class="text-decoration-none text-dark" style="font-size: 14px;">
@@ -132,6 +170,7 @@
             {% endfor %}
         </div>
         {% else %}
+        <!-- All Tasks (No Filter Applied) -->
         <div>
             <h5 class="text-dark">All Tasks</h5>
             <div class="d-flex justify-content-between mb-2">
@@ -142,15 +181,9 @@
             {% for task in tasks %}
             <div class="d-flex justify-content-between align-items-center p-3 mb-3 bg-white rounded shadow-sm border border-light">
                 <div class="d-flex align-items-center" style="width: 40%;">
-                    <!-- Editable Round Status Icon -->
-                    <div class="status-icon rounded-circle {% if task.status == 'green' %}bg-success{% elif task.status == 'yellow' %}bg-warning{% else %}bg-danger{% endif %} text-white d-flex justify-content-center align-items-center me-3" data-task-id="{{ task.pk }}" data-status="{{ task.status }}" style="width: 30px; height: 30px; cursor: pointer;">
-                        {% if task.status == 'green' %}
-                        <i class="bi bi-check-circle" style="font-size: 16px;"></i>
-                        {% elif task.status == 'yellow' %}
-                        <i class="bi bi-clock" style="font-size: 16px;"></i>
-                        {% else %}
-                        <i class="bi bi-list-check" style="font-size: 16px;"></i>
-                        {% endif %}
+                    <!-- Status Icon based on task status -->
+                    <div class="rounded-circle {% if task.status == 'green' %}bg-success{% elif task.status == 'yellow' %}bg-warning{% else %}bg-danger{% endif %} text-white d-flex justify-content-center align-items-center me-3" style="width: 30px; height: 30px;">
+                        <i class="bi {% if task.status == 'green' %}bi-check-circle{% elif task.status == 'yellow' %}bi-clock{% else %}bi-list-check{% endif %}" style="font-size: 16px;"></i>
                     </div>
                     <a href="{% url 'task_detail' task.pk %}" class="text-decoration-none text-dark" style="font-size: 14px;">
                         {{ task.title }}
@@ -166,12 +199,13 @@
                     </a>
                 </div>
             </div>
+            {% empty %}
+            <p>No tasks found.</p>
             {% endfor %}
         </div>
         {% endif %}
     </div>
 </div>
-
 <script>
     document.getElementById('new-task-btn').addEventListener('click', function() {
         document.getElementById('task-form-container').style.display = 'block';
@@ -184,6 +218,4 @@
     });
 </script>
 {% endblock %}
-
-
     
