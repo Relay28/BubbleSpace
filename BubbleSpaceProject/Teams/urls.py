@@ -10,6 +10,8 @@ urlpatterns = [
     path('detail/<int:pk>/add_member/', views.add_team_member, name='add_team_member'), 
     path('team/<int:pk>/edit/', views.team_edit, name='team_edit'), 
     path('search-members/', views.search_member, name='search_member'),
-    path('team/<int:team_id>/remove_member/<int:member_id>/', views.remove_team_member, name='remove_team_member')
+    path('team/<int:team_id>/remove_member/<int:member_id>/', views.remove_team_member, name='remove_team_member'),
+    path('teams/<int:team_id>/transfer/<int:member_id>/', views.transfer_ownership, name='transfer_ownership'),
+    path('teams/<int:team_id>/leave/', views.leave_team, name='leave_team'),
    
 ]

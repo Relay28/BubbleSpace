@@ -175,6 +175,7 @@
     {% endif %}
 </div>
 <!-- Members Section -->
+<!-- Members Section -->
 <section class="mb-5">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h2 class="h5 text-primary m-0">Members</h2>
@@ -199,7 +200,16 @@
                     <td>
                         <span class="badge badge-role badge-owner">Owner</span>
                     </td>
-                    <td class="table-actions">-</td>
+                    <td class="table-actions">
+                        {% if request.user == team.creator %}
+                        <!-- Display "Transfer Ownership" action for the owner -->
+                        <a href="{% url 'leave_team' team.pk %}" 
+                        class="btn btn-link text-danger" 
+                        title="Leave Team">
+                        <i class="bi bi-box-arrow-left"></i> 
+                       </a>
+                        {% endif %}
+                    </td>
                 </tr>
 
                 <!-- Display Other Members -->
@@ -211,13 +221,26 @@
                         <span class="badge badge-role badge-member">Member</span>
                     </td>
                     <td class="table-actions">
-                        <a
-                            href="{% url 'remove_team_member' team.pk member.pk %}"
-                            class="btn btn-link text-danger"
-                            title="Remove Member"
-                        >
+                        {% if request.user == team.creator %}
+                        <!-- Action for Owner: Transfer Ownership or Remove Member -->
+                        <a href="{% url 'transfer_ownership' team.pk member.pk %}" 
+                            class="btn btn-link text-warning" 
+                            title="Transfer Ownership">
+                            <i class="bi bi-shield-fill"></i> 
+                        </a>
+                        <a href="{% url 'remove_team_member' team.pk member.pk %}" 
+                            class="btn btn-link text-danger" 
+                            title="Remove Member">
                             <i class="bi bi-trash"></i>
                         </a>
+                        {% elif request.user == member %}
+                        <!-- Action for Member: Leave Team -->
+                        <a href="{% url 'leave_team' team.pk %}" 
+                            class="btn btn-link text-danger" 
+                            title="Leave Team">
+                            <i class="bi bi-box-arrow-left"></i> 
+                        </a>
+                        {% endif %}
                     </td>
                 </tr>
                 {% endif %}
@@ -226,6 +249,7 @@
         </table>
     </div>
 </section>
+
 
 <!-- Projects Section -->
 <section>

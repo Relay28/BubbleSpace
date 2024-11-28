@@ -159,3 +159,61 @@ def remove_team_member(request, team_id, member_id):
     else:
         # If the user is not the creator, redirect or show an error
         return redirect('team_detail', pk=team.id)
+    
+
+
+from django.http import HttpResponseForbidden
+
+@login_required
+def transfer_ownership(request, team_id, member_id):
+    """Allows the team creator to transfer ownership to another member."""
+    team = get_object_or_404(Team, pk=team_id)
+    new_owner = get_object_or_404(User, pk=member_id)
+
+    # Ensure the requesting user is the current creator
+    if request.user != team.creator:
+        messages.error(request, "Only the team owner can transfer ownership.")
+        return HttpResponseForbidden("You do not have permission to transfer ownership.")
+    
+    # Ensure the new owner is already a team member
+    if new_owner not in team.members.all():
+        messages.error(request, "The selected user is not a team member.")
+        return redirect('team_detail', pk=team.pk)
+
+    # Transfer ownership
+    team.creator = new_owner
+    team.save()
+
+    messages.success(request, f"Ownership successfully transferred to {new_owner.username}.")
+    return redirect('team_detail', pk=team.pk)
+
+@login_required
+def leave_team(request, team_id):
+    """Allows a user to leave a team. If the team owner leaves, reassign ownership if members exist."""
+    team = get_object_or_404(Team, pk=team_id)
+
+    # Check if the leaving user is the creator
+    if request.user == team.creator:
+        # Prevent the owner from leaving if the team has no other members
+        remaining_members = team.members.exclude(id=request.user.id)
+        if remaining_members.exists():
+            # Assign the first remaining member as the new creator
+            new_creator = remaining_members.first()
+            team.creator = new_creator
+            team.save()
+            messages.success(
+                request,
+                f"Ownership transferred to {new_creator.username} as you have left the team."
+            )
+        else:
+            # If no members remain, prevent the owner from leaving
+            messages.error(
+                request,
+                "You cannot leave the team as the owner if there are no other members."
+            )
+            return redirect('team_detail', pk=team.pk)
+
+    # Remove the user from the team
+    team.members.remove(request.user)
+    messages.success(request, f"You have left the team '{team.team_name}'.")
+    return redirect('team_list')
