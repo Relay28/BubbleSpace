@@ -4,17 +4,156 @@
     {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register</title>
-    <link rel="stylesheet" href="{% static 'Register/registerStyle.css' %}">
-    <script src="{% static 'Register/registerScript.js' %}" defer></script>
+    <title>BubbleSpace Register</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'base2.css' %}">
+    <style>
+        /* Base Variables */
+        :root {
+            --primary-color: #1e3d58;
+            --secondary-color: #4db8b8;
+            --background-color: #f5f5f5;
+            --text-color: #333;
+            --accent-color: #4db8b8;
+        }
+
+        /* General Styling */
+        body {
+            background-color: var(--background-color);
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .register-container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+            padding: 20px 30px;
+        }
+
+        header h1 {
+            text-align: center;
+            color: var(--primary-color);
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        .register-box h1 {
+            font-size: 24px;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .register-box p {
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .register-box p a {
+            color: var(--secondary-color);
+            text-decoration: none;
+        }
+
+        .register-box p a:hover {
+            text-decoration: underline;
+        }
+
+        form {
+            margin-top: 20px;
+        }
+
+        label {
+            font-size: 14px;
+            color: var(--primary-color);
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="date"],
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: var(--secondary-color);
+            outline: none;
+        }
+
+        .password-container {
+            position: relative;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 12px;
+            color: var(--text-color);
+            cursor: pointer;
+        }
+
+        small {
+            font-size: 12px;
+            color: #666;
+        }
+
+        button.register-button {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px;
+            border: none;
+            width: 100%;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+            cursor: pointer;
+        }
+
+        button.register-button:hover {
+            background-color: var(--secondary-color);
+        }
+
+        button.register-button:disabled {
+            background-color: #ddd;
+            cursor: not-allowed;
+        }
+
+        .terms {
+            font-size: 12px;
+            margin-top: 10px;
+            color: #555;
+        }
+
+        .terms a {
+            color: var(--secondary-color);
+            text-decoration: none;
+        }
+
+        .terms a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
+    <div class="register-container">
         <header>
-            <h1>Signup</h1>
+            <h1>BubbleSpace</h1>
         </header>
         <div class="register-box">
-            <h1>Create an account</h1>
+            <h1>Create an Account</h1>
             <p>Already have an account? <a href="{% url 'login' %}">Log in</a></p>
             <form method="POST" action="{% url 'register' %}">
                 {% csrf_token %}
@@ -32,12 +171,13 @@
                 <input type="text" id="lname" name="lname" placeholder="Enter your last name" required>
 
                 <!-- Password Field -->
-                <label for="password">Create a password</label>
+                <label for="password">Create a Password</label>
                 <div class="password-container">
                     <input type="password" id="password" name="password" placeholder="Enter your password" required>
                     <span class="toggle-password" onclick="togglePassword()">👁️ Show</span>
+                    <!-- <small>Use 8 or more characters with a mix of letters, numbers, and symbols.</small> -->
                 </div>
-                <small>Use 8 or more characters with a mix of letters, numbers & symbols</small>
+               
 
                 <!-- Birthdate Field -->
                 <label for="birthdate">Birthdate</label>
@@ -52,10 +192,23 @@
                     <option value="other">Other</option>
                 </select>
 
-                <p>By creating an account, you agree to the <a href="#">Terms of Use and Privacy Policy</a>.</p>
-                <button type="submit" id="submit-btn" class="register-button" disabled>Create an account</button>
+                <p class="terms">By creating an account, you agree to the <a href="#">Terms of Use</a> and <a href="#">Privacy Policy</a>.</p>
+                <button type="submit" id="submit-btn" class="register-button">Create an Account</button>
             </form>
         </div>
     </div>
+    <script>
+        function togglePassword() {
+            const passwordField = document.getElementById("password");
+            const toggleText = document.querySelector(".toggle-password");
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+                toggleText.textContent = "👁️ Hide";
+            } else {
+                passwordField.type = "password";
+                toggleText.textContent = "👁️ Show";
+            }
+        }
+    </script>
 </body>
 </html>
