@@ -44,6 +44,7 @@ LOGIN_URL = 'login'  # Replace 'login' with the name of your actual login view U
 
 INSTALLED_APPS = [
     'django.contrib.admin',
+    'django.contrib.humanize',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',

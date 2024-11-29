@@ -148,10 +148,44 @@ def logout_view(request):
     else:
         return JsonResponse({"error": "User not authenticated or invalid request method"}, status=403)
     
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
+from django.shortcuts import redirect
+from django.contrib.auth import logout
+from django.contrib import messages
+from django.db.models import Q
+
 @login_required
 @require_POST
 def delete_account_view(request):
     user = request.user
-    user.delete()  # Delete the user account
+    
+    # Check for teams owned by the user
+    owned_teams = user.created_teams.all()  # Get teams where the user is the creator
+    
+    for team in owned_teams:
+        remaining_members = team.members.exclude(id=user.id)  # Get all members excluding the owner
+        
+        if remaining_members.exists():
+            # Transfer ownership to the first remaining member
+            new_creator = remaining_members.first()
+            team.creator = new_creator
+            team.save()
+            messages.success(
+                request,
+                f"Ownership of the team '{team.team_name}' has been transferred to {new_creator.username}."
+            )
+        else:
+            # If no members remain, delete the team
+            team.delete()
+            messages.success(
+                request,
+                f"The team '{team.team_name}' has been deleted as there were no remaining members."
+            )
+
+    # Delete the user account
+    user.delete()
     logout(request)  # Log out the user
+    messages.success(request, "Your account has been successfully deleted.")
     return redirect('login')  # Redirect to the login page
+

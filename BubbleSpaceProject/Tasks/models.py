@@ -23,6 +23,7 @@ class Task(models.Model):
     description = models.TextField()
     status = models.CharField(max_length=10, choices=STATUS_CHOICES)
     assigned_to = models.CharField(max_length=100)
+    is_read = models.BooleanField(default=False) 
     created_by = models.ForeignKey(
         settings.AUTH_USER_MODEL, 
         on_delete=models.CASCADE,

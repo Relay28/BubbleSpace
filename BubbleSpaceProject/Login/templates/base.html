@@ -18,7 +18,7 @@
             --text-color: #333;
             --accent-color: #ff7043;
         }
-        
+
         /* Sidebar Styling */
         aside {
             background-color: var(--primary-color);
@@ -31,11 +31,11 @@
             transition: all 0.3s ease;
             z-index: 100;
         }
-        
+
         aside:hover {
             width: 300px;
         }
-        
+
         aside h2 {
             font-size: 1.5rem;
             font-weight: bold;
@@ -43,7 +43,7 @@
             text-align: center;
             color: var(--secondary-color);
         }
-        
+
         .nav-link {
             color: white;
             font-weight: 500;
@@ -53,34 +53,32 @@
             align-items: center;
             border-radius: 5px;
         }
-        
+
         .nav-link:hover {
             background-color: var(--secondary-color);
             color: white;
         }
-        
+
         .nav-link.active {
             background-color: var(--secondary-color);
         }
-        
+
         /* Main Content Styling */
         #main-content {
-            margin-left: 20%;
-            padding: 20px;
+            margin-left: 0%;
             padding: 20px;
             background-color: var(--background-color);
-            box-sizing: border-box;
             color: var(--text-color);
             margin-bottom: 5%;
             transition: margin-left 0.3s ease;
-            min-height: calc(100vh - 60px); /* Adjust for header and footer */
-            box-sizing: border-box; /* Ensure padding doesn't break layout */
+            min-height: calc(100vh - 60px);
+            box-sizing: border-box;
         }
-        
+
         aside:hover ~ #main-content {
             margin-left: 300px;
         }
-        
+
         /* Header Styling */
         .header {
             background-color: var(--background-color);
@@ -96,12 +94,12 @@
             transition: all 0.3s ease;
             z-index: 50;
         }
-        
+
         aside:hover ~ .header {
             left: 300px;
             width: calc(100% - 300px);
         }
-        
+
         /* Footer Styling */
         footer {
             background-color: var(--background-color);
@@ -115,25 +113,25 @@
             transition: all 0.3s ease;
             z-index: 50;
         }
-        
+
         aside:hover ~ footer {
             left: 300px;
             width: calc(100% - 300px);
         }
-        
+
         /* Role Styling */
         .role {
             font-weight: bold;
-            color: var(--primary-color); /* Changed to match brand but remain readable */
+            color: var(--primary-color);
         }
-        
+
         /* Project List */
         .project-list {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 20px;
         }
-        
+
         .project-card {
             background-color: var(--background-color);
             border: 1px solid #ddd;
@@ -141,30 +139,29 @@
             padding: 15px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
-        
+
         /* Responsive Design */
         @media (max-width: 768px) {
             aside {
                 left: -250px;
             }
-        
+
             aside.open {
                 left: 0;
             }
-        
+
             #main-content,
             .header {
                 margin-left: 0;
                 width: 100%;
             }
-        
+
             footer {
                 left: 0;
                 width: 100%;
             }
         }
-        </style>
-        
+    </style>
 </head>
 <body>
     <div class="d-flex">
@@ -211,104 +208,128 @@
         <!-- Main Content -->
         <div style="margin-left: 250px; width: calc(100% - 250px);">
             <!-- Header -->
-          <!-- Header -->
-<header class="d-flex align-items-center justify-content-between px-4 py-3 header bg-theme" 
-style="position: fixed; top: 0; left: 250px; width: calc(100% - 250px);">
-<div>
-    <h4 class="mb-0">Welcome, {{ user.fname }} {{ user.lname }}!</h4>
-</div>
-<div class="d-flex align-items-center">
-<!-- Notification Dropdown -->
-<!-- Notification Dropdown -->
-<div class="dropdown me-3">
-    <a href="#" class="d-block text-decoration-none position-relative" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-        <i class="bi bi-bell-fill text-secondary"></i>
-        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-            {{ nearing_deadline_tasks.count }} <!-- Dynamic count -->
-        </span>
-    </a>
-    <ul class="dropdown-menu dropdown-menu-end text-small" aria-labelledby="notificationDropdown">
-        <li class="dropdown-header">Notifications</li>
-        {% for task in nearing_deadline_tasks %}
-        <li>
-            <a class="dropdown-item" href="{% url 'task_detail' task.pk %}">
-                <div class="d-flex align-items-center">
-                    <i class="bi bi-alarm text-warning me-2"></i>
-                    <span>{{ task.title }} is due in {{ task.due_date|timesince }}! </span>
-                </div>
-            </a>
-        </li>
-        {% endfor %}
-        <li><hr class="dropdown-divider"></li>
-        <li><a href="{% url 'task_list' %}" class="dropdown-item text-center">View All Tasks</a></li>
-    </ul>
-</div>
-
-
-<!-- User Profile Dropdown -->
-<div class="dropdown">
-    <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-        {% if user.profile_picture %}
-            <img src="{{ user.profile_picture.url }}" alt="Profile Picture" class="rounded-circle" style="width: 35px; height: 35px;">
-        {% else %}
-            <span class="bg-secondary text-white rounded-circle d-inline-block text-center" style="width: 35px; height: 35px; line-height: 35px;">
-                <i class="bi bi-person-fill"></i>
-            </span>
-        {% endif %}
-    </a>
-    <ul class="dropdown-menu dropdown-menu-end text-small" aria-labelledby="profileDropdown">
-        <li>
-            <div class="d-flex align-items-center px-3 py-2">
-                {% if user.profile_picture %}
-                    <img src="{{ user.profile_picture.url }}" alt="👤" class="rounded-circle me-2" style="width: 40px; height: 40px;">
-                {% else %}
-                    <span class="bg-secondary text-white rounded-circle text-center d-inline-block me-2" style="width: 40px; height: 40px; line-height: 40px;">
-                        <i class="bi bi-person-fill"></i>
-                    </span>
-                {% endif %}
+            <header class="d-flex align-items-center justify-content-between px-4 py-3 header bg-theme"
+                style="position: fixed; top: 0; left: 250px; width: calc(100% - 250px);">
                 <div>
-                    <p class="mb-0">{{ user.fname }} {{ user.lname }}</p>
-                    <small>{{ user.email }}</small>
+                    <h4 class="mb-0">Welcome, {{ user.fname }} {{ user.lname }}!</h4>
                 </div>
+                <div class="d-flex align-items-center">
+                    <!-- Notification Dropdown -->
+                    <div class="dropdown me-3">
+                        <a href="#" class="d-block text-decoration-none position-relative" id="notificationDropdown"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-bell-fill text-secondary"></i>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                {{ nearing_deadline_tasks.count }} <!-- Dynamic count -->
+                            </span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end text-small" aria-labelledby="notificationDropdown">
+                            <li class="dropdown-header">Notifications</li>
+                            {% for task in nearing_deadline_tasks %}
+                            <li class="d-flex align-items-center">
+                                <a class="dropdown-item d-flex align-items-center" href="{% url 'task_detail' task.pk %}" data-task-id="{{ task.pk }}">
+                                    <div class="d-flex flex-grow-1">
+                                        <i class="bi bi-alarm text-warning me-2"></i>
+                                        <span>{{ task.title }} is due in {{ task.due_date|timesince }}! </span>
+                                    </div>
+                                    <!-- Compact Delete Icon -->
+                                    <button type="button" class="btn btn-link btn-sm text-danger ms-2 delete-icon" data-task-id="{{ task.pk }}">
+                                        <i class="bi bi-x-circle"></i>
+                                    </button>
+                                </a>
+                            </li>
+                            {% endfor %}
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a href="{% url 'task_list' %}" class="dropdown-item text-center">View All Tasks</a></li>
+                        </ul>
+                        
+                    </div>
+
+                    <!-- User Profile Dropdown -->
+                    <div class="dropdown">
+                        <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" id="profileDropdown"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            {% if user.profile_picture %}
+                                <img src="{{ user.profile_picture.url }}" alt="Profile Picture"
+                                    class="rounded-circle" style="width: 35px; height: 35px;">
+                            {% else %}
+                                <span class="bg-secondary text-white rounded-circle d-inline-block text-center"
+                                    style="width: 35px; height: 35px; line-height: 35px;">
+                                    <i class="bi bi-person-fill"></i>
+                                </span>
+                            {% endif %}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                            <li><a class="dropdown-item" href="{% url 'profile' %}">My Profile</a></li>
+                            <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Goes Here -->
+            <div id="main-content" class="container mt-5 pt-5">
+                {% block content %}
+                {% endblock %}
             </div>
-        </li>
-        <li><hr class="dropdown-divider"></li>
-        <li><a href="{% url 'profile' %}" class="dropdown-item">Manage Your Account</a></li>
-        <li><a href="{% url 'logout' %}" class="dropdown-item">Logout</a></li>
-    </ul>
-</div>
-</div>
-</header>
 
-
-            <!-- Page Content -->
-            <main class="p-4" style="margin-top: 70px;">
-                {% block content %}{% endblock %}
-            </main>
+            <!-- Footer -->
+            <footer class="bg-theme text-light py-3">
+                <p>&copy; 2024 Bubble Space, All rights reserved.</p>
+            </footer>
         </div>
     </div>
 
-    <!-- Footer
-    <footer class="footer bg-theme text-center d-flex align-items-center justify-content-center">
-        <span>© 2024 Bubble Space. All rights reserved.</span>
-    </footer> -->
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js">
-       
-    document.addEventListener('DOMContentLoaded', function () {
-        const notificationDropdown = document.getElementById('notificationDropdown');
-        const notificationBadge = notificationDropdown.querySelector('.badge');
-
-        // Hide the badge when the dropdown is opened
-        notificationDropdown.addEventListener('click', function () {
-            if (notificationBadge) {
-                notificationBadge.style.display = 'none';  // Hide the badge
-            }
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const notificationDropdown = document.getElementById('notificationDropdown');
+            const notificationBadge = notificationDropdown.querySelector('.badge');
+            const taskItems = notificationDropdown.querySelectorAll('.dropdown-item');
+    
+            taskItems.forEach(function (item) {
+                item.addEventListener('click', function (e) {
+                    const taskId = e.target.getAttribute('data-task-id');
+    
+                    if (taskId) {
+                        fetch(`/mark-notification-read/${taskId}/`, {  // Updated endpoint to mark as read
+                            method: 'POST',
+                            headers: {
+                                'X-CSRFToken': getCSRFToken()
+                            },
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                // Update badge count
+                                if (data.new_badge_count <= 0) {
+                                    notificationBadge.style.display = 'none';  // Hide if no unread tasks
+                                } else {
+                                    notificationBadge.textContent = data.new_badge_count;  // Update badge count
+                                }
+                                e.target.closest('li').classList.add('read'); // Optional: Add a class to visually indicate the notification is read
+                            } else {
+                                alert("Failed to mark notification as read");
+                            }
+                        })
+                        .catch(error => console.error('Error marking notification as read:', error));
+                    }
+                });
+            });
+    
+            // Hide badge count when the dropdown is clicked (optional)
+            notificationDropdown.addEventListener('click', function () {
+                if (notificationBadge) {
+                    notificationBadge.style.display = 'none'; 
+                }
+            });
         });
-    });
-
-
+    
+        function getCSRFToken() {
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            return csrfToken;
+        }
     </script>
+    
 </body>
-
 </html>

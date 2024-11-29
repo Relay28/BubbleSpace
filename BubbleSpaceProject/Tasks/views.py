@@ -7,7 +7,7 @@ from django.http import JsonResponse
 ## views.py
 from django.shortcuts import render
 from .models import Task
-
+from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
 from datetime import timedelta
@@ -104,3 +104,34 @@ def update_task_status(request, task_id):
             return JsonResponse({'status': 'success'})
         else:
             return JsonResponse({'status': 'error', 'message': 'Invalid status'})
+
+
+@csrf_exempt
+def delete_notification(request, task_id):
+    if request.method == 'POST':
+        try:
+            task = Task.objects.get(id=task_id)
+            task.delete()  # Delete the task (notification)
+            return JsonResponse({'success': True})
+        except Task.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Task not found'})
+    return JsonResponse({'success': False, 'error': 'Invalid request method'})
+
+
+@csrf_exempt
+def mark_notification_read(request, task_id):
+    if request.method == 'POST':
+        try:
+            task = Task.objects.get(id=task_id)
+            task.is_read = True  # Assuming you have a boolean field to track read status
+            task.save()
+
+            # Recalculate the unread notifications count
+            unread_tasks = Task.objects.filter(is_read=False).count()
+
+            return JsonResponse({
+                'success': True,
+                'new_badge_count': unread_tasks
+            })
+        except Task.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Task not found'}, status=404)

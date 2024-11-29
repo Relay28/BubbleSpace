@@ -10,4 +10,6 @@ urlpatterns = [
     path('task/<int:pk>/delete/', views.task_delete, name='task_delete'),
     # path('task/update_status/<int:pk>/', views.task_update_status, name='task_update_status'),
     # path('task/update_status/<int:pk>/', views.update_task_status, name='update_task_status'),
+      path('delete-notification/<int:task_id>/', views.delete_notification, name='delete_notification'),
+     path('mark-notification-read/<int:task_id>/', views.mark_notification_read, name='mark_notification_read'),
 ]

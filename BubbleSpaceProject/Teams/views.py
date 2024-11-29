@@ -189,12 +189,12 @@ def transfer_ownership(request, team_id, member_id):
 
 @login_required
 def leave_team(request, team_id):
-    """Allows a user to leave a team. If the team owner leaves, reassign ownership if members exist."""
+    """Allows a user to leave a team. If the team owner leaves and is the only member, the team is deleted."""
     team = get_object_or_404(Team, pk=team_id)
 
     # Check if the leaving user is the creator
     if request.user == team.creator:
-        # Prevent the owner from leaving if the team has no other members
+        # Check the number of remaining members (excluding the owner)
         remaining_members = team.members.exclude(id=request.user.id)
         if remaining_members.exists():
             # Assign the first remaining member as the new creator
@@ -206,14 +206,16 @@ def leave_team(request, team_id):
                 f"Ownership transferred to {new_creator.username} as you have left the team."
             )
         else:
-            # If no members remain, prevent the owner from leaving
-            messages.error(
+            # If no other members remain, delete the team
+            team.delete()
+            messages.success(
                 request,
-                "You cannot leave the team as the owner if there are no other members."
+                f"The team '{team.team_name}' has been deleted as you were the last member."
             )
-            return redirect('team_detail', pk=team.pk)
+            return redirect('team_list')
 
     # Remove the user from the team
     team.members.remove(request.user)
     messages.success(request, f"You have left the team '{team.team_name}'.")
     return redirect('team_list')
+
