@@ -1,21 +1,20 @@
+# views.py
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseBadRequest
 from .models import Note
 from .forms import NoteForm
 
-# In views.py, the notes_list view:
+# Notes list view
 @login_required
 def notes_list(request):
     notes = Note.objects.filter(user=request.user)
     return render(request, 'notes/notes_list.html', {'notes': notes})
 
+# Note detail API view
 @login_required
 def note_detail_api(request, pk):
-    # Ensure the note exists and belongs to the currently authenticated user
     note = get_object_or_404(Note, pk=pk, user=request.user)
-
-    # Return the note details in JSON format
     data = {
         "title": note.title,
         "description": note.description,
@@ -23,9 +22,7 @@ def note_detail_api(request, pk):
     }
     return JsonResponse(data)
 
-
-
-
+# Add a new note
 @login_required
 def add_note(request):
     if request.method == 'POST':
@@ -39,6 +36,7 @@ def add_note(request):
         form = NoteForm()
     return render(request, 'notes/add_note.html', {'form': form})
 
+# Edit an existing note
 @login_required
 def edit_note(request, pk):
     note = get_object_or_404(Note, pk=pk, user=request.user)
@@ -51,10 +49,12 @@ def edit_note(request, pk):
         form = NoteForm(instance=note)
     return render(request, 'notes/edit_note.html', {'form': form, 'note': note})
 
+# Delete a note
 @login_required
 def delete_note(request, pk):
-    note = get_object_or_404(Note, pk=pk, user=request.user)
     if request.method == 'POST':
+        note = get_object_or_404(Note, pk=pk, user=request.user)
         note.delete()
-        return redirect('notes_list')
-    return render(request, 'notes/delete_note.html', {'note': note})
+        return JsonResponse({'success': True})
+    else:
+        return HttpResponseBadRequest("Invalid request method.")
