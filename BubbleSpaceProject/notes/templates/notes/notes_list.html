@@ -219,56 +219,64 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            const modal = document.getElementById("note-modal");
-            const overlay = document.getElementById("modal-overlay");
+    const modal = document.getElementById("note-modal");
+    const overlay = document.getElementById("modal-overlay");
 
-            // Ensure modal and overlay are hidden on page load
-            modal.style.display = "none";
-            overlay.style.display = "none";
+    // Ensure modal and overlay are hidden on page load
+    modal.style.display = "none";
+    overlay.style.display = "none";
 
-            const closeModal = () => {
-                modal.style.display = "none";
-                overlay.style.display = "none";
-            };
+    const closeModal = () => {
+        modal.style.display = "none";
+        overlay.style.display = "none";
+    };
 
-            // Add event listeners to note items
-            document.querySelectorAll(".note-item").forEach(item => {
-                item.addEventListener("click", () => {
-                    const noteId = item.getAttribute("data-id");
-                    console.log("Note ID:", noteId);
+    // Add event listeners to note items
+    document.querySelectorAll(".note-item").forEach(item => {
+        item.addEventListener("click", (event) => {
+            const noteId = item.getAttribute("data-id");
+            console.log("Note ID:", noteId);
 
-                    // Fetch note details via AJAX
-                    fetch(`/bubblespace/notes/note-detail/${noteId}/`)
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error("Note not found or unauthorized");
-                            }
-                            return response.json();
-                        })
-                        .then(data => {
-                            // Populate modal content with note details
-                            if (data.title && data.description && data.content) {
-                                document.getElementById("modal-title").innerText = data.title;
-                                document.getElementById("modal-description").innerText = data.description;
-                                document.getElementById("modal-content").innerText = data.content;
+            // Fetch note details via AJAX
+            fetch(`/bubblespace/notes/note-detail/${noteId}/`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Note not found or unauthorized");
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Populate modal content with note details
+                    if (data.title && data.description && data.content) {
+                        document.getElementById("modal-title").innerText = data.title;
+                        document.getElementById("modal-description").innerText = data.description;
+                        document.getElementById("modal-content").innerText = data.content;
 
-                                // Show modal and overlay
-                                modal.style.display = "block";
-                                overlay.style.display = "flex";
-                            } else {
-                                console.error("Note details are incomplete:", data);
-                            }
-                        })
-                        .catch(error => {
-                            console.error("Error fetching note details:", error);
-                        });
+                        // Show modal and overlay
+                        modal.style.display = "block";
+                        overlay.style.display = "flex";
+                    } else {
+                        console.error("Note details are incomplete:", data);
+                    }
+                })
+                .catch(error => {
+                    console.error("Error fetching note details:", error);
                 });
-            });
-
-            // Close modal and overlay when overlay or close button is clicked
-            overlay.addEventListener("click", closeModal);
-            modal.querySelector(".close").addEventListener("click", closeModal);
         });
+    });
+
+    // Prevent modal from showing when clicking edit or delete icons
+    document.querySelectorAll(".note-actions a").forEach(icon => {
+        icon.addEventListener("click", (event) => {
+            event.stopPropagation(); // Prevent click from reaching the note-item handler
+        });
+    });
+
+    // Close modal and overlay when overlay or close button is clicked
+    overlay.addEventListener("click", closeModal);
+    modal.querySelector(".close").addEventListener("click", closeModal);
+});
+
     </script>
 </body>
 </html>
