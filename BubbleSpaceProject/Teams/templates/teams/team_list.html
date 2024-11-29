@@ -6,7 +6,7 @@
         <h1 class="fw-bold">Your Teams</h1>
         <!-- Create/Join Team Button -->
         <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createTeamModal">
-            <i class="bi bi-plus-circle me-2"></i> Join or Create Team
+            Join or Create Team
         </button>
     </div>
 
@@ -15,20 +15,32 @@
         {% for team in teams %}
         <div class="col-md-6 col-lg-4">
             <!-- Team Card -->
-            <div class="card h-100 shadow-sm border-0.5" style="border-radius: 8px; overflow: hidden; position: relative;">
+            <div class="card h-300 shadow-sm border-0.5" style="border-radius: 8px; overflow: hidden; position: relative; height: 250px; ">
                 <a href="{% url 'team_detail' team.pk %}" class="text-decoration-none text-dark d-flex flex-column justify-content-between">
                     <div class="card-body text-center">
-                        <!-- Team Icon -->
-                        <div class="bg-light text-primary rounded-circle d-flex justify-content-center align-items-center mx-auto mb-3" 
-                             style="width: 50px; height: 50px;">
-                            <i class="bi bi-people" style="font-size: 24px;"></i>
+                        <!-- Team Picture or Default Icon -->
+                        {% if team.team_picture %}
+                        <!-- Display team picture -->
+                        <div class="bg-light text-primary d-flex justify-content-center align-items-center mx-auto mb-3 mt-3" 
+                        style="width: 100%; max-width: 300px; height: 150px;">
+                            <img src="{{ team.team_picture.url }}" alt="{{ team.team_name }}'s Picture" 
+                                 class="img-fluid" style="width: 300px; height: 150px; object-fit: cover;">
                         </div>
-
+                        {% else %}
+                        <!-- Default icon -->
+                        <div class="bg-light text-primary d-flex justify-content-center align-items-center mx-auto mb-3 mt-3" 
+                             style="width: 100%; max-width: 300px; height: 150px;">
+                            <i class="bi bi-people" style="font-size: 70px;"></i>
+                        </div>
+                        
+                        {% endif %}
+                    
                         <!-- Team Name -->
                         <h5 class="card-title text-dark text-truncate" title="{{ team.team_name }}">
                             {{ team.team_name }}
                         </h5>
                     </div>
+                    
                     <!-- Card Footer (Link to Team Details) -->
                     <div class="mt-3">
                         <!-- Removed the "View Details" button since the whole card is now clickable -->

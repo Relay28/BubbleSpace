@@ -1,6 +1,8 @@
 # urls.py
 from django.urls import include, path
 from . import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('', views.team_list, name='team_list'),
@@ -14,4 +16,7 @@ urlpatterns = [
     path('teams/<int:team_id>/transfer/<int:member_id>/', views.transfer_ownership, name='transfer_ownership'),
     path('teams/<int:team_id>/leave/', views.leave_team, name='leave_team'),
    
+   
 ]
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

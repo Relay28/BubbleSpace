@@ -94,24 +94,26 @@ def team_delete(request, pk):
 @login_required
 def team_edit(request, pk):
     team = get_object_or_404(Team, pk=pk)
-    
-    # Check if the current user is the creator of the team
+
+    # Ensure only the owner can edit the team
     if request.user != team.creator:
         messages.error(request, "Only the team creator can edit the team.")
         return HttpResponseForbidden("You do not have permission to edit this team.")
-    
+
     if request.method == 'POST':
-        # Pass is_edit=True to exclude the members field
-        form = TeamForm(request.POST, instance=team, is_edit=True)
+        # Handle form submission, including file uploads for `profile_picture`
+        form = TeamForm(request.POST, request.FILES, instance=team, is_edit=True)
         if form.is_valid():
-            form.save()
+            team = form.save()
             messages.success(request, "Team updated successfully.")
             return redirect('team_detail', pk=team.pk)
     else:
-        # Pass is_edit=True to exclude the members field
+        # Pass the existing team instance to the form
         form = TeamForm(instance=team, is_edit=True)
-    
-    return render(request, 'teams/team_edit_form.html', {'form': form, 'team': team})
+
+    return render(request, 'teams/team_details.html', {'form': form, 'team': team})
+
+
 
 @login_required
 def search_member(request):
