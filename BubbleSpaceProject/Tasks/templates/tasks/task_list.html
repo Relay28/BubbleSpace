@@ -6,23 +6,24 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h4 text-primary">Tasks</h1>
         <!-- Create New Task Button (Text with background color) -->
-        <button id="new-task-btn" class="btn btn-success btn-sm d-flex align-items-center">
-            Add Task
-        </button>
     </div>
 
     <!-- Task Filter (Status Dropdown) -->
-    <div class="mb-4">
-        <form method="GET" action="{% url 'task_list' %}" class="d-flex justify-content-start">
-            <div class="me-3">
-                <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
-                    <option value="">All Tasks</option>
-                    <option value="green" {% if request.GET.status == 'green' %}selected{% endif %}>Completed</option>
-                    <option value="yellow" {% if request.GET.status == 'yellow' %}selected{% endif %}>Ongoing</option>
-                    <option value="red" {% if request.GET.status == 'red' %}selected{% endif %}>To Do</option>
-                </select>
-            </div>
+    <div class="mb-4 d-flex justify-content-between align-items-center">
+        <!-- Form for dropdown -->
+        <form method="GET" action="{% url 'task_list' %}" class="d-flex">
+            <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
+                <option value="">All Tasks</option>
+                <option value="green" {% if request.GET.status == 'green' %}selected{% endif %}>Completed</option>
+                <option value="yellow" {% if request.GET.status == 'yellow' %}selected{% endif %}>Ongoing</option>
+                <option value="red" {% if request.GET.status == 'red' %}selected{% endif %}>To Do</option>
+            </select>
         </form>
+    
+        <!-- Button outside the form -->
+        <button id="new-task-btn" class="btn btn-success btn-sm">
+            Add Task
+        </button>
     </div>
 
     
