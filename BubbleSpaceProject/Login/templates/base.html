@@ -73,6 +73,7 @@
             transition: margin-left 0.3s ease;
             min-height: calc(100vh - 60px);
             box-sizing: border-box;
+            margin-top: 0;
         }
 
         aside:hover ~ #main-content {
@@ -168,7 +169,7 @@
         <!-- Sidebar -->
         <aside class="bg-theme border-end" style="width: 250px; position: fixed; top: 0; left: 0; height: 100vh;">
             <div class="p-3">
-                <div class="text-center mb-4">
+                <div class="text-center mb-5">
                     <a href="{% url 'home' %}" class="text-decoration-none">
                         <h2 class="text-theme">Bubble Space</h2>
                     </a>
@@ -268,7 +269,7 @@
             </header>
 
             <!-- Content Goes Here -->
-            <div id="main-content" class="container mt-5 pt-5">
+            <div id="main-content" class="container mt-0 pt-0">
                 {% block content %}
                 {% endblock %}
             </div>

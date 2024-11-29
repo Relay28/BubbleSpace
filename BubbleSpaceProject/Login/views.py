@@ -8,7 +8,14 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import check_password
 from django.views.decorators.http import require_POST
 from django.core.files.storage import default_storage
-
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
+from django.shortcuts import redirect
+from django.contrib.auth import logout
+from django.contrib import messages
+from django.db.models import Q
+from Tasks.models import Task  # Replace with your actual app name
+from notes.models import Note  # Replace with your actual app name
 @csrf_exempt
 def register_view(request):
     if request.method == 'POST':
@@ -75,7 +82,14 @@ def login_view(request):
 
 
 def home_view(request):
-    return render(request, 'Home/Home.html')
+    tasks = Task.objects.filter(created_by=request.user)[:5]  # Limit to 5 tasks
+    notes = Note.objects.filter(user=request.user)[:5]  # Limit to 5 notes
+
+    return render(request, 'Home/home.html', {
+        'tasks': tasks,
+        'notes': notes,
+    })
+
 
 @login_required
 def appbar_view(request):
@@ -148,12 +162,7 @@ def logout_view(request):
     else:
         return JsonResponse({"error": "User not authenticated or invalid request method"}, status=403)
     
-from django.contrib.auth.decorators import login_required
-from django.views.decorators.http import require_POST
-from django.shortcuts import redirect
-from django.contrib.auth import logout
-from django.contrib import messages
-from django.db.models import Q
+
 
 @login_required
 @require_POST
@@ -188,4 +197,6 @@ def delete_account_view(request):
     logout(request)  # Log out the user
     messages.success(request, "Your account has been successfully deleted.")
     return redirect('login')  # Redirect to the login page
+
+
 
