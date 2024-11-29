@@ -156,6 +156,36 @@
             grid-template-columns: 1fr;
         }
     }
+
+    .selected-member {
+        display: flex;
+        align-items: center;
+        background-color: #f8f9fa;
+        border-radius: 20px;
+        padding: 5px 12px;
+        margin: 5px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .selected-member img {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        margin-right: 10px;
+    }
+
+    .selected-member .remove-btn {
+        background: none;
+        border: none;
+        color: #dc3545;
+        font-size: 18px;
+        cursor: pointer;
+        margin-left: 8px;
+    }
+
+    .selected-member .remove-btn:hover {
+        color: #a71d2a;
+    }
 </style>
 
 <!-- Back Button -->
@@ -196,8 +226,8 @@
                         <label for="profilePicture" class="form-label">Profile Picture</label>
                         <input type="file" class="form-control" id="profilePicture" name="team_picture" accept="image/*">
                         {% if team.team_picture %}
-                        <div class="mt-2">
-                            <img src="{{ team.profile_picture.url }}" alt="Current Profile Picture" class="img-thumbnail" style="max-width: 150px;">
+                        <div class="mt-2 " style="text-align: center;">
+                            <img src="{{ team.team_picture.url }}" alt="Current Profile Picture" class="img-thumbnail" style="width: 50%; height: 200px;">
                         </div>
                         {% endif %}
                     </div>
@@ -213,13 +243,64 @@
 
 <!-- Members Section -->
 <!-- Members Section -->
-<section class="mb-5">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2 class="h5 text-primary m-0">Members</h2>
-        <a href="{% url 'add_team_member' team.pk %}" class="btn btn-primary btn-sm">
-            <i class="bi bi-person-plus"></i> Add Member
-        </a>
+<!-- Add Member Button -->
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="h5 text-primary m-0">Members</h2>
+    <a href="#" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addMemberModal">
+        <i class="bi bi-person-plus"></i> Add Member
+    </a>
+</a>
+</div>
+<!-- Add Member Modal -->
+<div class="modal fade" id="addMemberModal" tabindex="-1" aria-labelledby="addMemberModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="addMemberForm" method="POST" action="{% url 'add_team_member' team.pk %}">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addMemberModalLabel">Add Team Member</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="searchMemberInput" class="form-label">Search Member</label>
+                        <input 
+                            type="text" 
+                            class="form-control" 
+                            id="searchMemberInput" 
+                            placeholder="Type username..."
+                            autocomplete="off"
+                        >
+                    </div>
+                    <ul class="list-group" id="memberSuggestions">
+                        <!-- Search results will be displayed here -->
+                    </ul>
+                    <div class="mt-3">
+                        <label for="selected-members" class="form-label">Selected Members</label>
+                        <div id="selected-members" class="d-flex flex-wrap">
+                            <!-- Selected members will appear here -->
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Members</button>
+                </div>
+                <input type="hidden" name="members" id="selectedMembers">
+            </form>
+        </div>
     </div>
+</div>
+<!-- Trigger Button -->
+
+
+
+<!-- Trigger Button -->
+
+
+<!-- Trigger Modal Button -->
+
+
 
     <div class="table-responsive">
         <table class="table table-striped table-hover">
@@ -414,5 +495,82 @@
         </div>
     </div>
 </section>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchMemberInput = document.getElementById('searchMemberInput');
+        const memberSuggestions = document.getElementById('memberSuggestions');
+        const selectedMembersContainer = document.getElementById('selected-members');
+        const selectedMembersInput = document.getElementById('selectedMembers');
+        const teamId = "{{ team.id|safe }}";  // Get the team ID from the template context
+        const currentUserId = "{{ user.id|safe }}";  // Get the current user's ID from the template context
 
+        let selectedMembers = [];
+
+        searchMemberInput.addEventListener('input', function() {
+            const query = searchMemberInput.value.trim();
+            if (query.length > 0) {
+                fetch(`/bubblespace/teams/search-members/?q=${encodeURIComponent(query)}&team_id=${teamId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        memberSuggestions.innerHTML = '';
+                        if (data.length > 0) {
+                            data.forEach(user => {
+                                if (user.id !== parseInt(currentUserId)) {
+                                    const li = document.createElement('li');
+                                    li.textContent = user.username;
+                                    li.dataset.id = user.id;
+                                    li.className = 'list-group-item';
+                                    li.addEventListener('click', function() {
+                                        addMember(user);
+                                    });
+                                    memberSuggestions.appendChild(li);
+                                }
+                            });
+                        } else {
+                            memberSuggestions.innerHTML = '<li class="list-group-item text-muted">No users found</li>';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching user suggestions:', error);
+                        memberSuggestions.innerHTML = `<li class="list-group-item text-danger">Error: ${error.message}</li>`;
+                    });
+            } else {
+                memberSuggestions.innerHTML = '';
+            }
+        });
+
+        function addMember(user) {
+            if (!selectedMembers.some(member => member.id === user.id)) {
+                selectedMembers.push(user);
+                updateSelectedMembers();
+            }
+            searchMemberInput.value = '';
+            memberSuggestions.innerHTML = '';
+        }
+
+        function removeMember(userId) {
+            selectedMembers = selectedMembers.filter(member => member.id !== userId);
+            updateSelectedMembers();
+        }
+
+        function updateSelectedMembers() {
+            selectedMembersContainer.innerHTML = '';
+            selectedMembers.forEach(member => {
+                const chip = document.createElement('div');
+                chip.className = 'selected-member';
+                chip.textContent = member.username;
+
+                const removeBtn = document.createElement('button');
+                removeBtn.className = 'remove-btn';
+                removeBtn.textContent = '×';
+                removeBtn.addEventListener('click', () => removeMember(member.id));
+
+                chip.appendChild(removeBtn);
+                selectedMembersContainer.appendChild(chip);
+            });
+
+            selectedMembersInput.value = selectedMembers.map(member => member.id).join(',');
+        }
+    });
+</script>
 {% endblock %}

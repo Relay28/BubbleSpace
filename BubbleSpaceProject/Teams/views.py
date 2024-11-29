@@ -44,7 +44,7 @@ def team_detail(request, pk):
 @login_required
 def team_create(request):
     if request.method == 'POST':
-        form = TeamForm(request.POST, creator=request.user, is_creation=True)
+        form = TeamForm(request.POST,  request.FILES,creator=request.user, is_creation=True)
         if form.is_valid():
             team = form.save(commit=False)
             team.creator = request.user  # Set the creator
@@ -56,22 +56,22 @@ def team_create(request):
         form = TeamForm(creator=request.user, is_creation=True)
     return render(request, 'teams/team_form.html', {'form': form})
 
-@login_required
-def team_update(request, pk):
-    team = get_object_or_404(Team, pk=pk)
-    if request.method == 'POST':
-        form = TeamForm(request.POST, instance=team, creator=team.creator)
-        if form.is_valid():
-            # Use commit=False to modify before the save
-            team = form.save(commit=False)
-            team.save()  # Save changes to the team instance
-            form.save_m2m()  # Save many-to-many data (members)
-            team.members.add(team.creator)  # Ensure the creator is part of the team
-            messages.success(request, "Team updated successfully.")
-            return redirect('team_detail', pk=team.pk)
-    else:
-        form = TeamForm(instance=team, creator=team.creator)
-    return render(request, 'teams/team_form.html', {'form': form, 'team': team})
+# @login_required
+# def team_update(request, pk):
+#     team = get_object_or_404(Team, pk=pk)
+#     if request.method == 'POST':
+#         form = TeamForm(request.POST, instance=team, creator=team.creator)
+#         if form.is_valid():
+#             # Use commit=False to modify before the save
+#             team = form.save(commit=False)
+#             team.save()  # Save changes to the team instance
+#             form.save_m2m()  # Save many-to-many data (members)
+#             team.members.add(team.creator)  # Ensure the creator is part of the team
+#             messages.success(request, "Team updated successfully.")
+#             return redirect('team_detail', pk=team.pk)
+#     else:
+#         form = TeamForm(instance=team, creator=team.creator)
+#     return render(request, 'teams/team_form.html', {'form': form, 'team': team})
 
 
 from django.http import HttpResponseForbidden
