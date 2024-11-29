@@ -81,7 +81,9 @@ def task_update(request, pk):
             return redirect('task_list')
     else:
         form = TaskForm(instance=task)
-    return render(request, 'tasks/task_form.html', {'form': form, 'title': 'Update Task'})
+    
+    # Pass the task object to the template
+    return render(request, 'tasks/task_form.html', {'form': form, 'title': 'Update Task', 'task': task})
 
 @login_required
 def task_delete(request, pk):

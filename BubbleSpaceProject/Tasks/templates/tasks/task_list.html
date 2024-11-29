@@ -84,9 +84,17 @@
                 </div>
                 <div style="width: 30%;">{{ task.due_date|date:"M d, Y" }}</div>
                 <div class="d-flex align-items-center gap-2" style="width: 30%;">
-                    <a href="{% url 'task_update' task.pk %}" class="btn btn-link btn-sm">
-                        <i class="bi bi-pencil text-primary" style="font-size: 16px;"></i>
-                    </a>
+                    <button type="button" class="btn btn-link btn-sm text-primary" 
+                            onclick="openEditForm({
+                                id: '{{ task.pk }}', 
+                                title: '{{ task.title }}', 
+                                description: '{{ task.description }}', 
+                                due_date: '{{ task.due_date }}', 
+                                status: '{{ task.status }}'
+                            })">
+                        <i class="bi bi-pencil" style="font-size: 16px;"></i>
+                    </button>
+                    <!-- Delete Button -->
                     <a href="{% url 'task_delete' task.pk %}" class="btn btn-link btn-sm">
                         <i class="bi bi-trash text-danger" style="font-size: 16px;"></i>
                     </a>
@@ -120,9 +128,17 @@
                 </div>
                 <div style="width: 30%;">{{ task.due_date|date:"M d, Y" }}</div>
                 <div class="d-flex align-items-center gap-2" style="width: 30%;">
-                    <a href="{% url 'task_update' task.pk %}" class="btn btn-link btn-sm">
-                        <i class="bi bi-pencil text-primary" style="font-size: 16px;"></i>
-                    </a>
+                    <button type="button" class="btn btn-link btn-sm text-primary" 
+                            onclick="openEditForm({
+                                id: '{{ task.pk }}', 
+                                title: '{{ task.title }}', 
+                                description: '{{ task.description }}', 
+                                due_date: '{{ task.due_date }}', 
+                                status: '{{ task.status }}'
+                            })">
+                        <i class="bi bi-pencil" style="font-size: 16px;"></i>
+                    </button>
+                    <!-- Delete Button -->
                     <a href="{% url 'task_delete' task.pk %}" class="btn btn-link btn-sm">
                         <i class="bi bi-trash text-danger" style="font-size: 16px;"></i>
                     </a>
@@ -156,9 +172,17 @@
                 </div>
                 <div style="width: 30%;">{{ task.due_date|date:"M d, Y" }}</div>
                 <div class="d-flex align-items-center gap-2" style="width: 30%;">
-                    <a href="{% url 'task_update' task.pk %}" class="btn btn-link btn-sm">
-                        <i class="bi bi-pencil text-primary" style="font-size: 16px;"></i>
-                    </a>
+                    <button type="button" class="btn btn-link btn-sm text-primary" 
+                            onclick="openEditForm({
+                                id: '{{ task.pk }}', 
+                                title: '{{ task.title }}', 
+                                description: '{{ task.description }}', 
+                                due_date: '{{ task.due_date }}', 
+                                status: '{{ task.status }}'
+                            })">
+                        <i class="bi bi-pencil" style="font-size: 16px;"></i>
+                    </button>
+                    <!-- Delete Button -->
                     <a href="{% url 'task_delete' task.pk %}" class="btn btn-link btn-sm">
                         <i class="bi bi-trash text-danger" style="font-size: 16px;"></i>
                     </a>
@@ -191,9 +215,17 @@
                 </div>
                 <div style="width: 30%;">{{ task.due_date|date:"M d, Y" }}</div>
                 <div class="d-flex align-items-center gap-2" style="width: 30%;">
-                    <a href="{% url 'task_update' task.pk %}" class="btn btn-link btn-sm">
-                        <i class="bi bi-pencil text-primary" style="font-size: 16px;"></i>
-                    </a>
+                    <button type="button" class="btn btn-link btn-sm text-primary" 
+                            onclick="openEditForm({
+                                id: '{{ task.pk }}', 
+                                title: '{{ task.title }}', 
+                                description: '{{ task.description }}', 
+                                due_date: '{{ task.due_date }}', 
+                                status: '{{ task.status }}'
+                            })">
+                        <i class="bi bi-pencil" style="font-size: 16px;"></i>
+                    </button>
+                    <!-- Delete Button -->
                     <a href="{% url 'task_delete' task.pk %}" class="btn btn-link btn-sm">
                         <i class="bi bi-trash text-danger" style="font-size: 16px;"></i>
                     </a>
@@ -215,6 +247,35 @@
     document.getElementById('cancel-task-btn').addEventListener('click', function() {
         document.getElementById('task-form-container').style.display = 'none';
         document.getElementById('new-task-btn').style.display = 'inline-block';
+    });
+
+    function openEditForm(task) {
+        const taskFormContainer = document.getElementById('task-form-container');
+        const taskForm = document.getElementById('task-form');
+        const newTaskBtn = document.getElementById('new-task-btn');
+
+        // Populate form fields with existing task data
+        taskForm.title.value = task.title;
+        taskForm.description.value = task.description;
+        taskForm.due_date.value = task.due_date ? task.due_date.split('T')[0] : '';
+        taskForm.status.value = task.status;
+
+        // Update form action URL
+        taskForm.action = `/bubblespace/tasks/task/${task.id}/edit/`;
+
+        // Show the form and hide the "Add Task" button
+        taskFormContainer.style.display = 'block';
+        newTaskBtn.style.display = 'none';
+    }
+
+    document.getElementById('cancel-task-btn').addEventListener('click', function() {
+        const taskFormContainer = document.getElementById('task-form-container');
+        const newTaskBtn = document.getElementById('new-task-btn');
+
+        // Reset form and toggle visibility
+        document.getElementById('task-form').reset();
+        taskFormContainer.style.display = 'none';
+        newTaskBtn.style.display = 'block';
     });
 </script>
 {% endblock %}
