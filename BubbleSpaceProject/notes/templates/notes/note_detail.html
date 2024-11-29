@@ -2,25 +2,145 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" href="{% static 'css/note_detail.css' %}">
-    <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
+    <style>
+        /* Global styling */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        .main-content {
+            padding: 40px;
+        }
+
+        /* Back button styling */
+        .back-link {
+            text-decoration: none;
+            color: #333;
+            font-size: 16px;
+            display: inline-flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .back-link:hover {
+            color: #4CAF50;
+        }
+
+        .back-link svg {
+            margin-right: 8px;
+        }
+
+        /* Note detail card */
+        .note-card {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 30px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e0e0e0;
+        }
+
+        .note-card h1 {
+            font-size: 28px;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            word-break: break-word;
+        }
+
+        .note-card p {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #555;
+            margin-bottom: 20px;
+        }
+
+        .note-card p.description {
+            font-weight: bold;
+            color: #7f8c8d;
+        }
+
+        /* Action buttons container */
+        .action-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+        }
+
+        /* Icon buttons */
+        .action-buttons a {
+            text-decoration: none;
+            color: #fff;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: transform 0.2s ease, background-color 0.3s ease;
+        }
+
+        /* Edit button icon */
+        .action-buttons .edit-button {
+            background-color: #4CAF50;
+        }
+
+        .action-buttons .edit-button:hover {
+            background-color: #45a049;
+            transform: scale(1.1);
+        }
+
+        /* Delete button icon */
+        .action-buttons .delete-button {
+            background-color: #f44336;
+        }
+
+        .action-buttons .delete-button:hover {
+            background-color: #d32f2f;
+            transform: scale(1.1);
+        }
+
+        /* Icons inside buttons */
+        .action-buttons svg {
+            width: 20px;
+            height: 20px;
+        }
+    </style>
 </head>
 <body>
     {% include "base.html" %}
     <div class="main-content">
-        <div style="margin-left: 20px;">
-        <a href="{% url 'notes_list' %}" style="text-decoration: none;"><</a>
-    </div>
-        
-        <div class="content">
-            <h1>{{ note.title }}</h1>
-            <p class="description" style="margin-top: 20px;">{{ note.description }}</p>
-            <p class="content-text" style="margin-top: 40px;">{{ note.content }}</p>
+        <!-- Back button -->
+        <a href="{% url 'notes_list' %}" class="back-link">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M15 8a.5.5 0 0 1-.5.5H2.707l3.147 3.146a.5.5 0 0 1-.708.708l-4-4a.5.5 0 0 1 0-.708l4-4a.5.5 0 0 1 .708.708L2.707 7.5H14.5A.5.5 0 0 1 15 8z"/>
+            </svg>
+            Back to Notes
+        </a>
 
-            <!-- Action buttons for editing and deleting the note -->
-            <div class="actions" style="margin-top: 50px;margin-left: 130vh;">
-                <a href="{% url 'edit_note' pk=note.pk %}" class="edit-button">Edit</a>
-                <a href="{% url 'delete_note' pk=note.pk %}" class="delete-button">Delete</a>
+        <!-- Note details -->
+        <div class="note-card">
+            <h1>{{ note.title }}</h1>
+            <p class="description">{{ note.description }}</p>
+            <p>{{ note.content }}</p>
+
+            <!-- Action buttons -->
+            <div class="action-buttons">
+                <!-- Edit button -->
+                <a href="{% url 'edit_note' pk=note.pk %}" class="edit-button" title="Edit Note">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
+                        <path d="M12.146.854a.5.5 0 0 1 .708 0l2.292 2.292a.5.5 0 0 1 0 .708L6.207 12.793l-3.75.75a.5.5 0 0 1-.606-.606l.75-3.75L12.146.854zm1.415 2.121L11.207 1.5 13.5 3.793l-1.939 1.939-1.292-1.293zM10.5 5.5L8.793 3.793 2.5 10.086V12.5h2.414l6.293-6.293z"/>
+                    </svg>
+                </a>
+                <!-- Delete button -->
+                <a href="{% url 'delete_note' pk=note.pk %}" class="delete-button" title="Delete Note">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                        <path d="M5.5 5.5A.5.5 0 0 1 6 5h4a.5.5 0 0 1 .5.5v7A.5.5 0 0 1 10 13H6a.5.5 0 0 1-.5-.5v-7zM11 1.5v1H5v-1h6zm-1 0h2.5A.5.5 0 0 1 13 2v1a.5.5 0 0 1-.5.5H3.5A.5.5 0 0 1 3 3V2a.5.5 0 0 1 .5-.5H6v1a.5.5 0 0 0 .5.5h3A.5.5 0 0 0 10 1.5v-1h.5z"/>
+                    </svg>
+                </a>
             </div>
         </div>
     </div>
