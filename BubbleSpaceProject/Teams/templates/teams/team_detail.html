@@ -273,6 +273,11 @@
             </button>
         </li>
         <li class="nav-item" role="presentation">
+            <button class="nav-link" id="cancelled-tab" data-bs-toggle="tab" data-bs-target="#cancelled" type="button" role="tab" aria-controls="cancelled" aria-selected="false">
+                Cancelled
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
             <button class="nav-link" id="completed-tab" data-bs-toggle="tab" data-bs-target="#completed" type="button" role="tab" aria-controls="completed" aria-selected="false">
                 Completed
             </button>
@@ -317,6 +322,29 @@
                         </a>
                         <a href="{% url 'project_tasks' project.ProjectId %}" class="btn btn-primary btn-sm">
                             <i class="bi bi-list-check"></i> Tasks
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Cancelled Tab -->
+        <div class="tab-pane fade" id="cancelled" role="tabpanel" aria-labelledby="cancelled-tab">
+            <div class="project-list mt-3">
+                {% for project in projects %}
+                {% if project.Status == 'Cancelled' %}
+                <div class="project-card">
+                    <div class="project-header">
+                        <a href="{% url 'project_tasks' project.ProjectId %}" class="text-decoration-none text-reset">
+                            {{ project.Title }}
+                        </a>
+                    </div>
+                    <div class="project-status status-completed">{{ project.Status }}</div>
+                    <div class="project-actions">
+                        <a href="{% url 'project_detail' project.ProjectId %}" class="btn btn-secondary btn-sm">
+                            <i class="bi bi-info-circle"></i> Details
                         </a>
                     </div>
                 </div>
