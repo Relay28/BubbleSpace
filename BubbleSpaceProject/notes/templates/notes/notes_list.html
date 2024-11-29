@@ -4,107 +4,167 @@
 <head>
 
     <title>Notes</title>
+    <!-- Add Font Awesome CDN for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        .main-content { padding: 20px; margin-left: 260px;padding-top: 0; }
-        .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 10px 15px; background-color: white; border-bottom: 2px solid #e6e6e6; flex-wrap: nowrap; padding-top: 0;}
+        .main-content { padding: 20px; margin-left: 260px; padding-top: 10px; margin-top: 42px;}
+        .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 10px 15px; background-color: white; border-bottom: 2px solid #e6e6e6; flex-wrap: nowrap; padding-top: 0; }
         .header-row h1 { font-size: 24px; font-weight: bold; color: #333; }
         .header-row .btn { font-size: 22px; color: #1e3d58; text-decoration: none; cursor: pointer; }
-        .note-list { display: flex; flex-direction: column; gap: 15px; }
-        .note-item { padding: 15px; background: white; border-radius: 10px; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); cursor: pointer; }
-        .modal-overlay {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        /* margin-left: 16.4%; */
-        background: rgba(0, 0, 0, 0.5);
-        z-index:999;
-        display: flex; /* Flexbox for centering */
-        justify-content: center;
-        align-items: center;
-    }
-
-    /* Modal Container */
-    #note-modal {
-        display: none; /* Hidden by default */
-        background: white;
-        width: 50%;
-        height: 65%;
-        border-radius: 8px;
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-        margin-left: 30%;
-        margin-top: 9%;
-        z-index: 1000;
-        overflow: hidden;
-        animation: fadeIn 0.3s ease; /* Smooth fade-in effect */
-    }
-
-    /* Modal Header */
-    .modal-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 15px 20px;
-        background: #1e3d58;
-        color: white;
-        
-    }
-
-    .modal-header h1 {
-        margin: 0;
-        font-size: 24px;
-    }
-
-    .modal-header .close {
-        cursor: pointer;
-        font-size: 30px;
-        line-height: 1;
-        background: none;
-        border: none;
-        color: white;
-    }
-
-    
-    .modal-body {
-    padding: 20px;
-    font-size: 16px;
-    line-height: 1.5;
-    color: #333;
-    word-wrap: break-word;
-    overflow-y: auto; /* Enable scrolling for long content */
-    max-height: calc(70vh - 60px); /* Adjust height for header */
-}
-
-    #modal-description p{
-    font-size: 1em;
-    margin-bottom: 40px;
-    font-weight: 300; 
-    margin: 10px 0;
-    word-wrap: break-word; 
-    overflow: hidden;
-    text-overflow: ellipsis;
-    border-bottom: #1e3d58;
-    
-}
-    .modal-body p{
-        margin-bottom: 25px;
-        word-wrap: break-word;
-        
-    }
-   
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-            transform: scale(0.95);
+        .note-list { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 15px; 
         }
-        to {
+        .note-item {
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            position: relative;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+           
+           
+        }
+        .note-item:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .note-circle {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: #1e3d58;
+            position: absolute;
+            top: 38px;
+            left: 20px;
+            flex-shrink: 0;
             opacity: 1;
-            transform: scale(1);
+            transition: transform 0.3s ease, background-color 0.3s ease;
         }
-    }
+        .note-item:hover .note-circle {
+            transform: scale(1.2);
+            background-color: #3b5d77;
+        }
+        .note-content {
+            margin-left: 45px;
+            margin-top: 5px;
+        }
+        .note-actions {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            position: absolute;
+            right: 15px; /* Align the icons to the right */
+            top: 15px;   /* Position the icons at the top right corner */
+            margin-right: 10px;
+            
+        }
+        .note-actions a {
+            text-decoration: none;
+            font-size: 24px;
+            color: #1e3d58;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+        .note-actions a:hover {
+            color: #ff4d4d;
+            transform: scale(1.1);
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    
+        #note-modal {
+            display: none;
+            background: white;
+            width: 50%;
+            height: 65%;
+            border-radius: 8px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            margin-left: 30%;
+            margin-top: 9%;
+            z-index: 1000;
+            overflow: hidden;
+            animation: fadeIn 0.3s ease;
+        }
+    
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: #1e3d58;
+            color: white;
+        }
+    
+        .modal-header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+    
+        .modal-header .close {
+            cursor: pointer;
+            font-size: 30px;
+            background: none;
+            border: none;
+            color: white;
+        }
+    
+        .modal-body {
+            padding: 20px;
+            font-size: 16px;
+            line-height: 1.5;
+            color: #333;
+            word-wrap: break-word;
+            overflow-y: auto;
+            max-height: calc(70vh - 60px);
+        }
+    
+        #modal-description p {
+            font-size: 1em;
+            margin-bottom: 40px;
+            font-weight: 300;
+            margin: 10px 0;
+            word-wrap: break-word;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            border-bottom: #1e3d58;
+        }
+    
+        .modal-body p {
+            margin-bottom: 25px;
+            word-wrap: break-word;
+        }
+    
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        .container1{
+            padding-left: 20px;
+            padding-right: 20px;
+            
+        }
     </style>
+    
 </head>
 <body>
     {% include "base.html" %}
@@ -116,88 +176,99 @@
         </div>
 
         <!-- Notes List -->
+         
         <div class="note-list">
             {% for note in notes %}
+            <div class="container1">
                 <div class="note-item" data-id="{{ note.pk }}">
-                    <strong>{{ note.title }}</strong>
-                    <p>{{ note.description }}</p>
+                    <div class="note-circle"></div>
+                    <div class="note-content">
+                        <strong>{{ note.title }}</strong>
+                        <p>{{ note.description }}</p>
+                    </div>
+                    <div class="note-actions">
+                        <a href="{% url 'edit_note' note.pk %}" class="edit-note" title="Edit">
+                            <i class="fas fa-edit"></i> <!-- Font Awesome edit icon -->
+                        </a>
+                        <a href="{% url 'delete_note' note.pk %}" class="delete-note" title="Delete">
+                            <i class="fas fa-trash-alt"></i> <!-- Font Awesome trash icon -->
+                        </a>
+                    </div>
                 </div>
+            </div>
+                
             {% empty %}
                 <p>No notes available. Click "+" to add a new note.</p>
             {% endfor %}
         </div>
+        
     </div>
 
     <!-- Redesigned Modal -->
-<div id="note-modal" class="modal">
-    <div class="modal-header">
-        <h1 id="modal-title"></h1>
-        <span class="close">&times;</span>
+    <div id="note-modal" class="modal">
+        <div class="modal-header">
+            <h1 id="modal-title"></h1>
+            <span class="close">&times;</span>
+        </div>
+        <div class="modal-body">
+            <p id="modal-description"></p>
+            <p id="modal-content"></p>
+        </div>
     </div>
-    <div class="modal-body">
-        <p id="modal-description"></p>
-        <p id="modal-content"></p>
-    </div>
-</div>
-<div id="modal-overlay" class="modal-overlay"></div>
+    <div id="modal-overlay" class="modal-overlay"></div>
 
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const modal = document.getElementById("note-modal");
+            const overlay = document.getElementById("modal-overlay");
 
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-    const modal = document.getElementById("note-modal");
-    const overlay = document.getElementById("modal-overlay");
+            // Ensure modal and overlay are hidden on page load
+            modal.style.display = "none";
+            overlay.style.display = "none";
 
-    // Ensure modal and overlay are hidden on page load
-    modal.style.display = "none";
-    overlay.style.display = "none";
+            const closeModal = () => {
+                modal.style.display = "none";
+                overlay.style.display = "none";
+            };
 
-    const closeModal = () => {
-        modal.style.display = "none";
-        overlay.style.display = "none";
-    };
+            // Add event listeners to note items
+            document.querySelectorAll(".note-item").forEach(item => {
+                item.addEventListener("click", () => {
+                    const noteId = item.getAttribute("data-id");
+                    console.log("Note ID:", noteId);
 
-    // Add event listeners to note items
-    document.querySelectorAll(".note-item").forEach(item => {
-        item.addEventListener("click", () => {
-            const noteId = item.getAttribute("data-id");
-            console.log("Note ID:", noteId);
+                    // Fetch note details via AJAX
+                    fetch(`/bubblespace/notes/note-detail/${noteId}/`)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error("Note not found or unauthorized");
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            // Populate modal content with note details
+                            if (data.title && data.description && data.content) {
+                                document.getElementById("modal-title").innerText = data.title;
+                                document.getElementById("modal-description").innerText = data.description;
+                                document.getElementById("modal-content").innerText = data.content;
 
-            // Fetch note details via AJAX
-            fetch(`/bubblespace/notes/note-detail/${noteId}/`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error("Note not found or unauthorized");
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    // Populate modal content with note details
-                    if (data.title && data.description && data.content) {
-                        document.getElementById("modal-title").innerText = data.title;
-                        document.getElementById("modal-description").innerText = data.description;
-                        document.getElementById("modal-content").innerText = data.content;
-
-                        // Show modal and overlay
-                        modal.style.display = "block";
-                        overlay.style.display = "flex";
-                    } else {
-                        console.error("Note details are incomplete:", data);
-                    }
-                })
-                .catch(error => {
-                    console.error("Error fetching note details:", error);
+                                // Show modal and overlay
+                                modal.style.display = "block";
+                                overlay.style.display = "flex";
+                            } else {
+                                console.error("Note details are incomplete:", data);
+                            }
+                        })
+                        .catch(error => {
+                            console.error("Error fetching note details:", error);
+                        });
                 });
+            });
+
+            // Close modal and overlay when overlay or close button is clicked
+            overlay.addEventListener("click", closeModal);
+            modal.querySelector(".close").addEventListener("click", closeModal);
         });
-    });
-
-    // Close modal and overlay when overlay or close button is clicked
-    overlay.addEventListener("click", closeModal);
-    modal.querySelector(".close").addEventListener("click", closeModal);
-});
-
-
-</script>
-
-    
+    </script>
 </body>
 </html>
