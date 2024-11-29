@@ -247,6 +247,7 @@
                     </div>
 
                     <!-- User Profile Dropdown -->
+            <!-- User Profile Dropdown -->
                     <div class="dropdown">
                         <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" id="profileDropdown"
                             data-bs-toggle="dropdown" aria-expanded="false">
@@ -260,11 +261,38 @@
                                 </span>
                             {% endif %}
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
-                            <li><a class="dropdown-item" href="{% url 'profile' %}">My Profile</a></li>
-                            <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                        <ul class="dropdown-menu dropdown-menu-end p-2 shadow-sm" aria-labelledby="profileDropdown" style="width: 260px;">
+                            <!-- User Info -->
+                            <li class="d-flex align-items-center mb-2">
+                                {% if user.profile_picture %}
+                                    <img src="{{ user.profile_picture.url }}" alt="Profile Picture"
+                                        class="rounded-circle me-2" style="width: 50px; height: 50px;">
+                                {% else %}
+                                    <span class="bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center me-2"
+                                        style="width: 50px; height: 50px;">
+                                        <i class="bi bi-person-fill" style="font-size: 1.5rem;"></i>
+                                    </span>
+                                {% endif %}
+                                <div>
+                                    <h6 class="mb-0">{{ user.fname }} {{ user.lname }}</h6>
+                                    <small class="text-muted">{{ user.email }}</small>
+                                </div>
+                            </li>
+                            <hr class="dropdown-divider">
+                            <!-- Action Links -->
+                            <li>
+                                <a class="dropdown-item py-2 d-flex align-items-center" href="{% url 'profile' %}">
+                                    <i class="bi bi-person-circle me-2"></i> Manage My Account
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item py-2 d-flex align-items-center text-danger" href="{% url 'logout' %}">
+                                    <i class="bi bi-box-arrow-right me-2"></i> Logout
+                                </a>
+                            </li>
                         </ul>
                     </div>
+
                 </div>
             </header>
 
