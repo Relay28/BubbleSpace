@@ -71,7 +71,9 @@
             color: var(--text-color);
             margin-bottom: 5%;
             transition: margin-left 0.3s ease;
-            min-height: calc(100vh - 60px);
+            min-height: 50%;
+            height: 100%;
+            width: auto;
             box-sizing: border-box;
             margin-top: 0;
         }
@@ -297,15 +299,15 @@
             </header>
 
             <!-- Content Goes Here -->
-            <div id="main-content" class="container mt-0 pt-0">
+            <div id="main-content" class="container mt-5 pt-5">
                 {% block content %}
                 {% endblock %}
             </div>
 
             <!-- Footer -->
-            <footer class="bg-theme text-light py-3">
+            <!-- <footer class="bg-theme text-light py-3">
                 <p>&copy; 2024 Bubble Space, All rights reserved.</p>
-            </footer>
+            </footer> -->
         </div>
     </div>
 
