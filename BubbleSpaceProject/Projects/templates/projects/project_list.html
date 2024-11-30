@@ -116,6 +116,12 @@
 <body>
     {% include "base.html" %}
     <div class="container">
+        <div class="back-button-container" style="margin: 10px;">
+            <a href="#" onclick="history.back(); return false;" class="btn btn-primary btn-sm" style="text-decoration: none;">
+                &larr; Back
+            </a>
+        </div>
+
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1 class="h4 text-primary">Tasks in {{ project.Title }}</h1>
             <a href="{% url 'task_create_for_project' project.ProjectId %}" class="btn btn-sm btn-success">
