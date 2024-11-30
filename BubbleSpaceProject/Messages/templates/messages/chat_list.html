@@ -5,38 +5,67 @@
 
 
 <style>
-    /* Chat Window */
-    #chat-window {
-        display: flex;
-        flex-direction: column;
-        height: 66vh;
-        overflow-y: auto;
-        background-color: #ffffff;
-        border: 1px solid #ddd;
-        padding:30px;
-        gap:15px;
-    }
-
     .chat-message {
-        padding: 10px;
-        border-radius: 10px;
-        max-width: 75%;
-        word-wrap: break-word;
-        white-space: pre-wrap;
-        font-size: 14px;
+    padding: 12px;
+    padding-bottom: 0;
+    border-radius: 8px;
+    max-width: 50vh; /* Limit the maximum width */
+    overflow-wrap: break-word; /* Break long words */
+    white-space: pre-wrap; /* Preserve white spaces and wrap long text */
+    font-size: 13px;
+    line-height: 0.8; /* Adjust line height for readability */
+    position: relative;
+    display: inline-block;
+    margin-top: 10px;
+    text-align: center;
+}
+
+.chat-message.sender {
+    background-color: #2a5479;
+    align-self: flex-end;
+    text-align: right;
+    color: #fff;
+}
+
+.chat-message.receiver {
+    background-color: #6383a0;
+    align-self: flex-start;
+    text-align: flex-start;
+    justify-content: flex-start;
+    align-items: flex-start;
+    align-content: flex-start;
+    color: #fff;
+}
+
+    .chat-message .timestamp {
+    font-size: 10px;
+    color: #888;
+    margin-top: 5px;
+    position: absolute;
+    bottom: -15px;
+    right: 10px;
+}
+
+
+    .chat-message .date {
+        font-size: 10px;
+        color: #888;
+        position: absolute;
+        bottom: -15px;
+        left: 10px;
     }
 
-    .chat-message.sender {
-        background-color: #DCF8C6;
-        align-self: flex-end;
-        text-align: right;
-    }
-
-    .chat-message.receiver {
-        background-color: #b0f3b9;
-        align-self: flex-start;
-        text-align: left;
-    }
+    #chat-window {
+    display: flex;
+    flex-direction: column;
+    height: 66vh;
+    width: 120vh;
+    overflow-y: auto;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    padding: 30px;
+    gap: 25px;
+}
 
     .sent-message {
         align-self: flex-end;
@@ -47,18 +76,10 @@
     .received-message {
         align-self: flex-start;
         background-color: #E5E5EA;
-        text-align: left;
+        text-align: flex-start;
         justify-content: flex-start;
-    }
-
-    .chat-message .text {
-        font-size: 14px;
-    }
-
-    .chat-message .timestamp {
-        font-size: 10px;
-        color: #888;
-        margin-top: 5px;
+        align-items: flex-start;
+        align-content: flex-start;
     }
 
     /* Container */
@@ -269,44 +290,47 @@
 }
 
 
-    async function loadChatHistory(userId) {
-    try {
-        const response = await fetch(`${baseChatUrl}${userId}/`);
-        if (!response.ok) throw new Error('Failed to load chat history.');
+async function loadChatHistory(userId) {
+        try {
+            const response = await fetch(`${baseChatUrl}${userId}/`);
+            if (!response.ok) throw new Error('Failed to load chat history.');
 
-        const data = await response.json();
-        const chatWindow = document.getElementById('chat-window');
-        chatWindow.innerHTML = ''; // Clear existing messages
+            const data = await response.json();
+            const chatWindow = document.getElementById('chat-window');
+            chatWindow.innerHTML = ''; // Clear existing messages
 
-        if (data.status === 'success' && data.messages.length > 0) {
-            data.messages.forEach((message) => {
-                const messageElement = document.createElement('div');
-                messageElement.classList.add('chat-message');
-                messageElement.setAttribute('data-message-id', message.id);
+            if (data.status === 'success' && data.messages.length > 0) {
+                data.messages.forEach((message) => {
+                    const messageElement = document.createElement('div');
+                    messageElement.classList.add('chat-message');
 
-                // Determine the alignment and styling based on the sender
-                if (message.sender__username === data.current_user) {
-                    // User's message (sent by the logged-in user)
-                    messageElement.classList.add('sent-message');
-                } else {
-                    // Other user's message (received)
-                    messageElement.classList.add('received-message');
-                }
+                    // Determine the alignment and styling based on the sender
+                    if (message.sender__username === data.current_user) {
+                        messageElement.classList.add('sender');
+                    } else {
+                        messageElement.classList.add('receiver');
+                    }
 
-                messageElement.innerHTML = `
-                    <span class="text">${message.message}</span>
-                    <span class="timestamp">${new Date(message.date_sent).toLocaleTimeString()}</span>
-                `;
+                    // Create inner HTML with timestamp and date outside the box
+                    const messageDate = new Date(message.date_sent);
+                    const formattedTime = messageDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    const formattedDate = messageDate.toLocaleDateString();
 
-                chatWindow.appendChild(messageElement);
-            });
+                    messageElement.innerHTML = `
+                        <span class="text">${message.message}</span>
+                        <span class="timestamp">${formattedTime}</span>
+                        <span class="date">${formattedDate}</span>
+                    `;
 
-            chatWindow.scrollTop = chatWindow.scrollHeight; // Scroll to the bottom
+                    chatWindow.appendChild(messageElement);
+                });
+
+                chatWindow.scrollTop = chatWindow.scrollHeight; // Scroll to the bottom
+            }
+        } catch (error) {
+            console.error('Error loading chat history:', error);
         }
-    } catch (error) {
-        console.error('Error loading chat history:', error);
     }
-}
 
 
     async function sendMessage() {
@@ -440,6 +464,7 @@
             console.error('Error loading user chats:', error);
         }
     }
+    
 
     // Call the function to load chats when the page loads
     window.onload = loadUserChats;
