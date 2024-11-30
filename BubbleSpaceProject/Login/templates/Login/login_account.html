@@ -6,131 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BubbleSpace Login</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{% static 'base2.css' %}">
+    <link rel="stylesheet" href="{% static 'Login/loginStyle.css' %}">
     <style>
-        /* Base Variables */
-        :root {
-            --primary-color: #1e3d58;
-            --secondary-color: #4db8b8;
-            --background-color: #f5f5f5;
-            --text-color: #333;
-            --accent-color: #4db8b8;
-        }
-
-        /* Body Styling */
-        body {
-            background-color: var(--background-color);
-            font-family: Arial, sans-serif;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-        }
-
-        /* Login Container */
-        .login-container {
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 450px;
-            padding: 20px 30px;
-        }
-
-        /* Header Styling */
-        .login-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .login-header a {
-            font-size: 14px;
-            color: var(--primary-color);
-            text-decoration: none;
-        }
-
-        .login-header a:hover {
-            text-decoration: underline;
-        }
-
-        .logo-circle {
-            width: 60px;
-            height: 60px;
-            background-color: var(--secondary-color);
-            border-radius: 50%;
-            margin: 0 auto 15px;
-        }
-
-        /* Form Styling */
-        h1 {
-            text-align: center;
-            font-size: 24px;
-            font-weight: bold;
-            color: var(--primary-color);
-        }
-
-        form {
-            margin-top: 15px;
-        }
-
-        label {
-            font-size: 14px;
-            color: var(--primary-color);
-        }
-
-        input[type="text"],
-        input[type="password"] {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 14px;
-        }
-
-        input[type="text"]:focus,
-        input[type="password"]:focus {
-            border-color: var(--secondary-color);
-            outline: none;
-        }
-
-        .password-container {
-            position: relative;
-        }
-
-        .toggle-password {
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 12px;
-            color: var(--text-color);
-            cursor: pointer;
-        }
-
-        /* Login Button */
-        .btn-login {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 10px;
-            width: 100%;
-            font-size: 16px;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-        }
-
-        .btn-login:hover {
-            background-color: var(--secondary-color);
-        }
-
-        /* Error Message */
-        .error-message {
-            color: red;
-            font-size: 12px;
-        }
+       
     </style>
 </head>
 <body>
@@ -143,11 +21,15 @@
         <h1>BubbleSpace</h1>
         <form id="login-form" action="{% url 'login' %}" method="POST">
             {% csrf_token %}
+            {% if errors.username %}
+            <div class="error-message">
+                <i class="bi bi-exclamation-triangle"></i>
+                <span>{{ errors.username }}</span>
+            </div>
+          {% endif %}
             <label for="username">Username</label>
             <input type="text" id="username" name="username" placeholder="Enter your username">
-            {% if errors.username %}
-                <div class="error-message">{{ errors.username }}</div>
-            {% endif %}
+         
 
             <label for="password">Password</label>
             <div class="password-container">
@@ -155,7 +37,10 @@
                 <span class="toggle-password" onclick="togglePassword()">👁️ Show</span>
             </div>
             {% if errors.password %}
-                <div class="error-message">{{ errors.password }}</div>
+                <div class="error-message">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    <span>{{ errors.password }}</span>
+                </div>
             {% endif %}
 
             <button type="submit" class="btn-login">Log In</button>
