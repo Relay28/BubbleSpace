@@ -97,6 +97,9 @@ def home_view(request):
         'notes': notes,
     })
 
+def landing_page(request):
+    return render(request, 'LandingPage/LandingPage.html')
+
 
 @login_required
 def appbar_view(request):
