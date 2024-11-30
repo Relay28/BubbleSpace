@@ -1,5 +1,9 @@
 from django import forms
 from .models import Task
+from Teams.models import Team 
+from django.contrib.auth import get_user_model
+User = get_user_model()
+from Login.models import Users_Account 
 
 class TaskForm(forms.ModelForm):
     class Meta:
@@ -93,3 +97,14 @@ class ProjectTaskForm(forms.ModelForm):
                 ),
             }),
         }
+    
+    def __init__(self, *args, **kwargs):
+        project = kwargs.pop('project', None)  # Extract the project from kwargs
+        super().__init__(*args, **kwargs)
+
+        if project:
+            self.fields['assigned_to'].queryset = Users_Account.objects.filter(
+                teams__projects=project
+            ).distinct()
+        else:
+            self.fields['assigned_to'].queryset = Users_Account.objects.none()

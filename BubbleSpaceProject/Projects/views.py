@@ -5,7 +5,8 @@ from Teams.models import Team
 from .forms import ProjectForm
 from Tasks.forms import TaskForm,ProjectTaskForm
 from django.contrib.auth.decorators import login_required
-
+from Login.models import Users_Account 
+from django.urls import reverse
 # Create your views here.
 
 # Project List View
@@ -30,37 +31,41 @@ def project_detail(request, pk):
 # Create Project View
 @login_required
 def project_create(request, team_id):
+    print(f"Received team_id: {team_id}")  # Debugging line
     team = get_object_or_404(Team, pk=team_id)
 
     if request.method == 'POST':
         form = ProjectForm(request.POST)
         if form.is_valid():
             project = form.save()
-            team.projects.add(project)  # Add the project to the team's projects
-            return redirect('team_detail', pk=team.pk)  # Redirect to the team's detail page after creating the project
+            team.projects.add(project)
+            return redirect('team_detail', pk=team.pk)
     else:
         form = ProjectForm()
 
     return render(request, 'teams/team_detail.html', {'form': form, 'team': team})
 
+
 # Task Create for a Specific Project
 @login_required
 def task_create_for_project(request, project_id):
-    project = get_object_or_404(Project, pk=project_id)
+    project = get_object_or_404(Project, pk=project_id)  # Fetch the project
 
     if request.method == 'POST':
-        form = ProjectTaskForm(request.POST)
+        form = ProjectTaskForm(request.POST, project=project)  # Pass project to form
         if form.is_valid():
             task = form.save(commit=False)
-            task.project = project  # Assign the task to the specified project
-            task.created_by = request.user  # Assign the currently logged-in user
+            task.project = project
+            task.created_by = request.user
+            task.assigned_to = form.cleaned_data['assigned_to']  # Explicitly save the selected user
             task.save()
-            # After saving the task, redirect to the project form for the same project
-            return redirect('project_form', pk=project.pk)  # Use project.pk instead of project.id
-    else:
-        form = ProjectTaskForm()
+            return redirect(f"{reverse('project_list')}?project_id={project.ProjectId}")
 
-    return render(request, 'Projects/task_form.html', {'form': form, 'project': project})
+    else:
+        form = ProjectTaskForm(project=project)  # Pass project to form
+
+    return render(request, 'projects/task_form.html', {'form': form})
+
 
 def project_tasks(request, pk):
     project = get_object_or_404(Project, pk=pk)

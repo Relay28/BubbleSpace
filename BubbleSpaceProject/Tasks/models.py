@@ -2,7 +2,7 @@ from django.db import models
 # models.py
 
 from django.conf import settings
-
+from Login.models import Users_Account 
 class Task(models.Model):
     title = models.CharField(max_length=255)
     CATEGORY_CHOICES = [
@@ -22,7 +22,7 @@ class Task(models.Model):
     due_date = models.DateField()
     description = models.TextField()
     status = models.CharField(max_length=10, choices=STATUS_CHOICES)
-    assigned_to = models.CharField(max_length=100)
+    assigned_to = models.ForeignKey(Users_Account, on_delete=models.SET_NULL, null=True, blank=True)
     is_read = models.BooleanField(default=False) 
     created_by = models.ForeignKey(
         settings.AUTH_USER_MODEL, 
