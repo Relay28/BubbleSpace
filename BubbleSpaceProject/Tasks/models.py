@@ -13,9 +13,9 @@ class Task(models.Model):
         ('Category 5', 'Category 5'),
     ]
     STATUS_CHOICES = [
-        ('Completed', 'Completed'),
-        ('Ongoing', 'Ongoing'),
-        ('Todo', 'Todo'),
+        ('green', 'Completed'),
+        ('yellow', 'Ongoing'),
+        ('red', 'Todo'),
     ]
     task_id = models.AutoField(primary_key=True)
     category = models.CharField(max_length=20, choices=CATEGORY_CHOICES)
