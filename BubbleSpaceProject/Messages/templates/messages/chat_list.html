@@ -13,7 +13,8 @@
         overflow-y: auto;
         background-color: #ffffff;
         border: 1px solid #ddd;
-       
+        padding:30px;
+        gap:15px;
     }
 
     .chat-message {
@@ -79,13 +80,12 @@
     .chat-list {
         flex: 1;
         border: 1px solid #ccc;
-        border-radius: 8px;
         overflow-y: auto;
         padding: 15px;
     }
 
     #search-input {
-        width: 53vh;
+        width: 100%;
         padding: 10px;
         margin-bottom: 10px;
         border: 1px solid #ccc;
@@ -94,7 +94,7 @@
 
     #user-suggestions {
         list-style-type: none;
-        padding: 0;
+        padding: 10px;
         margin: 0;
         display: none;
         border: 1px solid #ccc;
@@ -104,7 +104,7 @@
         position: absolute;
         z-index: 100;
         background-color: #fff;
-        width:26.8%;
+        width:26.4%;
     }
 
     #chat-items {
@@ -131,7 +131,6 @@
     .chat-window {
         flex: 2;
         border: 1px solid #ccc;
-        border-radius: 8px;
         display: flex;
         flex-direction: column;
     }
@@ -140,8 +139,6 @@
         border-bottom: 1px solid #ccc;
         background-color: #1e3d58;
         padding: 15px;
-        border-top-left-radius: 8px;
-        border-top-right-radius: 8px;
         color: #fff;
     }
 
