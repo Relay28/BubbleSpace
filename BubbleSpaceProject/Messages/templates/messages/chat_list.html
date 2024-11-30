@@ -190,6 +190,38 @@
         border-radius: 4px;
         cursor: pointer;
     }
+
+    .edit-icon {
+        font-size: 17px;
+        cursor: pointer;
+        margin-left: 5px;
+        position: absolute;
+        bottom: 6px;
+        right: 8px;
+        gap: 8px;
+    }
+
+    .delete-icon {
+        font-size: 17px;
+        cursor: pointer;
+        margin-left: 8px;
+        position: absolute;
+        bottom: 6px;
+        right: 30px;
+        gap: 8px;
+    }
+
+    .edit-icon {
+        color: #33c5ff; /* Edit icon color */
+    }
+
+    .delete-icon {
+        color: #33c5ff; /* Delete icon color */
+    }
+
+    .edit-icon:hover, .delete-icon:hover {
+        opacity: 0.8;
+    }
 </style>
 
 <div class="container">
@@ -291,46 +323,55 @@
 
 
 async function loadChatHistory(userId) {
-        try {
-            const response = await fetch(`${baseChatUrl}${userId}/`);
-            if (!response.ok) throw new Error('Failed to load chat history.');
+    try {
+        const response = await fetch(`${baseChatUrl}${userId}/`);
+        if (!response.ok) throw new Error('Failed to load chat history.');
 
-            const data = await response.json();
-            const chatWindow = document.getElementById('chat-window');
-            chatWindow.innerHTML = ''; // Clear existing messages
+        const data = await response.json();
+        const chatWindow = document.getElementById('chat-window');
+        chatWindow.innerHTML = ''; // Clear existing messages
 
-            if (data.status === 'success' && data.messages.length > 0) {
-                data.messages.forEach((message) => {
-                    const messageElement = document.createElement('div');
-                    messageElement.classList.add('chat-message');
+        if (data.status === 'success' && data.messages.length > 0) {
+            data.messages.forEach((message) => {
+                const messageElement = document.createElement('div');
+                messageElement.classList.add('chat-message');
 
-                    // Determine the alignment and styling based on the sender
-                    if (message.sender__username === data.current_user) {
-                        messageElement.classList.add('sender');
-                    } else {
-                        messageElement.classList.add('receiver');
+                // Determine the alignment and styling based on the sender
+                if (message.sender__username === data.current_user) {
+                    messageElement.classList.add('sender');
+                } else {
+                    messageElement.classList.add('receiver');
+                }
+
+                // Create inner HTML with timestamp, date, and action icons
+                const messageDate = new Date(message.date_sent);
+                const formattedTime = messageDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                const formattedDate = messageDate.toLocaleDateString();
+
+                messageElement.innerHTML = `
+                    <span class="text">${message.message}</span>
+                    <span class="timestamp">${formattedTime}</span>
+                    <span class="date">${formattedDate}</span>
+                    ${
+                        message.sender__username === data.current_user
+                            ? `
+                        <i class="bi bi-pencil-square edit-icon" onclick="editMessage(${message.id})" title="Edit"></i>
+                        <i class="bi bi-trash delete-icon" onclick="deleteMessage(${message.id})" title="Delete"></i>
+                        `
+                            : ""
                     }
+                `;
 
-                    // Create inner HTML with timestamp and date outside the box
-                    const messageDate = new Date(message.date_sent);
-                    const formattedTime = messageDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                    const formattedDate = messageDate.toLocaleDateString();
+                chatWindow.appendChild(messageElement);
+            });
 
-                    messageElement.innerHTML = `
-                        <span class="text">${message.message}</span>
-                        <span class="timestamp">${formattedTime}</span>
-                        <span class="date">${formattedDate}</span>
-                    `;
-
-                    chatWindow.appendChild(messageElement);
-                });
-
-                chatWindow.scrollTop = chatWindow.scrollHeight; // Scroll to the bottom
-            }
-        } catch (error) {
-            console.error('Error loading chat history:', error);
+            chatWindow.scrollTop = chatWindow.scrollHeight; // Scroll to the bottom
         }
+    } catch (error) {
+        console.error('Error loading chat history:', error);
     }
+}
+
 
 
     async function sendMessage() {
