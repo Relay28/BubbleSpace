@@ -563,38 +563,57 @@
     }
 }); 
 
-        searchMemberInput.addEventListener('input', function() {
-            const query = searchMemberInput.value.trim();
-            if (query.length > 0) {
-                fetch(`/bubblespace/teams/search-members/?q=${encodeURIComponent(query)}&team_id=${teamId}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        memberSuggestions.innerHTML = '';
-                        if (data.length > 0) {
-                            data.forEach(user => {
-                                if (user.id !== parseInt(currentUserId)) {
-                                    const li = document.createElement('li');
-                                    li.textContent = user.username;
-                                    li.dataset.id = user.id;
-                                    li.className = 'list-group-item';
-                                    li.addEventListener('click', function() {
-                                        addMember(user);
-                                    });
-                                    memberSuggestions.appendChild(li);
-                                }
-                            });
-                        } else {
-                            memberSuggestions.innerHTML = '<li class="list-group-item text-muted">No users found</li>';
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error fetching user suggestions:', error);
-                        memberSuggestions.innerHTML = `<li class="list-group-item text-danger">Error: ${error.message}</li>`;
-                    });
-            } else {
+searchMemberInput.addEventListener('input', function() {
+    const query = searchMemberInput.value.trim();
+    if (query.length > 0) {
+        fetch(`/bubblespace/teams/search-members/?q=${encodeURIComponent(query)}&team_id=${teamId}`)
+            .then(response => response.json())
+            .then(data => {
                 memberSuggestions.innerHTML = '';
-            }
-        });
+                if (data.length > 0) {
+                    data.forEach(user => {
+                        if (user.id !== parseInt(currentUserId)) {
+                            const li = document.createElement('li');
+                            li.className = 'list-group-item d-flex align-items-center';
+
+                            // Add profile picture
+                            if (user.profile_picture) {
+                                const img = document.createElement('img');
+                                img.src = user.profile_picture;
+                                img.alt = `${user.username}'s profile picture`;
+                                img.className = 'rounded-circle me-3';
+                                img.style.width = '40px';
+                                img.style.height = '40px';
+                                li.appendChild(img);
+                            }
+
+                            // Add username
+                            const span = document.createElement('span');
+                            span.textContent = user.username;
+                            li.appendChild(span);
+
+                            // Add click event
+                            li.dataset.id = user.id;
+                            li.addEventListener('click', function() {
+                                addMember(user);
+                            });
+
+                            memberSuggestions.appendChild(li);
+                        }
+                    });
+                } else {
+                    memberSuggestions.innerHTML = '<li class="list-group-item text-muted">No users found</li>';
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching user suggestions:', error);
+                memberSuggestions.innerHTML = `<li class="list-group-item text-danger">Error: ${error.message}</li>`;
+            });
+    } else {
+        memberSuggestions.innerHTML = '';
+    }
+});
+
 
         function addMember(user) {
             if (!selectedMembers.some(member => member.id === user.id)) {

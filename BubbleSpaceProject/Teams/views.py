@@ -12,6 +12,7 @@ from django.db.models import Q
 from django.shortcuts import render
 from django.template.loader import render_to_string
 from Projects.forms import ProjectForm
+from django.conf import settings
 User = get_user_model()
 
 @login_required
@@ -152,9 +153,9 @@ def search_member(request):
     users = User.objects.filter(
         Q(username__icontains=query) & ~Q(id__in=existing_member_ids)
     ).exclude(id=request.user.id)[:10]  # Limit results to 10
-
+    default_profile_picture = f"{settings.MEDIA_URL}profile_pictures/default.svg"
     # Prepare data for the response
-    user_data = [{'id': user.id, 'username': user.username} for user in users]
+    user_data = [{'id': user.id, 'username': user.username,'profile_picture':user.profile_picture.url if user.profile_picture else default_profile_picture} for user in users]
 
     # Return the JSON response
     return JsonResponse(user_data, safe=False)
