@@ -79,7 +79,10 @@
                     <div class="rounded-circle bg-success text-white d-flex justify-content-center align-items-center me-3" style="width: 30px; height: 30px;">
                         <i class="bi bi-check-circle" style="font-size: 16px;"></i>
                     </div>
-                    <a href="{% url 'task_detail' task.pk %}" class="text-decoration-none text-dark" style="font-size: 14px;">
+                    <a href="#" 
+                        class="text-decoration-none text-dark" 
+                        style="font-size: 14px;" 
+                        onclick="showTaskDetails('{{ task.title }}', '{{ task.description }}', '{{ task.due_date }}', '{{ task.status }}')">
                         {{ task.title }}
                     </a>
                 </div>
@@ -126,7 +129,10 @@
                     <div class="rounded-circle bg-warning text-dark d-flex justify-content-center align-items-center me-3" style="width: 30px; height: 30px;">
                         <i class="bi bi-clock" style="font-size: 16px;"></i>
                     </div>
-                    <a href="{% url 'task_detail' task.pk %}" class="text-decoration-none text-dark" style="font-size: 14px;">
+                    <a href="#" 
+                        class="text-decoration-none text-dark" 
+                        style="font-size: 14px;" 
+                        onclick="showTaskDetails('{{ task.title }}', '{{ task.description }}', '{{ task.due_date }}', '{{ task.status }}')">
                         {{ task.title }}
                     </a>
                 </div>
@@ -173,7 +179,10 @@
                     <div class="rounded-circle bg-danger text-white d-flex justify-content-center align-items-center me-3" style="width: 30px; height: 30px;">
                         <i class="bi bi-list-check" style="font-size: 16px;"></i>
                     </div>
-                    <a href="{% url 'task_detail' task.pk %}" class="text-decoration-none text-dark" style="font-size: 14px;">
+                    <a href="#" 
+                        class="text-decoration-none text-dark" 
+                        style="font-size: 14px;" 
+                        onclick="showTaskDetails('{{ task.title }}', '{{ task.description }}', '{{ task.due_date }}', '{{ task.status }}')">
                         {{ task.title }}
                     </a>
                 </div>
@@ -219,7 +228,10 @@
                     <div class="rounded-circle {% if task.status == 'green' %}bg-success{% elif task.status == 'yellow' %}bg-warning{% else %}bg-danger{% endif %} text-white d-flex justify-content-center align-items-center me-3" style="width: 30px; height: 30px;">
                         <i class="bi {% if task.status == 'green' %}bi-check-circle{% elif task.status == 'yellow' %}bi-clock{% else %}bi-list-check{% endif %}" style="font-size: 16px;"></i>
                     </div>
-                    <a href="{% url 'task_detail' task.pk %}" class="text-decoration-none text-dark" style="font-size: 14px;">
+                    <a href="#" 
+                        class="text-decoration-none text-dark" 
+                        style="font-size: 14px;" 
+                        onclick="showTaskDetails('{{ task.title }}', '{{ task.description }}', '{{ task.due_date }}', '{{ task.status }}')">
                         {{ task.title }}
                     </a>
                 </div>
@@ -274,6 +286,26 @@
     </div>
 </div>
 
+<!-- Task Details Modal -->
+<div class="modal fade" id="taskDetailsModal" tabindex="-1" aria-labelledby="taskDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="taskDetailsModalLabel">Task Details</h5>
+            </div>
+            <div class="modal-body">
+                <p><strong>Title:</strong> <span id="modal-task-title"></span></p>
+                <p><strong>Description:</strong> <span id="modal-task-description"></span></p>
+                <p><strong>Due Date:</strong> <span id="modal-task-due-date"></span></p>
+                <p><strong>Status:</strong> <span id="modal-task-status"></span></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     document.getElementById('new-task-btn').addEventListener('click', function() {
         document.getElementById('task-form-container').style.display = 'block';
@@ -321,6 +353,18 @@
         // Update the form action URL with the correct task ID
         const deleteForm = document.getElementById('delete-task-form');
         deleteForm.action = `/bubblespace/tasks/task/${taskId}/delete/`;
+    }
+
+    function showTaskDetails(title, description, dueDate, status) {
+        // Populate modal content
+        document.getElementById('modal-task-title').textContent = title;
+        document.getElementById('modal-task-description').textContent = description;
+        document.getElementById('modal-task-due-date').textContent = dueDate ? new Date(dueDate).toLocaleDateString() : 'N/A';
+        document.getElementById('modal-task-status').textContent = status.charAt(0).toUpperCase() + status.slice(1);
+
+        // Show the modal
+        var taskDetailsModal = new bootstrap.Modal(document.getElementById('taskDetailsModal'));
+        taskDetailsModal.show();
     }
 </script>
 {% endblock %}
