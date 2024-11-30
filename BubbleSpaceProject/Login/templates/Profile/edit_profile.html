@@ -9,12 +9,12 @@
         <p class="text-muted">Update your personal information and preferences.</p>
     </div>
 
-    <div class="card shadow-lg border-0 rounded-4 mx-auto" style="max-width: 700px;">
-        <div class="card-body">
+    <div class="card shadow-lg border-0 rounded-4 mx-auto" style="max-width: 700px; height:470px;">
+        <div class="card-body mt-4">
             <div class="d-flex align-items-center mb-4 position-relative">
-                <div class="me-3 position-relative">
+                <div class="me-3 position-relative"  >
                     {% if profile_picture %}
-                        <img src="{{ user.profile_picture.url }}" alt="Profile Picture" class="rounded-circle" style="width: 100px; height: 100px; object-fit: cover;">
+                        <img src="{{ user.profile_picture.url }}" alt="Profile Picture" class="rounded-circle shadow-lg " style="width: 100px; height: 100px; object-fit: cover;border: 1px solid;">
                     {% else %}
                         <div class="bg-secondary rounded-circle text-white d-flex justify-content-center align-items-center" style="width: 100px; height: 100px;">
                             <span class="fs-1">👤</span>
@@ -71,7 +71,7 @@
 
                 <div class="mt-4 text-center">
                     <button type="submit" class="btn btn-primary px-5">Save Changes</button>
-                    <button class="btn btn-outline-secondary px-5"><a href="{% url 'profile' %}">Cancel</a></button>
+                    <button class="btn btn-outline-secondary px-5"><a href="{% url 'profile' %}" style="text-decoration: none;">Cancel</a></button>
                 </div>
             </form>
         </div>

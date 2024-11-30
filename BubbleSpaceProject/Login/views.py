@@ -12,6 +12,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from django.shortcuts import redirect
 from django.contrib.auth import logout
+from django.conf import settings
 from django.contrib import messages
 from django.db.models import Q
 from Tasks.models import Task  # Replace with your actual app name
@@ -20,7 +21,7 @@ from notes.models import Note  # Replace with your actual app name
 def register_view(request):
     if request.method == 'POST':
         try:
-            data = json.loads(request.body) if request.content_type == 'application/json' else request.POST
+            data = request.POST
 
             username = data.get('username')
             password = data.get('password')
@@ -28,13 +29,16 @@ def register_view(request):
             lname = data.get('lname')
             gender = data.get('gender')
             birthDate = data.get('birthDate')
-            custom_gender = request.POST.get('custom_gender')
+            custom_gender = data.get('custom_gender')
             if gender == 'Other':
                 gender = custom_gender
 
             # Check if the username already exists
             if Users_Account.objects.filter(username=username).exists():
-                return JsonResponse({"error": "Username already exists"}, status=400)
+                return render(request, 'Register/register_account.html', {
+                    'error': "Username already exists",
+                    'data': data  # Pass the filled data to the template
+                })
 
             # Create and save the new user
             user = Users_Account(username=username, fname=fname, lname=lname, gender=gender, birthDate=birthDate)
@@ -43,9 +47,12 @@ def register_view(request):
             return redirect('login') 
 
         except json.JSONDecodeError:
-            return JsonResponse({"error": "Invalid JSON format"}, status=400)
+            return render(request, 'Register/register_account.html', {
+                'error': "Invalid form data"
+            })
 
     return render(request, 'Register/register_account.html')
+
 
 def custom_authenticate(username, password):
     try:
@@ -103,6 +110,7 @@ def help_view(request):
 def profile_view(request):
     if request.user.is_authenticated:
         user = request.user
+        default_profile_picture = f"{settings.MEDIA_URL}profile_pictures/default.svg"
         user_data = {
             "username": user.username,
             "fname": user.fname,
@@ -110,7 +118,7 @@ def profile_view(request):
             "gender": user.gender,
             "birthDate": user.birthDate.strftime('%d/%m/%Y'),  # Format as needed
             "age": user.age,
-             "profile_picture": user.profile_picture.url if user.profile_picture else None  # Add profile picture URL
+            "profile_picture": user.profile_picture.url if user.profile_picture else None  # Add profile picture URL
         }
         return render(request, 'Profile/profile_account.html', user_data)
     return redirect('login')

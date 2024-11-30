@@ -50,7 +50,7 @@ class Users_Account(AbstractBaseUser, PermissionsMixin):
         return self.username
     def delete(self, *args, **kwargs):
         # Delete the profile picture from storage when deleting the user
-        if self.profile_picture and self.profile_picture.name != 'profile_pictures/default.svg':
+        if self.profile_picture and self.profile_picture.name != 'media/profile_pictures/default.svg':
             if os.path.isfile(self.profile_picture.path):
                 os.remove(self.profile_picture.path)
         super().delete(*args, **kwargs)
