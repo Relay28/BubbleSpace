@@ -9,6 +9,9 @@ from django.db import IntegrityError
 from django.http import JsonResponse
 from django.contrib.auth import get_user_model
 from django.db.models import Q
+from django.shortcuts import render
+from django.template.loader import render_to_string
+from Projects.forms import ProjectForm
 User = get_user_model()
 
 @login_required
@@ -36,26 +39,37 @@ def team_list(request):
 @login_required
 def team_detail(request, pk):
     team = get_object_or_404(Team, pk=pk)
+    form = ProjectForm() 
     members = team.members.all()
     projects = team.projects.all()  # Get only projects related to this team
-    return render(request, 'teams/team_detail.html', {'team': team, 'members': members, 'projects': projects})
-
+    return render(request, 'teams/team_detail.html', {'team': team, 'members': members, 'projects': projects,'form':form})
 
 @login_required
 def team_create(request):
     if request.method == 'POST':
-        form = TeamForm(request.POST,  request.FILES,creator=request.user, is_creation=True)
+        form = TeamForm(request.POST, request.FILES, creator=request.user, is_creation=True)
         if form.is_valid():
             team = form.save(commit=False)
             team.creator = request.user  # Set the creator
             team.save()
             team.members.add(request.user)  # Add the creator as a member
-            messages.success(request, "Team created successfully.")
-            return redirect('team_list')
-    else:
-        form = TeamForm(creator=request.user, is_creation=True)
-    return render(request, 'teams/team_form.html', {'form': form})
+            
+            # Render the updated team list to include the new team
+            team_list_html = render_to_string('teams/team_list.html', {'teams': Team.objects.all()}, request=request)
 
+            return JsonResponse({
+                'success': True,
+                'message': "Team created successfully.",
+                'team_list_html': team_list_html,
+            })
+
+        return JsonResponse({
+            'success': False,
+            'error': "Invalid form data.",
+            'errors': form.errors,
+        }, status=400)
+    
+    return JsonResponse({'success': False, 'error': 'Invalid request method.'}, status=405)
 # @login_required
 # def team_update(request, pk):
 #     team = get_object_or_404(Team, pk=pk)

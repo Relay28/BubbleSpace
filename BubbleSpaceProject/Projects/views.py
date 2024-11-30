@@ -41,7 +41,7 @@ def project_create(request, team_id):
     else:
         form = ProjectForm()
 
-    return render(request, 'Projects/project_form.html', {'form': form, 'team': team})
+    return render(request, 'teams/team_detail.html', {'form': form, 'team': team})
 
 # Task Create for a Specific Project
 @login_required
