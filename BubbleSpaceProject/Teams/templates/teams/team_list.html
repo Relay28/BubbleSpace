@@ -156,49 +156,49 @@
     }
     // For Create Team Modal Popup
     document.addEventListener('DOMContentLoaded', function() {
-        const createTeamForm = document.getElementById('createTeamForm');
-        const createTeamFormFeedback = document.getElementById('createTeamFormFeedback');
+    const createTeamForm = document.getElementById('createTeamForm');
+    const createTeamFormFeedback = document.getElementById('createTeamFormFeedback');
 
-        createTeamForm.addEventListener('submit', function(event) {
-            event.preventDefault();
+    createTeamForm.addEventListener('submit', function(event) {
+        event.preventDefault();
 
-            const formData = new FormData(createTeamForm);
-            fetch("{% url 'team_create' %}", {
-                method: "POST",
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest',
-                },
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    createTeamFormFeedback.classList.remove('d-none', 'alert-danger');
-                    createTeamFormFeedback.classList.add('alert-success');
-                    createTeamFormFeedback.textContent = "Team created successfully!";
+        const formData = new FormData(createTeamForm);
+        fetch("{% url 'team_create' %}", {
+            method: "POST",
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                createTeamFormFeedback.classList.remove('d-none', 'alert-danger');
+                createTeamFormFeedback.classList.add('alert-success');
+                createTeamFormFeedback.textContent = "Team created successfully!";
 
-                    // Update the team list dynamically
-                    const teamListContainer = document.getElementById('teamListContainer');
-                   // teamListContainer.innerHTML = data.team_list_html;
+                // Close the modal after a delay
+                setTimeout(() => {
+                    const createTeamModal = bootstrap.Modal.getInstance(document.getElementById('createTeamModal'));
+                    createTeamModal.hide();
+                    createTeamForm.reset();
 
-                    // Close the modal after a delay
-                    setTimeout(() => {
-                        const createTeamModal = bootstrap.Modal.getInstance(document.getElementById('createTeamModal'));
-                        createTeamModal.hide();
-                        createTeamForm.reset();
-                    }, 1000);
-                } else {
-                    createTeamFormFeedback.classList.remove('d-none', 'alert-success');
-                    createTeamFormFeedback.classList.add('alert-danger');
-                    createTeamFormFeedback.textContent = data.error || "Failed to create team.";
-                }
-            })
-            .catch(error => {
+                    // Reload the page to show updated results
+                    window.location.reload();
+                }, 1000);
+            } else {
                 createTeamFormFeedback.classList.remove('d-none', 'alert-success');
                 createTeamFormFeedback.classList.add('alert-danger');
-                createTeamFormFeedback.textContent = `Error: ${error.message}`;
-            });
+                createTeamFormFeedback.textContent = data.error || "Failed to create team.";
+            }
+        })
+        .catch(error => {
+            createTeamFormFeedback.classList.remove('d-none', 'alert-success');
+            createTeamFormFeedback.classList.add('alert-danger');
+            createTeamFormFeedback.textContent = `Error: ${error.message}`;
         });
     });
+});
+
 </script>
 {% endblock %}
