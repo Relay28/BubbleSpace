@@ -44,7 +44,7 @@
 
 <div class="container py-3">
     <!-- Task List Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-1">
         <h1 class="h1" style="font-size: 24px; font-weight: bold; color: #333;">Tasks</h1>
         <!-- Create New Task Button (Text with background color) -->
     </div>
@@ -52,7 +52,7 @@
     <!-- Task Filter (Status Dropdown) -->
     <div class="mb-4 d-flex justify-content-between align-items-center">
         <!-- Form for dropdown -->
-        <form method="GET" action="{% url 'task_list' %}" class="d-flex">
+        <form method="GET" action="{% url 'task_list' %}" class="d-flex" style="height: 30px;">
             <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
                 <option value="">All Tasks</option>
                 <option value="green" {% if request.GET.status == 'green' %}selected{% endif %}>Completed</option>
