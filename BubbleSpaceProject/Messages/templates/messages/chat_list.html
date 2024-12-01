@@ -188,7 +188,7 @@
     .action-menu {
     position: absolute;
     top: -3px; 
-    left: -20px; 
+    left: -90px; 
     z-index: 10;
 }
 
@@ -382,30 +382,35 @@ async function loadChatHistory(userId) {
                 const messageElement = document.createElement('div');
                 messageElement.classList.add('chat-message');
 
-                // Determine the alignment and styling based on the sender
-                if (message.sender__username === data.current_user) {
-                    messageElement.classList.add('sender');
-                } else {
-                    messageElement.classList.add('receiver');
-                }
-
-                // Create inner HTML with timestamp, date, and action icons
+                // Create formatted time
                 const messageDate = new Date(message.date_sent);
-                const formattedTime = messageDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                const formattedTime = messageDate.toLocaleTimeString([], {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                });
 
-                messageElement.innerHTML = `
-    <div class="action-menu">
-        <i class="bi bi-three-dots" title="More options" onclick="toggleMenu(this)"></i>
-        <div class="dropdown-menu1">
-            <i class="bi bi-pencil-square edit-icon" onclick="editMessage(${message.id}, '${message.message}')" title="Edit">Edit</i>
-            <i class="bi bi-trash delete-icon" onclick="deleteMessage(${message.id})" title="Delete">Delete</i>
-        </div>
-    </div>
-    <span class="text">${message.message}</span>
-    <span class="timestamp">${formattedTime}</span>
-`;
-
-
+                if (message.sender__username === data.current_user) {
+                    // Message sent by the current user
+                    messageElement.classList.add('sender');
+                    messageElement.innerHTML = `
+                        <div class="action-menu">
+                            <i class="bi bi-three-dots" title="More options" onclick="toggleMenu(this)"></i>
+                            <div class="dropdown-menu1">
+                                <i class="bi bi-pencil-square edit-icon" onclick="editMessage(${message.id}, '${message.message}')" title="Edit">Edit</i>
+                                <i class="bi bi-trash delete-icon" onclick="deleteMessage(${message.id})" title="Delete">Delete</i>
+                            </div>
+                        </div>
+                        <span class="text">${message.message}</span>
+                        <span class="timestamp">${formattedTime}</span>
+                    `;
+                } else {
+                    // Message received by the current user
+                    messageElement.classList.add('receiver');
+                    messageElement.innerHTML = `
+                        <span class="text">${message.message}</span>
+                        <span class="timestamp">${formattedTime}</span>
+                    `;
+                }
 
                 chatWindow.appendChild(messageElement);
             });
@@ -416,6 +421,7 @@ async function loadChatHistory(userId) {
         console.error('Error loading chat history:', error);
     }
 }
+
 
 function toggleMenu(element) {
     const dropdown = element.nextElementSibling; // Select the dropdown menu
