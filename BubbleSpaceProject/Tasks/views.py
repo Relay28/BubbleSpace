@@ -5,6 +5,7 @@ from Projects.models import Project
 from .forms import TaskForm
 from django.http import JsonResponse
 ## views.py
+from django.shortcuts import render
 from .models import Task
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
@@ -48,7 +49,7 @@ def task_create(request):
         if form.is_valid():
             task = form.save(commit=False)
             task.created_by = request.user
-            task.status = 'todo'
+            task.status = 'red'
             task.save()
 
             # If the request is AJAX, send a JSON response
@@ -137,21 +138,3 @@ def mark_notification_read(request, task_id):
             })
         except Task.DoesNotExist:
             return JsonResponse({'success': False, 'error': 'Task not found'}, status=404)
-        
-@login_required
-def update_task_status(request, task_id):
-    """Update the status of a specific task."""
-    if request.method == 'POST':
-        task = get_object_or_404(Task, pk=task_id, created_by=request.user)
-        
-        # Get the new status from the form data
-        status = request.POST.get('status')
-        
-        # Validate the status
-        if status in ['green', 'yellow', 'red']:
-            task.status = status
-            task.save()
-            return JsonResponse({'status': 'success', 'new_status': task.status})
-        else:
-            return JsonResponse({'status': 'error', 'message': 'Invalid status'}, status=400)
-    return HttpResponseForbidden("Invalid request method")

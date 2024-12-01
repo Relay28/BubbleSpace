@@ -52,7 +52,7 @@
         .btn-add{
             background-color: #333;
             color: #fff;
-            border-radius: 10px;
+            border-radius: 20px;
             text-decoration: none; /* Removes underline */
             display: inline-block; /* Ensures hover effects apply properly */
             transition: transform 0.3s ease, background-color 0.3s ease; /* Adds smooth transition */
@@ -62,6 +62,72 @@
             color: #fff;
             transform: scale(1.1); /* Slightly enlarges the button */
         }
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .modal-actions button {
+            margin: 5px;
+        }
+        .note-actions {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            position: absolute;
+            right: 15px; /* Align the icons to the right */
+            top: 15px;   /* Position the icons at the top right corner */
+            margin-right: 10px;
+        }
+        .note-actions a {
+            text-decoration: none;
+            font-size: 24px;
+            color: #1e3d58;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+        .note-actions a:hover {
+            color: #ff4d4d;
+            transform: scale(1.1);
+        }
+        /* Style the description field separately */
+    .description-group {
+        margin-top: 20px; /* Adds space before the description */
+    }
+
+    .description-group textarea {
+        width: 100%; /* Makes the textarea fill the available width */
+        height: 150px; /* Adjust the height to enlarge the description field */
+        font-size: 1.2em; /* Enlarges the text inside the description field */
+        padding: 10px; /* Adds padding inside the textarea */
+        border: 1px solid #ccc; /* Optional border style */
+    }
+
+    /* Hover effect for Add Task button */
+    .btn-primary:hover {
+        background-color: #6c6c6c;
+        transform: scale(1.1);
+    }
+
+    /* Hover effect for Cancel button */
+    #cancelTaskButton:hover {
+        background-color: #8b0000;
+        transform: scale(1.1);
+    }
+    .task-form-buttons{
+        margin-top: 10px;
+    }
     </style>
 </head>
 
@@ -77,7 +143,7 @@
 
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1 class="h1" style="font-size: 24px; font-weight: bold; color: #333;">Tasks in {{ project.Title }}</h1>
-            <button id="addTaskButton" class="btn-add">
+            <button id="addTaskButton" class="btn-add" style="padding: 5px; background-color: var(--primary-color); border-radius: 5px;">
                 Add New Task
             </button>
         </div>
@@ -85,38 +151,51 @@
         <!-- Task Form (Create New Task) -->
         <div id="taskFormContainer" class="mb-4" style="display: none;">
             <form id="task-create-form" data-project-id="{{ project.ProjectId }}">
-            {% csrf_token %}
-            <div class="task-form-container">
-                <div class="form-group">
-                    <label for="id_title">Task Title</label>
-                    {{ form.title }}
+                {% csrf_token %}
+                <div class="task-form-container">
+                    <div class="form-group">
+                        <label for="id_title">Task Title</label>
+                        {{ form.title }}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_category">Category</label>
+                        {{ form.category }}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_assigned_to">Assigned To</label>
+                        {{ form.assigned_to }}
+                    </div>
+                    <!-- New Row for Due Date and Status -->
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col">
+                                <label for="id_due_date">Due Date</label>
+                                {{ form.due_date }}
+                            </div>
+                            <div class="col">
+                                <label for="id_status">Status</label>
+                                {{ form.status }}
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group">
+                <div class="form-group description-group">
                     <label for="id_description">Description</label>
                     {{ form.description }}
                 </div>
-                <div class="form-group">
-                    <label for="id_category">Category</label>
-                    {{ form.category }}
+                <div class="task-form-buttons">
+                    <button type="submit" class="btn btn-primary" 
+                        style="background-color: var(--primary-color); color: #fff; text-decoration: none; display: inline-block; transition: transform 0.3s ease, background-color 0.3s ease; border: none;">
+                        Add Task
+                    </button>
+            
+                    <button type="button" id="cancelTaskButton" class="btn btn-secondary" 
+                        style="background-color: #dc3545; color: white; text-decoration: none; display: inline-block; transition: transform 0.3s ease, background-color 0.3s ease; border: none;">
+                        Cancel
+                    </button>
                 </div>
-                <div class="form-group">
-                    <label for="id_assigned_to">Assigned To</label>
-                    {{ form.assigned_to }}
-                </div>
-                <div class="form-group">
-                    <label for="id_due_date">Due Date</label>
-                    {{ form.due_date }}
-                </div>
-                <div class="form-group">
-                    <label for="id_status">Status</label>
-                    {{ form.status }}
-                </div>
-            </div>
-            <div class="task-form-buttons">
-                <button type="submit" class="btn btn-primary">Add Task</button>
-            </div>
-        </form>
-        </div>
+            </form>
+        </div>  
 
         <!-- Task List Header -->
         <div class="task-list-header">
@@ -151,15 +230,52 @@
                                 {% endif %}
                             </div>
                         </span>
-
-                        <span class="task-actions">
-                            <button class="btn btn-link btn-sm edit-task-btn" data-task-id="{{ task.pk }}">
+                        
+                        <div style="display: flex; gap: 10px; margin-right: auto; margin-left: auto; align-items: end;">
+                            <button class="btn btn-link btn-sm edit-task-btn btn-edit" data-task-id="{{ task.task_id }}">
                                 Edit
                             </button>
-                            <button class="btn btn-link btn-sm text-danger delete-task-btn" data-task-id="{{ task.pk }}">
-                                Delete
-                            </button>
-                        </span>
+                            <form action="/bubblespace/projects/project_tasks/delete/{{ task.task_id }}/" method="POST" class="delete-task-form">
+                                {% csrf_token %}
+                                <button type="button" class="delete-task-btn btn-delete-task" data-task-id="{{ task.task_id }}">
+                                    Delete Task
+                                </button>
+                            </form>
+                            
+                            <style>
+                                .btn-edit {
+                                    background-color: var(--primary-color);
+                                    color: #fff;
+                                    text-decoration: none; /* Removes underline */
+                                    display: inline-block; /* Ensures hover effects apply properly */
+                                    transition: transform 0.3s ease, background-color 0.3s ease; /* Adds smooth transition */
+                                    border: none;
+                                    border-radius: 5px;
+                                }
+                            
+                                .btn-edit:hover {
+                                    background-color: #6c6c6c;
+                                    color: #fff;
+                                    transform: scale(1.1); /* Slightly enlarges the button */
+                                }
+
+                                .btn-delete-task{
+                                    background-color: #dc3545;
+                                    color: #fff;
+                                    text-decoration: none; /* Removes underline */
+                                    display: inline-block; /* Ensures hover effects apply properly */
+                                    transition: transform 0.3s ease, background-color 0.3s ease; /* Adds smooth transition */
+                                    border: none;
+                                    border-radius: 5px;
+                                }
+
+                                .btn-delete-task:hover {
+                                    background-color: #8b0000;
+                                    color: #fff;
+                                    transform: scale(1.1); /* Slightly enlarges the button */
+                                }
+                            </style>
+                        </div>
                     </div>
 
                     <!-- Edit Task Form (Inline) -->
@@ -185,22 +301,23 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="id_category_{{ task.pk }}">Category</label>
-                                    <select 
-                                        id="id_category_{{ task.pk }}" 
-                                        name="category" 
-                                        class="form-control">
-                                        <option value="Category1" {% if task.category == "Category1" %}selected{% endif %}>Category1</option>
-                                        <option value="Category2" {% if task.category == "Category2" %}selected{% endif %}>Category2</option>
+                                    <select id="id_category_{{ task.pk }}" name="category" class="form-control">
+                                        {% for choice in form.category.field.choices %}
+                                            <option value="{{ choice.0 }}" {% if task.category == choice.0 %}selected{% endif %}>
+                                                {{ choice.1 }}
+                                            </option>
+                                        {% endfor %}
                                     </select>
                                 </div>
                                 <div class="form-group">
                                     <label for="id_assigned_to_{{ task.pk }}">Assigned To</label>
-                                    <input 
-                                        type="text" 
-                                        id="id_assigned_to_{{ task.pk }}" 
-                                        name="assigned_to" 
-                                        value="{{ task.assigned_to }}" 
-                                        class="form-control">
+                                    <select id="id_assigned_to_{{ task.pk }}" name="assigned_to" class="form-control">
+                                        {% for user in users %}  <!-- Assuming you pass a list of users from the view -->
+                                            <option value="{{ user.id }}" {% if task.assigned_to.id == user.id %}selected{% endif %}>
+                                                {{ user.username }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
                                 </div>
                                 <div class="form-group">
                                     <label for="id_due_date_{{ task.pk }}">Due Date</label>
@@ -224,7 +341,42 @@
                                 </div>
                             </div>
                             <div class="task-form-buttons">
-                                <button type="submit" class="btn btn-primary">Save Changes</button>
+                                <button type="submit" class="btn btn-primary btn-save-changes">
+                                    Save Changes
+                                </button>
+                                <button class="btn btn-link btn-sm edit-task-btn btn-cancel" data-task-id="{{ task.task_id }}">
+                                    Cancel
+                                </button>
+
+                                <style>
+                                    .btn-save-changes{
+                                        background-color: var(--primary-color);
+                                        color: #fff;
+                                        text-decoration: none; /* Removes underline */
+                                        display: inline-block; /* Ensures hover effects apply properly */
+                                        transition: transform 0.3s ease, background-color 0.3s ease; /* Adds smooth transition */
+                                        border: none
+                                    }
+
+                                    .btn-save-changes:hover {
+                                        color: #fff;
+                                        transform: scale(1.1); /* Slightly enlarges the button */
+                                    }
+
+                                    .btn-cancel {
+                                        background-color: #dc3545;
+                                        color: #fff;
+                                        text-decoration: none; /* Removes underline */
+                                        display: inline-block; /* Ensures hover effects apply properly */
+                                        transition: transform 0.3s ease, background-color 0.3s ease; /* Adds smooth transition */
+                                    }
+                                
+                                    .btn-cancel:hover {
+                                        background-color: darkred;
+                                        color: #fff;
+                                        transform: scale(1.1); /* Slightly enlarges the button */
+                                    }
+                                </style>
                             </div>
                         </form>
                     </div>
@@ -235,6 +387,17 @@
             {% endif %}
         </div>
     </div>
+
+    <div id="deleteModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <p>Are you sure you want to delete this task?</p>
+            <div class="modal-actions">
+                <button id="confirmDelete" class="confirm-btn">Yes</button>
+                <button id="cancelDelete" class="cancel-btn">No</button>
+            </div>
+        </div>
+    </div>
+
 <script>
  document.addEventListener("DOMContentLoaded", () => {
     const taskFormContainer = document.getElementById("taskFormContainer");
@@ -244,6 +407,12 @@
     addTaskButton.addEventListener("click", () => {
         taskFormContainer.style.display = "block";
         addTaskButton.style.display = "none";
+    });
+
+    // Hide the task form when the Cancel button is clicked
+    cancelTaskButton.addEventListener("click", () => {
+        taskFormContainer.style.display = "none";
+        addTaskButton.style.display = "inline-block"; // Show the Add Task button again
     });
 
     const taskCreateForm = document.getElementById("task-create-form");
@@ -302,42 +471,19 @@ taskCreateForm.addEventListener("submit", (event) => {
 
     // Handle task deletion
     document.addEventListener("click", (event) => {
-        if (event.target.classList.contains("delete-task-btn")) {
-            const taskId = event.target.getAttribute("data-task-id");
-            const confirmed = confirm("Are you sure you want to delete this task?");
-            if (confirmed) {
-                fetch(`/bubblespace/projects/project_task/delete/${taskId}/`, {
-                    method: "POST",
-                    headers: {
-                        "X-CSRFToken": document.querySelector("[name='csrfmiddlewaretoken']").value,
-                        "Content-Type": "application/json",
-                    },
-                })
-                    .then((response) => {
-                        if (response.ok) {
-                            document.getElementById(`task-${taskId}`).remove();
-                        } else {
-                            throw new Error("Failed to delete task.");
-                        }
-                    })
-                    .catch((error) => {
-                        console.error("Error:", error);
-                        alert("An error occurred while deleting the task.");
-                    });
-            }
-        }
-    });
+    if (event.target.classList.contains("delete-task-btn")) {
+        const taskId = event.target.getAttribute("data-task-id");
+        const deleteModal = document.getElementById("deleteModal");
+        const confirmDeleteButton = document.getElementById("confirmDelete");
+        const cancelDeleteButton = document.getElementById("cancelDelete");
 
-    // Handle task editing
-    document.addEventListener("submit", (event) => {
-        if (event.target.classList.contains("edit-task-form")) {
-            event.preventDefault();
-            const taskId = event.target.getAttribute("data-task-id");
-            const formData = new FormData(event.target);
+        // Show the modal
+        deleteModal.style.display = "flex";
 
-            fetch(`/bubblespace/projects/project_tasks/edit/${taskId}/`, {
+        // Confirm deletion
+        confirmDeleteButton.onclick = () => {
+            fetch(`/bubblespace/projects/project_tasks/delete/${taskId}/`, {
                 method: "POST",
-                body: formData,
                 headers: {
                     "X-CSRFToken": document.querySelector("[name='csrfmiddlewaretoken']").value,
                 },
@@ -345,35 +491,97 @@ taskCreateForm.addEventListener("submit", (event) => {
                 .then((response) => {
                     if (!response.ok) {
                         return response.json().then((data) => {
-                            throw new Error(data.error || "Failed to save task.");
+                            throw new Error(data.error || "Failed to delete task.");
                         });
                     }
                     return response.json();
                 })
                 .then((data) => {
                     if (data.success) {
+                        // Remove the task item from the DOM
                         const taskElement = document.getElementById(`task-${taskId}`);
-                        taskElement.querySelector(".task-item-content span:nth-child(1)").textContent = data.updated_title;
-                        taskElement.querySelector(".task-item-content span:nth-child(2)").textContent = data.updated_description;
-                        taskElement.querySelector(".task-item-content span:nth-child(3)").textContent = data.updated_category;
-                        taskElement.querySelector(".task-item-content span:nth-child(4)").textContent = data.updated_assigned_to;
-                        taskElement.querySelector(".task-item-content span:nth-child(5)").textContent = data.updated_due_date;
-
-                        const statusIcon = taskElement.querySelector(".status-icon");
-                        statusIcon.className = `status-icon ${data.updated_status}`;
-                        statusIcon.innerHTML = data.updated_status_icon;
-
-                        document.getElementById(`edit-form-${taskId}`).style.display = "none";
-                    } else {
-                        alert("Error saving task: " + data.errors);
+                        if (taskElement) {
+                            taskElement.remove();
+                        }
                     }
                 })
                 .catch((error) => {
                     console.error("Error:", error);
-                    alert(error.message || "An error occurred while saving the task.");
+                })
+                .finally(() => {
+                    deleteModal.style.display = "none"; // Hide the modal
                 });
-        }
-    });
+        };
+
+        // Cancel deletion
+        cancelDeleteButton.onclick = () => {
+            deleteModal.style.display = "none"; // Hide the modal
+        };
+    }
+});
+
+    // Handle task editing
+    document.addEventListener("submit", (event) => {
+    if (event.target.classList.contains("edit-task-form")) {
+        event.preventDefault();
+        const taskId = event.target.getAttribute("data-task-id");
+        const formData = new FormData(event.target);
+
+        // Fetch the CSRF token from the form directly, in case it's rendered dynamically
+        const csrfToken = formData.get("csrfmiddlewaretoken") || 
+                          document.querySelector("[name='csrfmiddlewaretoken']").value;
+
+        fetch(`/bubblespace/projects/project_tasks/edit/${taskId}/`, {
+            method: "POST",
+            body: formData,
+            headers: {
+                "X-CSRFToken": csrfToken,
+            },
+        })
+        .then((response) => {
+            if (!response.ok) {
+                return response.json().then((data) => {
+                    // Log the full error response for debugging
+                    console.error("Full error response:", data);
+
+                    // Create a more detailed error message
+                    let errorMessage = data.error_message || "Failed to save task.";
+
+                    // If specific field errors exist, append them
+                    if (data.errors) {
+                        errorMessage += "\n\nDetails:";
+                        Object.entries(data.errors).forEach(([field, errors]) => {
+                            errorMessage += `\n- ${field}: ${errors.join(', ')}`;
+                        });
+                    }
+
+                    throw new Error(errorMessage);
+                });
+            }
+            return response.json();
+        })
+        .then((data) => {
+            if (data.success) {
+                // Hide the form on successful submission
+                document.getElementById(`edit-form-${taskId}`).style.display = "none";
+                window.location.reload();
+
+                // Optionally, update the DOM to reflect changes (e.g., update task details)
+                if (data.updated_task) {
+                    const taskElement = document.getElementById(`task-${taskId}`);
+                    taskElement.querySelector(".task-assigned-to").innerText = data.updated_task.assigned_to;
+                }
+            } else {
+                alert("Error saving task: " + data.errors);
+            }
+        })
+        .catch((error) => {
+            console.error("Error:", error);
+            alert(error.message || "An error occurred while saving the task.");
+        });
+    }
+});
+
 });
 
 </script>    

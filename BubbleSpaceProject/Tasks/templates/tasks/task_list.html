@@ -1,6 +1,47 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
+
+<style>
+    .btn-new-task {
+        background-color: var(--primary-color); /* Use your primary color variable */
+        color: #fff;
+        text-decoration: none; /* Removes underline */
+        display: inline-block; /* Ensures hover effects apply properly */
+        transition: transform 0.3s ease, background-color 0.3s ease; /* Adds smooth transition */
+    }
+
+    .btn-new-task:hover {
+        color: #fff;
+        transform: scale(1.1); /* Slightly enlarges the button */
+    }
+
+    .btn-save-task{
+        background-color: var(--primary-color); /* Use your primary color variable */
+        color: #fff;
+        text-decoration: none; /* Removes underline */
+        display: inline-block; /* Ensures hover effects apply properly */
+        transition: transform 0.3s ease, background-color 0.3s ease; /* Adds smooth transition */
+    }
+
+    .btn-save-task:hover{
+        color: #fff;
+        transform: scale(1.1); /* Slightly enlarges the button */
+    }
+
+    .btn-cancel-action{
+        background-color: #dc3545;
+        color: #fff;
+        display: inline-block; /* Ensures hover effects apply properly */
+        transition: transform 0.3s ease, background-color 0.3s ease; /* Adds smooth transition */
+    }
+
+    .btn-cancel-action:hover{
+        background-color: #bd2130;
+        transform: scale(1.1); /* Slightly enlarges the button */
+    }
+</style>
+
 <div class="container py-3">
     <!-- Task List Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -21,7 +62,7 @@
         </form>
     
         <!-- Button outside the form -->
-        <button id="new-task-btn" class="btn btn-success btn-sm">
+        <button id="new-task-btn" class="btn btn-primary btn-sm btn-new-task">
             Add Task
         </button>
     </div>
@@ -50,11 +91,11 @@
             </div>
             <div class="text-end">
                 <!-- Save Task Button (with background color) -->
-                <button type="submit" class="btn btn-primary btn-sm me-2">
+                <button type="submit" class="btn btn-primary btn-sm me-2 btn-save-task">
                     <i class="bi bi-save"></i> Save
                 </button>
                 <!-- Cancel Button (with background color) -->
-                <button id="cancel-task-btn" type="button" class="btn btn-danger btn-sm">
+                <button id="cancel-task-btn" type="button" class="btn btn-danger btn-sm btn-cancel-action">
                     <i class="bi bi-x-circle"></i> Cancel
                 </button>
             </div>
@@ -325,7 +366,8 @@
         // Populate form fields with existing task data
         taskForm.title.value = task.title;
         taskForm.description.value = task.description;
-        taskForm.due_date.value = task.due_date ? task.due_date.split('T')[0] : '';
+        console.log(new Date(task.due_date).toLocaleDateString('en-GB'));
+        taskForm.due_date.value = new Date(task.due_date).toLocaleDateString('en-GB');
         taskForm.status.value = task.status;
 
         // Update form action URL

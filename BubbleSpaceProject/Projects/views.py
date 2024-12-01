@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import Project
 from Tasks.models import Task
 from Teams.models import Team
+from Login.models import Users_Account
 from .forms import ProjectForm
 from Tasks.forms import TaskForm,ProjectTaskForm
 from django.contrib.auth.decorators import login_required
@@ -31,18 +32,21 @@ def project_list(request, project_id):
     
     project = get_object_or_404(Project, pk=project_id)
     tasks = project.tasks.all()  # Assuming a related name for tasks in the Project model
+    users = Users_Account.objects.all()
     form = ProjectTaskForm()
 
     return render(request, 'Projects/project_list.html', {
         'project': project,
         'tasks': tasks,
+        'users': users,
         'form': form,  # Pass the task form
     })
 def project_tasks(request, pk):
     project = get_object_or_404(Project, pk=pk)
     tasks = Task.objects.filter(project=project)
     form = ProjectTaskForm(project=project)
-    return render(request, 'Projects/project_list.html', {'project': project, 'tasks': tasks , 'form':form})
+    users = Users_Account.objects.all()
+    return render(request, 'Projects/project_list.html', {'project': project, 'tasks': tasks , 'form':form , 'users': users})
 @login_required
 def project_task_create(request, ProjectId):
     project = get_object_or_404(Project, pk=ProjectId)
@@ -63,32 +67,16 @@ def project_task_create(request, ProjectId):
 @login_required
 def project_task_edit(request, task_id):
     task = get_object_or_404(Task, pk=task_id)
-
-    if request.method == 'POST':
-        form = ProjectTaskForm(request.POST, instance=task)
+    if request.method == "POST":
+        form = TaskForm(request.POST, instance=task)
         if form.is_valid():
-            updated_task = form.save()
-
-            # Prepare response data
-            data = {
-                'success': True,
-                'message': 'Task updated successfully!',
-                'updated_title': updated_task.title,
-                'updated_description': updated_task.description,
-                'updated_category': updated_task.category,
-                'updated_assigned_to': updated_task.assigned_to.username if updated_task.assigned_to else "Unassigned",
-                'updated_due_date': updated_task.due_date.strftime('%b %d, %Y') if updated_task.due_date else "",
-                'updated_status': 'bg-success' if updated_task.status == 'green' else 'bg-warning' if updated_task.status == 'yellow' else 'bg-danger',
-                'updated_status_icon': getattr(updated_task, 'status_icon_html', lambda: '')(),  # Optional method
-            }
-            return JsonResponse(data)
-
-        # Return validation errors
-        return JsonResponse({'success': False, 'errors': form.errors}, status=400)
-
-    return JsonResponse({'success': False, 'error': 'Invalid request method.'}, status=405)
-
-
+            form.save()
+            return JsonResponse({"success": True, "message": "Task updated successfully."})
+        else:
+            return JsonResponse({"success": False, "errors": form.errors})
+    else:
+        form = TaskForm(instance=task)
+    return render(request, "edit_task.html", {"form": form, "task": task})
 
 @login_required
 def project_task_delete(request, task_id):
