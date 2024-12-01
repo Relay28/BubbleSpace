@@ -14,7 +14,7 @@ Bubble Space redefines task management by seamlessly integrating social elements
 |-------------------|---------------------------------------------------------------------------------------------------|
 | User Management   | Manages user accounts, including creating, updating, and deleting user profiles.                   |
 | Team Management   | Handles the creation and management of teams, including assigning members and a leader.             |
-| Messaging/Interaction | Allows users to send and receive messages, facilitating communication between team members.      |
+| Messaging/Interaction | Allows users to send and receive messages, facilitating communication between users.      |
 | Project Management | Oversees the creation, updating, and tracking of projects, including assigning tasks to teams.    |
 | Task Management   | Manages tasks within projects, including setting due dates, statuses, and monitoring progress.     |
 | Note Creation     | Allows users to create, store, and manage notes related to their tasks or projects.                |
