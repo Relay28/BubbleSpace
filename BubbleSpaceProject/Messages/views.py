@@ -12,6 +12,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 import json
 from django.conf import settings
+from .utils import send_message_to_websocket
 
 
 User = get_user_model()  # Get the custom user model
@@ -69,7 +70,7 @@ def send_message(request):
                 recipient=recipient,
                 message=message_text,
             )
-
+            send_message_to_websocket(user_id, message)
             return JsonResponse({"status": "success", "message": "Message sent successfully."})
         except Exception as e:
             return JsonResponse({"status": "error", "message": str(e)})

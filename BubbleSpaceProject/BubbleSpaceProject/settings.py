@@ -34,13 +34,22 @@ ALLOWED_HOSTS = []
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'), 
 ]
-
+ASGI_APPLICATION = 'BubbleSpaceProject.asgi.application'
 # settings.py
 AUTH_USER_MODEL = 'Login.Users_Account'  # Replace 'yourapp' with your actual app name
 # Redirect to this URL if a user tries to access a login-required page without being logged in
 LOGIN_URL = 'login'  # Replace 'login' with the name of your actual login view URL pattern
 
 # Application definition
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [('127.0.0.1', 6379)],  # Make sure Redis is running
+        },
+    },
+}
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -56,6 +65,7 @@ INSTALLED_APPS = [
     'Messages',
     'Teams',
     'Projects',
+    'channels',
     
 ]
 

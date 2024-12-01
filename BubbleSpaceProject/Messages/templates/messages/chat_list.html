@@ -273,6 +273,41 @@
     let currentChatUserId = null;
     let editingMessageId = null;
 
+    let chatSocket = null;
+
+    null;
+
+function connectWebSocket(userId) {
+    if (chatSocket) {
+        chatSocket.close(); // Close existing connection if any
+    }
+
+    chatSocket = new WebSocket(`ws://${window.location.host}/ws/messages/${userId}/`);
+
+    chatSocket.onmessage = function (e) {
+        const data = JSON.parse(e.data);
+        const message = data.message;
+
+        // Update the chat window with the new message
+        const chatWindow = document.getElementById('chat-window');
+        const messageElement = document.createElement('div');
+        messageElement.classList.add('chat-message', 'receiver');
+        messageElement.innerHTML = `
+            <span class="text">${message}</span>
+            <span class="timestamp">${new Date().toLocaleTimeString([], {
+                hour: '2-digit',
+                minute: '2-digit',
+            })}</span>
+        `;
+        chatWindow.appendChild(messageElement);
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+    };
+
+    chatSocket.onclose = function () {
+        console.log('WebSocket disconnected');
+    };
+}
+
     function handleEnterKey(event) {
     if (event.key === "Enter") {
         event.preventDefault(); // Prevent newline in input
@@ -329,7 +364,7 @@ function selectUser(userId, username, profile_picture) {
     // Get the chat items container
     const chatItems = document.getElementById('chat-items');
     const chatElements = chatItems.getElementsByClassName('chat-item');
-    
+     connectWebSocket(userId);
     // Remove the 'selected' class from any previously selected chat item
     for (const chatElement of chatElements) {
         chatElement.classList.remove('selected');
@@ -437,7 +472,11 @@ async function sendMessage() {
     const messageInput = document.getElementById('message-input');
     const message = messageInput.value.trim();
 
-    if (message === "") return;
+  
+    if (message === "" || !chatSocket) return;
+
+    chatSocket.send(JSON.stringify({ message: message }));
+    messageInput.value = ''; // Clear the input field
 
     try {
         let response;
