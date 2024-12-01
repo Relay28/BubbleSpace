@@ -262,6 +262,7 @@
     const baseChatUrl = "{% url 'load_chat_history' 1 %}".replace("1/", "");
 
     let currentChatUserId = null;
+    let editingMessageId = null;
 
     function handleEnterKey(event) {
     if (event.key === "Enter") {
@@ -349,18 +350,18 @@ async function loadChatHistory(userId) {
                 const formattedDate = messageDate.toLocaleDateString();
 
                 messageElement.innerHTML = `
-                    <span class="text">${message.message}</span>
-                    <span class="timestamp">${formattedTime}</span>
-                    <span class="date">${formattedDate}</span>
-                    ${
-                        message.sender__username === data.current_user
-                            ? `
-                        <i class="bi bi-pencil-square edit-icon" onclick="editMessage(${message.id})" title="Edit"></i>
-                        <i class="bi bi-trash delete-icon" onclick="deleteMessage(${message.id})" title="Delete"></i>
-                        `
-                            : ""
-                    }
-                `;
+    <span class="text">${message.message}</span>
+    <span class="timestamp">${formattedTime}</span>
+    <span class="date">${formattedDate}</span>
+    ${
+        message.sender__username === data.current_user
+            ? `
+        <i class="bi bi-pencil-square edit-icon" onclick="editMessage(${message.id}, '${message.message}')" title="Edit"></i>
+        <i class="bi bi-trash delete-icon" onclick="deleteMessage(${message.id})" title="Delete"></i>
+        `
+            : ""
+    }
+`;
 
                 chatWindow.appendChild(messageElement);
             });
@@ -374,39 +375,56 @@ async function loadChatHistory(userId) {
 
 
 
-    async function sendMessage() {
-        if (currentChatUserId === null) {
-            alert("Please select a user to chat with.");
-            return;
-        }
+async function sendMessage() {
+    const messageInput = document.getElementById('message-input');
+    const message = messageInput.value.trim();
 
-        const messageInput = document.getElementById('message-input');
-        const message = messageInput.value.trim();
+    if (message === "") return;
 
-        if (message === "") return;
+    try {
+        let response;
 
-        try {
-            const response = await fetch(`/bubblespace/messages/send/${currentChatUserId}/`, {
+        if (editingMessageId) {
+            // Editing an existing message
+            response = await fetch(`/bubblespace/messages/edit_message/${editingMessageId}/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-CSRFToken': getCookie('csrftoken')
+                    'X-CSRFToken': getCookie('csrftoken'),
                 },
-                body: `message=${encodeURIComponent(message)}`
+                body: `message=${encodeURIComponent(message)}`,
             });
 
-            const data = await response.json();
-
-            if (data.status === 'success') {
-                messageInput.value = '';
-                loadChatHistory(currentChatUserId);
-            } else {
-                console.error('Failed to send message:', data.message);
+            editingMessageId = null; // Reset after editing
+        } else {
+            // Sending a new message
+            if (currentChatUserId === null) {
+                alert("Please select a user to chat with.");
+                return;
             }
-        } catch (error) {
-            console.error('Error sending message:', error);
+
+            response = await fetch(`/bubblespace/messages/send/${currentChatUserId}/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': getCookie('csrftoken'),
+                },
+                body: `message=${encodeURIComponent(message)}`,
+            });
         }
+
+        const data = await response.json();
+        if (data.status === 'success') {
+            messageInput.value = ''; // Clear the input field
+            loadChatHistory(currentChatUserId);
+        } else {
+            console.error('Failed to send/edit message:', data.message);
+        }
+    } catch (error) {
+        console.error('Error sending/editing message:', error);
     }
+}
+
 
     function getCookie(name) {
         let cookieValue = null;
@@ -423,36 +441,13 @@ async function loadChatHistory(userId) {
         return cookieValue;
     }
 
-    async function editMessage(messageId) {
-        const newContent = prompt("Edit your message:");
-        if (!newContent || newContent.trim() === "") {
-            alert("Message content cannot be empty.");
-            return;
-        }
+    function editMessage(messageId, currentContent) {
+    editingMessageId = messageId;
+    const messageInput = document.getElementById('message-input');
+    messageInput.value = currentContent;
+    messageInput.focus(); // Focus on the input field
+}
 
-        try {
-            const response = await fetch(`/bubblespace/messages/edit_message/${messageId}/`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-CSRFToken': getCookie('csrftoken')
-                },
-                body: `message=${encodeURIComponent(newContent)}`
-            });
-
-            if (!response.ok) throw new Error('Failed to edit message');
-
-            const data = await response.json();
-            if (data.status === 'success') {
-                loadChatHistory(currentChatUserId);
-            } else {
-                console.error("Error editing message:", data.message);
-                alert("Error editing message: " + data.message);
-            }
-        } catch (error) {
-            console.error("Error editing message:", error);
-        }
-    }
 
     async function deleteMessage(messageId) {
         if (!confirm("Are you sure you want to delete this message?")) return;
