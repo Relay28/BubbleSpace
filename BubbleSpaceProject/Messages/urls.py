@@ -1,12 +1,11 @@
 from django.urls import path
 from .views import (
-    chat_list, chat_detail, send_message, load_chat_history, search_users,
+    chat_list, send_message, load_chat_history, search_users,
     get_new_messages, edit_message, delete_message, get_user_chats, get_chat_messages# Add the view here
 )
 
 urlpatterns = [
     path('', chat_list, name='chat_list'),
-    path('chat/<int:chat_id>/', chat_detail, name='chat_detail'),
     path('search_users/', search_users, name='search_users'),
     path('get_new_messages/<int:chat_id>/', get_new_messages, name='get_new_messages'),
 

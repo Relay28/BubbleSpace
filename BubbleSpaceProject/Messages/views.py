@@ -11,6 +11,7 @@ from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 import json
+from django.conf import settings
 
 
 User = get_user_model()  # Get the custom user model
@@ -35,6 +36,7 @@ def get_user_chats(request):
             chat_data.append({
                 'username': other_user.username,
                 'recipient_id': other_user.id,  # Send recipient_id instead of chat_id
+                'profile_picture': other_user.profile_picture.url if other_user.profile_picture else '/static/default-avatar.jpg',
             })
 
     return JsonResponse({'status': 'success', 'chats': chat_data})
@@ -45,13 +47,6 @@ def chat_list(request):
     """View to display a list of all chats for the logged-in user."""
     chats = Chat.objects.filter(sender=request.user) | Chat.objects.filter(recipient=request.user)
     return render(request, 'messages/chat_list.html', {'chats': chats})
-
-@login_required
-def chat_detail(request, chat_id):
-    """View to display and send messages within a specific chat."""
-    chat = get_object_or_404(Chat, id=chat_id)
-    messages = chat.messages.all()
-    return render(request, 'messages/chat_detail.html', {'chat': chat, 'messages': messages})
 
 @csrf_exempt
 @login_required
@@ -152,13 +147,21 @@ def send_message(request, recipient_id):
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request method.'}, status=400)
 
-
 @login_required
 def search_users(request):
     """Fetch users that match the search query."""
     query = request.GET.get('q', '')
-    users = User.objects.filter(username__icontains=query).values('id', 'username')
-    return JsonResponse(list(users), safe=False)
+    users = User.objects.filter(username__icontains=query).values('id', 'username', 'profile_picture')
+    user_list = []
+    for user in users:
+        user_list.append({
+            'id': user['id'],
+            'username': user['username'],
+            'profile_picture': f"{settings.MEDIA_URL}{user['profile_picture']}" if user['profile_picture'] else '/static/default-avatar.jpg',
+
+        })
+    return JsonResponse(user_list, safe=False)
+
 
 @login_required
 def get_new_messages(request, chat_id):

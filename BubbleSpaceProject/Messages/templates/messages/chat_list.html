@@ -5,6 +5,9 @@
 
 
 <style>
+    body {
+        font-family: 'Arial', sans-serif;
+    }
     .chat-message {
     padding: 12px;
     padding-bottom: 12px;
@@ -199,7 +202,7 @@
     display: none;
     position: absolute;
     top: -25px;
-    left: -55px;
+    left: -5px;
     background: #fff;
     border-radius: 5px;
     z-index: 1;
@@ -255,6 +258,7 @@
         <div class="chat-window">
             <div class="chat-header">
                 <h4 id="chat-header">Chat with User</h4>
+                
             </div>
             <div id="chat-window">
                 <!-- Chat history messages will be added here dynamically -->
@@ -284,34 +288,53 @@
         sendMessage(); // Call the sendMessage function
     }
 }
-    async function searchUsers() {
-        const query = document.getElementById('search-input').value;
-        if (query.length === 0) {
-            document.getElementById('user-suggestions').style.display = 'none';
-            return;
-        }
+async function searchUsers() {
+    const query = document.getElementById('search-input').value;
+    if (query.length === 0) {
+        document.getElementById('user-suggestions').style.display = 'none';
+        return;
+    }
 
+    try {
         const response = await fetch(`/bubblespace/messages/search_users/?q=${query}`);
         const users = await response.json();
-        
+
         const suggestions = document.getElementById('user-suggestions');
         suggestions.innerHTML = '';
 
         if (users.length > 0) {
             users.forEach(user => {
+                // Fallback for profile picture if not defined or missing
+                const profilePictureUrl = user.profile_picture || '/static/default-avatar.jpg';
+
                 const li = document.createElement('li');
-                li.textContent = user.username;
                 li.style.cursor = 'pointer';
-                li.onclick = () => selectUser(user.id, user.username);
+                li.classList.add('d-flex', 'align-items-center', 'mb-2');
+
+                li.onclick = () => selectUser(user.id, user.username, profilePictureUrl);
+
+                li.innerHTML = `
+                    <img src="${profilePictureUrl}" alt="${user.username}'s Profile Picture" 
+                        style="width: 30px; height: 30px; border-radius: 15px; margin-right: 10px;">
+                    <span>${user.username}</span>
+                `;
                 suggestions.appendChild(li);
             });
             suggestions.style.display = 'block';
         } else {
             suggestions.style.display = 'none';
         }
+    } catch (error) {
+        console.error('Error fetching user suggestions:', error);
     }
+}
 
-    function selectUser(userId, username) {
+
+
+function selectUser(userId, username, profile_picture) {
+    // Fallback for undefined or null profile pictures
+    const profilePictureUrl = profile_picture || '/static/default-avatar.jpg';
+
     // Get the chat items container
     const chatItems = document.getElementById('chat-items');
     const chatElements = chatItems.getElementsByClassName('chat-item');
@@ -322,19 +345,27 @@
     }
     
     // Set the selected chat item
-    const selectedChatItem = Array.from(chatElements).find(item => item.textContent === username);
+    const selectedChatItem = Array.from(chatElements).find(item => item.textContent.includes(username));
     if (selectedChatItem) {
         selectedChatItem.classList.add('selected');
     }
 
     currentChatUserId = userId;
-    document.getElementById('search-input').value = username;
+    document.getElementById('search-input').value = "";
     document.getElementById('user-suggestions').style.display = 'none';
-    document.getElementById('chat-header').innerText = `Chat with ${username}`;
-    document.getElementById('message-input').value = '';
 
+    // Update the chat header with profile picture and username
+    const chatHeader = document.getElementById('chat-header');
+    chatHeader.innerHTML = `
+        <img src="${profilePictureUrl}" alt="${username}'s Profile Picture" 
+             style="width: 30px; height: 30px; border-radius: 15px; margin-right: 10px;">
+        <span>${username}</span>
+    `;
+
+    document.getElementById('message-input').value = '';
     loadChatHistory(userId);
 }
+
 
 
 async function loadChatHistory(userId) {
@@ -518,9 +549,9 @@ async function sendMessage() {
                     chatElement.classList.add('chat-item');
                     chatElement.style.cursor = 'pointer';
                     
-                    chatElement.onclick = () => selectUser(chat.recipient_id, chat.username);
+                    chatElement.onclick = () => selectUser(chat.recipient_id, chat.username, chat.profile_picture);
 
-                    chatElement.innerHTML = `<strong>${chat.username}</strong>`;
+                    chatElement.innerHTML = `<img src=${chat.profile_picture} alt="sda" style="width:30px;height:30px;border-radius:20px; margin-right: 10px;"> <strong>${chat.username}</strong>`;
                     chatItems.appendChild(chatElement);
                 });
             } else {
