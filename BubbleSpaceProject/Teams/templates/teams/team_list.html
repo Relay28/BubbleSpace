@@ -4,10 +4,10 @@
 <div class="container my-4" style="--primary-color: #1e3d58; --secondary-color: #4db8b8; --background-color: #f5f5f5; --text-color: #333; --accent-color: #ff7043;">
     <!-- Page Header -->
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h1 class="fw-bold" style="color: var(--primary-color);">Your Teams</h1>
+        <h1 class="fw-bold" style="color: var(--primary-color);">Your Spaces</h1>
         <!-- Create/Join Team Button -->
         <button type="button" class="btn btn-sm" data-bs-toggle="modal" data-bs-target="#createTeamModal" style="background-color: var(--primary-color); color: #fff; border-color: var(--primary-color);">
-            Create Team
+            Create a Space
         </button>
     </div>
 
@@ -74,7 +74,7 @@
             </div>
         </div>
         {% empty %}
-        <p class="text-muted text-center" style="color: var(--primary-color);">No teams found. Create or join a team to get started!</p>
+        <p class="text-muted text-center" style="color: var(--primary-color);">No teams found. Create a team to get started!</p>
         {% endfor %}
     </div>
 

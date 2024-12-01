@@ -7,127 +7,7 @@
     <link rel="stylesheet" href="{% static 'css/project_list.css' %}">
     <style>
         /* Styling for the horizontal form layout */
-        .task-form-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
-        .task-form-container .form-group {
-            flex: 1 1 20%; /* Make form fields take equal space */
-            display: flex;
-            flex-direction: column;
-        }
-        .task-form-container .form-group label {
-            font-size: 14px;
-            margin-bottom: 5px;
-        }
-        .task-form-container .form-group input,
-        .task-form-container .form-group select,
-        .task-form-container .form-group textarea {
-            font-size: 14px;
-            padding: 8px;
-            border-radius: 5px;
-            border: 1px solid #ddd;
-            box-shadow: none;
-        }
-        .task-form-container .form-group textarea {
-            height: 50px;
-            resize: none;
-        }
-        .task-form-container .form-group select,
-        .task-form-container .form-group input[type="date"] {
-            height: 40px;
-        }
-        .task-form-buttons {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-        }
-        .btn-back{
-            color: #000;
-            text-decoration: none; /* Removes underline */
-        }
-        .btn-add{
-            background-color: #333;
-            color: #fff;
-            border-radius: 20px;
-            text-decoration: none; /* Removes underline */
-            display: inline-block; /* Ensures hover effects apply properly */
-            transition: transform 0.3s ease, background-color 0.3s ease; /* Adds smooth transition */
-        }
-        .btn-add:hover{
-            background-color: #6c6c6c;
-            color: #fff;
-            transform: scale(1.1); /* Slightly enlarges the button */
-        }
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .modal-content {
-            background: #fff;
-            padding: 20px;
-            border-radius: 5px;
-            text-align: center;
-        }
-        .modal-actions button {
-            margin: 5px;
-        }
-        .note-actions {
-            display: flex;
-            gap: 20px;
-            align-items: center;
-            position: absolute;
-            right: 15px; /* Align the icons to the right */
-            top: 15px;   /* Position the icons at the top right corner */
-            margin-right: 10px;
-        }
-        .note-actions a {
-            text-decoration: none;
-            font-size: 24px;
-            color: #1e3d58;
-            transition: color 0.3s ease, transform 0.3s ease;
-        }
-        .note-actions a:hover {
-            color: #ff4d4d;
-            transform: scale(1.1);
-        }
-        /* Style the description field separately */
-    .description-group {
-        margin-top: 20px; /* Adds space before the description */
-    }
-
-    .description-group textarea {
-        width: 100%; /* Makes the textarea fill the available width */
-        height: 150px; /* Adjust the height to enlarge the description field */
-        font-size: 1.2em; /* Enlarges the text inside the description field */
-        padding: 10px; /* Adds padding inside the textarea */
-        border: 1px solid #ccc; /* Optional border style */
-    }
-
-    /* Hover effect for Add Task button */
-    .btn-primary:hover {
-        background-color: #6c6c6c;
-        transform: scale(1.1);
-    }
-
-    /* Hover effect for Cancel button */
-    #cancelTaskButton:hover {
-        background-color: #8b0000;
-        transform: scale(1.1);
-    }
-    .task-form-buttons{
-        margin-top: 10px;
-    }
+      
     </style>
 </head>
 
@@ -152,7 +32,7 @@
         <div id="taskFormContainer" class="mb-4" style="display: none;">
             <form id="task-create-form" data-project-id="{{ project.ProjectId }}">
                 {% csrf_token %}
-                <div class="task-form-container">
+                <div class="task-form-container">   
                     <div class="form-group">
                         <label for="id_title">Task Title</label>
                         {{ form.title }}

@@ -63,8 +63,8 @@ class ProjectTaskForm(forms.ModelForm):
                 'class': 'form-control',
                 'placeholder': 'Description (optional)',
                 'style': (
-                    'flex: 2; font-size: 14px; padding: 8px; border-radius: 5px; '
-                    'border: 1px solid #ddd; box-shadow: none; height: 150px;'
+                    'flex: 2; font-size: 14px; padding: 5px; border-radius: 5px; '
+                    'border: 1px solid #ddd; box-shadow: none; height: 80px;'
                 ),
             }),
             'category': forms.Select(attrs={
