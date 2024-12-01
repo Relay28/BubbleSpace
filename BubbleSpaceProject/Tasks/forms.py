@@ -63,8 +63,8 @@ class ProjectTaskForm(forms.ModelForm):
                 'class': 'form-control',
                 'placeholder': 'Description (optional)',
                 'style': (
-                    'flex: 3; font-size: 14px; padding: 8px; border-radius: 5px; '
-                    'border: 1px solid #ddd; box-shadow: none; height: 100px;'
+                    'flex: 2; font-size: 14px; padding: 8px; border-radius: 5px; '
+                    'border: 1px solid #ddd; box-shadow: none; height: 20px;'
                 ),
             }),
             'category': forms.Select(attrs={
@@ -108,3 +108,13 @@ class ProjectTaskForm(forms.ModelForm):
             ).distinct()
         else:
             self.fields['assigned_to'].queryset = Users_Account.objects.none()
+
+    
+def clean_assigned_to(self):
+    assigned_to = self.cleaned_data.get('assigned_to')
+    project = self.initial.get('project')  # Retrieve the project passed during initialization
+
+    if project and not Users_Account.objects.filter(pk=assigned_to.pk, teams__projects=project).exists():
+        raise forms.ValidationError("This user is not part of the project's team.")
+    
+    return assigned_to

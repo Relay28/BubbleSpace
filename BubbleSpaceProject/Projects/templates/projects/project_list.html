@@ -4,117 +4,53 @@
 
 <head>
     <title>Project Task List</title>
-    <!-- <link rel="stylesheet" href="{% static 'base2.css' %}"> -->
+    <link rel="stylesheet" href="{% static 'css/project_list.css' %}">
     <style>
-        .container{
-            position: absolute;
-            left: 17%;
+        /* Styling for the horizontal form layout */
+        .task-form-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: space-between;
+            margin-bottom: 20px;
         }
-        .task-item {
-            border: 1px solid #ddd;
-            padding: 10px;
-            margin: 7px 0;
-            border-radius: 8px;
-            background-color: #fff;
+        .task-form-container .form-group {
+            flex: 1 1 20%; /* Make form fields take equal space */
             display: flex;
             flex-direction: column;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-           
         }
-        .task-list-header {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 15px;
-            font-size: 16px;
-            font-weight: bold;
-            color: #333;
-        }
-        .task-list-header div {
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            text-align: center;
-        }
-        .task-item-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
-            gap: 10px;
-            align-items: center;
-            margin-top: 10px;
+        .task-form-container .form-group label {
             font-size: 14px;
-            color: #555;
+            margin-bottom: 5px;
         }
-        .task-item-content span {
-            display: block;
-            text-align: center;
-        }
-        .task-actions {
-            display: flex;
-            justify-content: flex-start;
-            gap: 10px;
-            margin-top: 10px;
-        }
-        .task-actions a {
+        .task-form-container .form-group input,
+        .task-form-container .form-group select,
+        .task-form-container .form-group textarea {
             font-size: 14px;
-            color: #007bff;
-            text-decoration: none;
-            padding: 5px 8px;
+            padding: 8px;
             border-radius: 5px;
-            transition: background-color 0.3s ease;
+            border: 1px solid #ddd;
+            box-shadow: none;
         }
-        .task-actions a:hover {
-            background-color: #f8f9fa;
+        .task-form-container .form-group textarea {
+            height: 50px;
+            resize: none;
         }
-        .status-icon-container {
+        .task-form-container .form-group select,
+        .task-form-container .form-group input[type="date"] {
+            height: 40px;
+        }
+        .task-form-buttons {
             display: flex;
-            justify-content: center;
-            margin-top: 10px;
-        }
-        .status-icon {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            margin-left: 45%;
-            align-items: center;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background-color 0.3s ease;
-        }
-        .status-dropdown-menu {
-            display: none;
-            position: absolute;
-            top: 40px;
-            right: 0;
-            background-color: #fff;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            padding: 5px;
-            border-radius: 4px;
-            list-style: none;
-            width: 120px;
-        }
-        .status-dropdown-menu li {
-            padding: 5px 10px;
-            cursor: pointer;
-        }
-        .status-dropdown-menu li:hover {
-            background-color: #f8f9fa;
-        }
-        .task-list-container {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            margin-top: 20px;
-        }
-        .container {
-            margin: 20px;
+            justify-content: flex-end;
+            gap: 10px;
         }
     </style>
 </head>
 
 <body>
     {% include "base.html" %}
+
     <div class="container">
         <div class="back-button-container" style="margin: 10px;">
             <a href="#" onclick="history.back(); return false;" class="btn btn-primary btn-sm" style="text-decoration: none;">
@@ -124,9 +60,45 @@
 
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1 class="h4 text-primary">Tasks in {{ project.Title }}</h1>
-            <a href="{% url 'task_create_for_project' project.ProjectId %}" class="btn btn-sm btn-success">
+            <button id="addTaskButton" class="btn btn-sm btn-success">
                 Add New Task
-            </a>
+            </button>
+        </div>
+
+        <!-- Task Form (Create New Task) -->
+        <div id="taskFormContainer" class="mb-4" style="display: none;">
+            <form id="task-create-form" data-project-id="{{ project.ProjectId }}">
+            {% csrf_token %}
+            <div class="task-form-container">
+                <div class="form-group">
+                    <label for="id_title">Task Title</label>
+                    {{ form.title }}
+                </div>
+                <div class="form-group">
+                    <label for="id_description">Description</label>
+                    {{ form.description }}
+                </div>
+                <div class="form-group">
+                    <label for="id_category">Category</label>
+                    {{ form.category }}
+                </div>
+                <div class="form-group">
+                    <label for="id_assigned_to">Assigned To</label>
+                    {{ form.assigned_to }}
+                </div>
+                <div class="form-group">
+                    <label for="id_due_date">Due Date</label>
+                    {{ form.due_date }}
+                </div>
+                <div class="form-group">
+                    <label for="id_status">Status</label>
+                    {{ form.status }}
+                </div>
+            </div>
+            <div class="task-form-buttons">
+                <button type="submit" class="btn btn-primary">Add Task</button>
+            </div>
+        </form>
         </div>
 
         <!-- Task List Header -->
@@ -139,18 +111,17 @@
             <div>Actions</div>
         </div>
 
+        <!-- Task List -->
         <div class="task-list-container">
             {% if tasks %}
                 {% for task in tasks %}
-                <div class="task-item">
-                    <!-- Task Details -->
+                <div class="task-item" id="task-{{ task.pk }}">
                     <div class="task-item-content">
                         <span><strong>{{ task.title }}</strong></span>
                         <span>{{ task.category }}</span>
                         <span>{{ task.assigned_to }}</span>
                         <span>{{ task.due_date|date:"M d, Y" }}</span>
 
-                        <!-- Status Icon -->
                         <span class="status-icon-container">
                             <div class="status-icon {% if task.status == 'green' %}bg-success{% elif task.status == 'yellow' %}bg-warning{% else %}bg-danger{% endif %}"
                                 data-task-id="{{ task.pk }}" data-status="{{ task.status }}">
@@ -164,73 +135,231 @@
                             </div>
                         </span>
 
-                        <!-- Task Actions -->
                         <span class="task-actions">
-                            <a href="{% url 'task_update' task.pk %}" class="btn btn-link btn-sm">Edit</a>
-                            <a href="{% url 'task_delete' task.pk %}" class="btn btn-link btn-sm">Delete</a>
+                            <button class="btn btn-link btn-sm edit-task-btn" data-task-id="{{ task.pk }}">
+                                Edit
+                            </button>
+                            <button class="btn btn-link btn-sm text-danger delete-task-btn" data-task-id="{{ task.pk }}">
+                                Delete
+                            </button>
                         </span>
                     </div>
-                </div>
+
+                    <!-- Edit Task Form (Inline) -->
+                    <div class="edit-task-form" id="edit-form-{{ task.pk }}" style="display: none;">
+                        <form method="post" data-task-id="{{ task.pk }}" class="edit-task-form">
+                            {% csrf_token %}
+                            <div class="task-form-container">
+                                <div class="form-group">
+                                    <label for="id_title_{{ task.pk }}">Task Title</label>
+                                    <input 
+                                        type="text" 
+                                        id="id_title_{{ task.pk }}" 
+                                        name="title" 
+                                        value="{{ task.title }}" 
+                                        class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label for="id_description_{{ task.pk }}">Description</label>
+                                    <textarea 
+                                        id="id_description_{{ task.pk }}" 
+                                        name="description" 
+                                        class="form-control">{{ task.description }}</textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="id_category_{{ task.pk }}">Category</label>
+                                    <select 
+                                        id="id_category_{{ task.pk }}" 
+                                        name="category" 
+                                        class="form-control">
+                                        <option value="Category1" {% if task.category == "Category1" %}selected{% endif %}>Category1</option>
+                                        <option value="Category2" {% if task.category == "Category2" %}selected{% endif %}>Category2</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="id_assigned_to_{{ task.pk }}">Assigned To</label>
+                                    <input 
+                                        type="text" 
+                                        id="id_assigned_to_{{ task.pk }}" 
+                                        name="assigned_to" 
+                                        value="{{ task.assigned_to }}" 
+                                        class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label for="id_due_date_{{ task.pk }}">Due Date</label>
+                                    <input 
+                                        type="date" 
+                                        id="id_due_date_{{ task.pk }}" 
+                                        name="due_date" 
+                                        value="{{ task.due_date|date:'Y-m-d' }}" 
+                                        class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label for="id_status_{{ task.pk }}">Status</label>
+                                    <select 
+                                        id="id_status_{{ task.pk }}" 
+                                        name="status" 
+                                        class="form-control">
+                                        <option value="green" {% if task.status == "green" %}selected{% endif %}>Completed</option>
+                                        <option value="yellow" {% if task.status == "yellow" %}selected{% endif %}>In Progress</option>
+                                        <option value="red" {% if task.status == "red" %}selected{% endif %}>Not Started</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="task-form-buttons">
+                                <button type="submit" class="btn btn-primary">Save Changes</button>
+                            </div>
+                        </form>
+                    </div>
+                    
                 {% endfor %}
             {% else %}
                 <p>No tasks found for this project.</p>
             {% endif %}
         </div>
     </div>
+<script>
+ document.addEventListener("DOMContentLoaded", () => {
+    const taskFormContainer = document.getElementById("taskFormContainer");
+    const addTaskButton = document.getElementById("addTaskButton");
 
-    {% block scripts %}
-    <script>
-        // Toggle the dropdown menu when the status icon is clicked
-        document.querySelectorAll('.status-icon').forEach(function(icon) {
-            icon.addEventListener('click', function() {
-                const dropdownMenu = this.closest('.status-icon-container').querySelector('.status-dropdown-menu');
-                dropdownMenu.style.display = dropdownMenu.style.display === 'none' ? 'block' : 'none';
-            });
-        });
+    // Show task form on "Add Task" button click
+    addTaskButton.addEventListener("click", () => {
+        taskFormContainer.style.display = "block";
+        addTaskButton.style.display = "none";
+    });
 
-        // Handle status selection from the dropdown
-        document.querySelectorAll('.status-option').forEach(function(option) {
-            option.addEventListener('click', function(e) {
-                e.preventDefault();
-                const taskId = this.closest('.status-icon-container').querySelector('.status-icon').getAttribute('data-task-id');
-                const newStatus = this.getAttribute('data-status');
+    const taskCreateForm = document.getElementById("task-create-form");
 
-                // AJAX request to update task status
-                fetch(`/update_task_status/${taskId}/`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': '{{ csrf_token }}',
-                    },
-                    body: JSON.stringify({ status: newStatus })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    // Update the status icon and close the dropdown
-                    const statusIcon = this.closest('.status-icon-container').querySelector('.status-icon');
-                    statusIcon.setAttribute('data-status', newStatus);
+taskCreateForm.addEventListener("submit", (event) => {
+    event.preventDefault(); // Prevent the form's default submission behavior
 
-                    if (newStatus === 'green') {
-                        statusIcon.classList.remove('bg-danger', 'bg-warning');
-                        statusIcon.classList.add('bg-success');
-                        statusIcon.innerHTML = '<i class="bi bi-check-circle" style="font-size: 14px;"></i>';
-                    } else if (newStatus === 'yellow') {
-                        statusIcon.classList.remove('bg-danger', 'bg-success');
-                        statusIcon.classList.add('bg-warning');
-                        statusIcon.innerHTML = '<i class="bi bi-clock" style="font-size: 14px;"></i>';
-                    } else if (newStatus === 'red') {
-                        statusIcon.classList.remove('bg-success', 'bg-warning');
-                        statusIcon.classList.add('bg-danger');
-                        statusIcon.innerHTML = '<i class="bi bi-list-check" style="font-size: 14px;"></i>';
-                    }
+    const formData = new FormData(taskCreateForm);
+    const projectId = taskCreateForm.getAttribute("data-project-id");
 
-                    // Hide the dropdown
-                    this.closest('.status-dropdown-menu').style.display = 'none';
+    fetch(`/bubblespace/projects/project_tasks/create/${projectId}/`, {
+        method: "POST",
+        body: formData,
+        headers: {
+            "X-CSRFToken": document.querySelector("[name='csrfmiddlewaretoken']").value,
+        },
+    })
+        .then((response) => {
+            if (!response.ok) {
+                return response.json().then((data) => {
+                    throw new Error(data.error || "Failed to create task.");
                 });
-            });
+            }
+            return response.json();
+        })
+        .then((data) => {
+            if (data.success) {
+                //alert(data.message);
+                location.reload(); // Optionally reload the page or update the task list dynamically
+            } else {
+                alert("Task creation failed: " + JSON.stringify(data.errors));
+            }
+        })
+        .catch((error) => {
+            console.error("Error:", error);
+            alert("An error occurred: " + error.message);
         });
-    </script>
-    {% endblock %}
+});
+
+    // Event delegation for edit buttons
+    document.addEventListener("click", (event) => {
+        if (event.target.classList.contains("edit-task-btn")) {
+            const taskId = event.target.getAttribute("data-task-id");
+            const editForm = document.getElementById(`edit-form-${taskId}`);
+            if (editForm) {
+                editForm.style.display = editForm.style.display === "none" ? "block" : "none";
+            }
+        } else if (event.target.classList.contains("cancel-edit-btn")) {
+            const taskId = event.target.getAttribute("data-task-id");
+            const editForm = document.getElementById(`edit-form-${taskId}`);
+            if (editForm) {
+                editForm.style.display = "none";
+            }
+        }
+    });
+
+    // Handle task deletion
+    document.addEventListener("click", (event) => {
+        if (event.target.classList.contains("delete-task-btn")) {
+            const taskId = event.target.getAttribute("data-task-id");
+            const confirmed = confirm("Are you sure you want to delete this task?");
+            if (confirmed) {
+                fetch(`/bubblespace/projects/project_task/delete/${taskId}/`, {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": document.querySelector("[name='csrfmiddlewaretoken']").value,
+                        "Content-Type": "application/json",
+                    },
+                })
+                    .then((response) => {
+                        if (response.ok) {
+                            document.getElementById(`task-${taskId}`).remove();
+                        } else {
+                            throw new Error("Failed to delete task.");
+                        }
+                    })
+                    .catch((error) => {
+                        console.error("Error:", error);
+                        alert("An error occurred while deleting the task.");
+                    });
+            }
+        }
+    });
+
+    // Handle task editing
+    document.addEventListener("submit", (event) => {
+        if (event.target.classList.contains("edit-task-form")) {
+            event.preventDefault();
+            const taskId = event.target.getAttribute("data-task-id");
+            const formData = new FormData(event.target);
+
+            fetch(`/bubblespace/projects/project_tasks/edit/${taskId}/`, {
+                method: "POST",
+                body: formData,
+                headers: {
+                    "X-CSRFToken": document.querySelector("[name='csrfmiddlewaretoken']").value,
+                },
+            })
+                .then((response) => {
+                    if (!response.ok) {
+                        return response.json().then((data) => {
+                            throw new Error(data.error || "Failed to save task.");
+                        });
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    if (data.success) {
+                        const taskElement = document.getElementById(`task-${taskId}`);
+                        taskElement.querySelector(".task-item-content span:nth-child(1)").textContent = data.updated_title;
+                        taskElement.querySelector(".task-item-content span:nth-child(2)").textContent = data.updated_description;
+                        taskElement.querySelector(".task-item-content span:nth-child(3)").textContent = data.updated_category;
+                        taskElement.querySelector(".task-item-content span:nth-child(4)").textContent = data.updated_assigned_to;
+                        taskElement.querySelector(".task-item-content span:nth-child(5)").textContent = data.updated_due_date;
+
+                        const statusIcon = taskElement.querySelector(".status-icon");
+                        statusIcon.className = `status-icon ${data.updated_status}`;
+                        statusIcon.innerHTML = data.updated_status_icon;
+
+                        document.getElementById(`edit-form-${taskId}`).style.display = "none";
+                    } else {
+                        alert("Error saving task: " + data.errors);
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error:", error);
+                    alert(error.message || "An error occurred while saving the task.");
+                });
+        }
+    });
+});
+
+</script>    
 </body>
 
 </html>

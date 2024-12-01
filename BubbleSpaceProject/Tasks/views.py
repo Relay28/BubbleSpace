@@ -5,7 +5,6 @@ from Projects.models import Project
 from .forms import TaskForm
 from django.http import JsonResponse
 ## views.py
-from django.shortcuts import render
 from .models import Task
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required

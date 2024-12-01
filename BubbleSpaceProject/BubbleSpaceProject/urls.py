@@ -23,7 +23,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('bubblespace/', include('Login.urls')),  # Include Login.urls without a prefix for direct access
    # path('notes/', include('notes.urls')),
-    path("select2/", include("django_select2.urls")),
+    # path("select2/", include("django_select2.urls")),
 ]
 
 if settings.DEBUG:

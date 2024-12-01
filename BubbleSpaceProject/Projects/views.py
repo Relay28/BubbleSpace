@@ -7,18 +7,100 @@ from Tasks.forms import TaskForm,ProjectTaskForm
 from django.contrib.auth.decorators import login_required
 from Login.models import Users_Account 
 from django.urls import reverse
+from django.http import JsonResponse
+from django.shortcuts import redirect
+from django.contrib import messages
+from django.http import HttpResponse
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+from django.contrib.auth.decorators import login_required
 # Create your views here.
+# @login_required
+# def project_list(request):
+#     project_id = request.GET.get('project_id')  # Get project_id from query parameters
+#     project = get_object_or_404(Project, pk=project_id) if project_id else Project.objects.first()
 
-# Project List View
-def project_list(request):
-    project_id = request.GET.get('project_id')  # Get project_id from query parameters
-    if project_id:
-        project = get_object_or_404(Project, pk=project_id)
-    else:
-        project = Project.objects.first()  # Default to the first project if no ID is provided
+#     if not project:
+#         return render(request, 'Projects/no_projects.html')  # Handle case where no projects exist
+
+#     tasks = project.tasks.all()  # Get tasks for the specific project
+
+    # Handle task creation
+@login_required
+def project_list(request, project_id):
     
-    tasks = project.tasks.all()  # Get tasks for the specific project
-    return render(request, 'Projects/project_list.html', {'project': project, 'tasks': tasks})
+    project = get_object_or_404(Project, pk=project_id)
+    tasks = project.tasks.all()  # Assuming a related name for tasks in the Project model
+    form = ProjectTaskForm()
+
+    return render(request, 'Projects/project_list.html', {
+        'project': project,
+        'tasks': tasks,
+        'form': form,  # Pass the task form
+    })
+def project_tasks(request, pk):
+    project = get_object_or_404(Project, pk=pk)
+    tasks = Task.objects.filter(project=project)
+    form = ProjectTaskForm(project=project)
+    return render(request, 'Projects/project_list.html', {'project': project, 'tasks': tasks , 'form':form})
+@login_required
+def project_task_create(request, ProjectId):
+    project = get_object_or_404(Project, pk=ProjectId)
+
+    if request.method == 'POST':
+        form = ProjectTaskForm(request.POST, project=project)
+        if form.is_valid():
+            task = form.save(commit=False)
+            task.project = project
+            task.created_by = request.user
+            task.assigned_to = form.cleaned_data['assigned_to']
+            task.save()
+            return JsonResponse({'success': True, 'message': 'Task created successfully!'})
+
+        # If form is invalid, return errors
+        return JsonResponse({'success': False, 'errors': form.errors}, status=400)
+
+@login_required
+def project_task_edit(request, task_id):
+    task = get_object_or_404(Task, pk=task_id)
+
+    if request.method == 'POST':
+        form = ProjectTaskForm(request.POST, instance=task)
+        if form.is_valid():
+            updated_task = form.save()
+
+            # Prepare response data
+            data = {
+                'success': True,
+                'message': 'Task updated successfully!',
+                'updated_title': updated_task.title,
+                'updated_description': updated_task.description,
+                'updated_category': updated_task.category,
+                'updated_assigned_to': updated_task.assigned_to.username if updated_task.assigned_to else "Unassigned",
+                'updated_due_date': updated_task.due_date.strftime('%b %d, %Y') if updated_task.due_date else "",
+                'updated_status': 'bg-success' if updated_task.status == 'green' else 'bg-warning' if updated_task.status == 'yellow' else 'bg-danger',
+                'updated_status_icon': getattr(updated_task, 'status_icon_html', lambda: '')(),  # Optional method
+            }
+            return JsonResponse(data)
+
+        # Return validation errors
+        return JsonResponse({'success': False, 'errors': form.errors}, status=400)
+
+    return JsonResponse({'success': False, 'error': 'Invalid request method.'}, status=405)
+
+
+
+@login_required
+def project_task_delete(request, task_id):
+    task = get_object_or_404(Task, pk=task_id)
+
+    if request.method == 'POST':
+        task.delete()
+        return JsonResponse({'success': True, 'message': 'Task deleted successfully.'})
+
+    return JsonResponse({'success': False, 'error': 'Invalid request method.'}, status=405)
+
+
 
 # Project Detail View
 def project_detail(request, pk):
@@ -47,30 +129,9 @@ def project_create(request, team_id):
 
 
 # Task Create for a Specific Project
-@login_required
-def task_create_for_project(request, project_id):
-    project = get_object_or_404(Project, pk=project_id)  # Fetch the project
-
-    if request.method == 'POST':
-        form = ProjectTaskForm(request.POST, project=project)  # Pass project to form
-        if form.is_valid():
-            task = form.save(commit=False)
-            task.project = project
-            task.created_by = request.user
-            task.assigned_to = form.cleaned_data['assigned_to']  # Explicitly save the selected user
-            task.save()
-            return redirect(f"{reverse('project_list')}?project_id={project.ProjectId}")
-
-    else:
-        form = ProjectTaskForm(project=project)  # Pass project to form
-
-    return render(request, 'projects/task_form.html', {'form': form})
 
 
-def project_tasks(request, pk):
-    project = get_object_or_404(Project, pk=pk)
-    tasks = Task.objects.filter(project=project)
-    return render(request, 'Projects/project_list.html', {'project': project, 'tasks': tasks})
+
 
 @login_required
 def project_update(request, pk):
@@ -149,3 +210,24 @@ def cancel_project(request, pk):
     if request.method == "POST" and project.Status == "Ongoing":
         project.cancel_project()
     return redirect('project_detail', pk=pk)
+
+
+@login_required
+def task_update(request, pk):
+    task = get_object_or_404(Task, pk=pk)
+    if request.method == 'POST':
+        form = TaskForm(request.POST, instance=task)
+        if form.is_valid():
+            form.save()
+            return redirect('project_list') + f"?project_id={task.project.id}"
+    else:
+        form = TaskForm(instance=task)
+    return render(request, 'tasks/task_form.html', {'form': form})
+
+@login_required
+def task_delete(request, pk):
+    task = get_object_or_404(Task, pk=pk)
+    if request.method == 'POST':
+        task.delete()
+        return redirect('project_list') + f"?project_id={task.project.id}"
+    return render(request, 'tasks/task_confirm_delete.html', {'task': task})
