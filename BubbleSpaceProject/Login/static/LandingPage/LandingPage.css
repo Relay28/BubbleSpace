@@ -8,6 +8,32 @@
     --btn-hover-color: #f4a261; /* Hover color */
 }
 
+.header {
+    height: 14vh; /* Reduce height */
+    background-color: #1e3d58;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+    padding: 0.5rem 1rem; /* Adjust padding for a smaller appearance */
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+}
+
+.header .logo {
+    font-size: 1.5rem; /* Reduce logo font size */
+    font-weight: bold;
+}
+
+.header .navbar .nav-link {
+    font-size: 1rem; /* Reduce link font size */
+    margin: 0 0.5rem;
+}
+
+.header .btn {
+    font-size: 1rem; /* Reduce button font size */
+    padding: 0.4rem 0.8rem; /* Adjust button padding */
+}
+
 /* General Reset */
 * {
     margin: 0;
@@ -31,41 +57,48 @@ section {
 }
 
 /* Hero Section */
-.hero {
-    background-color: var(--background-color);
-    text-align: center;
+.hero-content {
+    color: white; /* Set text color to white */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Add subtle shadow for readability */
+    margin-top: 10vh;
 }
 
-.hero h1 {
-    font-size: 3.5rem; /* Increased font size for emphasis */
-    margin-bottom: 2rem;
-    color: var(--primary-color); /* Primary Color */
+.hero-content h1 {
+    font-size: 3.5rem; /* Maintain emphasis on heading */
+    color: inherit; /* Inherit white color */
+    
 }
 
-.hero p {
+.hero-content p {
     font-size: 1.3rem;
-    margin-bottom: 3rem;
-    color: var(--text-muted);
+    color: inherit; /* Inherit white color */
 }
 
-.hero .btn-primary {
-    background-color: var(--primary-color); /* Primary Color */
+.hero-content .btn-primary {
+    background-color: white; /* Button background white */
+    color: var(--primary-color); /* Text in primary color */
+    font-weight: bold;
     border: none;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
+    transition: all 0.3s ease;
 }
 
-.hero .btn-outline-primary {
-    border-color: var(--primary-color); /* Primary Color */
-    color: var(--primary-color); /* Primary Color */
-    font-weight: bold;
-    transition: background-color 0.3s ease;
+.hero-content .btn-primary:hover {
+    background-color: var(--btn-hover-color); /* Change background on hover */
+    color: white; /* Invert text color */
 }
 
-.hero .btn-primary:hover, .hero .btn-outline-primary:hover {
-    background-color: var(--secondary-color); /* Secondary Color */
-    color: white;
+.hero-content .btn-outline-light {
+    border-color: white; /* Outline color white */
+    color: white; /* Text color white */
+    font-weight: bold;
+    transition: all 0.3s ease;
 }
+
+.hero-content .btn-outline-light:hover {
+    background-color: white; /* Change to solid white on hover */
+    color: var(--primary-color); /* Invert text color */
+}
+
 
 /* Features Section */
 .features {
@@ -73,9 +106,10 @@ section {
 }
 
 .features h2 {
-    font-size: 2.5rem;
+    font-size: 3rem;
     margin-bottom: 3rem;
     color: var(--primary-color); /* Primary Color */
+    font-weight: 400;
 }
 
 .features .card {
@@ -128,3 +162,4 @@ section {
 .footer a:hover {
     text-decoration: underline;
 }
+
