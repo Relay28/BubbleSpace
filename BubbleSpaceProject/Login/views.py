@@ -4,6 +4,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import Users_Account
 import json
+from Teams.models import Team
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import check_password
 from django.views.decorators.http import require_POST
@@ -29,6 +30,7 @@ def register_view(request):
             lname = data.get('lname')
             gender = data.get('gender')
             birthDate = data.get('birthDate')
+            email = data.get('email') 
             custom_gender = data.get('custom_gender')
             if gender == 'Other':
                 gender = custom_gender
@@ -39,13 +41,18 @@ def register_view(request):
                     'error': "Username already exists",
                     'data': data  # Pass the filled data to the template
                 })
+            
+            if Users_Account.objects.filter(email=email).exists():
+                return render(request, 'Register/register_account.html', {
+                    'error': "Email already exists",
+                    'data': data  # Pass the filled data to the template
+                })
 
             # Create and save the new user
-            user = Users_Account(username=username, fname=fname, lname=lname, gender=gender, birthDate=birthDate)
+            user = Users_Account(username=username, fname=fname, lname=lname, gender=gender, birthDate=birthDate, email=email)
             user.set_password(password)
             user.save()
-            return redirect('login') 
-
+            return redirect('login')
         except json.JSONDecodeError:
             return render(request, 'Register/register_account.html', {
                 'error': "Invalid form data"
@@ -114,17 +121,25 @@ def profile_view(request):
     if request.user.is_authenticated:
         user = request.user
         default_profile_picture = f"{settings.MEDIA_URL}profile_pictures/default.svg"
+        
+        # Fetch teams where the user is a member
+        user_teams = Team.objects.filter(members=user)
+
         user_data = {
             "username": user.username,
             "fname": user.fname,
             "lname": user.lname,
             "gender": user.gender,
-            "birthDate": user.birthDate.strftime('%d/%m/%Y'),  # Format as needed
+            "birthDate": user.birthDate.strftime('%d/%m/%Y'),
             "age": user.age,
-            "profile_picture": user.profile_picture.url if user.profile_picture else None  # Add profile picture URL
+            "profile_picture": user.profile_picture.url if user.profile_picture else None,
+            "teams": user_teams,  # Include user teams
+            "email":user.email,
+             "joined_date":user.joined_date,
         }
         return render(request, 'Profile/profile_account.html', user_data)
     return redirect('login')
+
 
 @login_required
 def edit_profile_view(request):
@@ -137,6 +152,7 @@ def edit_profile_view(request):
         birthDate = request.POST.get('birthDate')
         password = request.POST.get('password')
         custom_gender = request.POST.get('custom_gender')
+        email = request.POST.get('email')  # Get the email field
         if gender == 'Other':
             gender = custom_gender
 
@@ -145,12 +161,17 @@ def edit_profile_view(request):
         user.fname = fname
         user.lname = lname
         user.gender = gender
-
         user.birthDate = birthDate
+
         if password:
             user.set_password(password)
         if profile_picture:
             user.profile_picture = profile_picture
+
+        # Update the email
+        if email:
+            user.email = email
+
         user.save()
 
         return redirect('profile')
@@ -161,6 +182,7 @@ def edit_profile_view(request):
         'lname': user.lname,
         'gender': user.gender,
         'birthDate': user.birthDate,
+        'email': user.email,  # Pass email to the template
         'profile_picture': user.profile_picture.url if user.profile_picture else None,
     }
     return render(request, 'Profile/edit_profile.html', context)

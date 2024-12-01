@@ -31,7 +31,10 @@ class Users_Account(AbstractBaseUser, PermissionsMixin):
     birthDate = models.DateField()
     profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
     is_active = models.BooleanField(default=True)
+    
     is_staff = models.BooleanField(default=False)
+    email = models.EmailField(unique=True)  # Added email field
+    joined_date = models.DateField(auto_now_add=True) 
 
     objects = UsersAccountManager()
 

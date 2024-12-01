@@ -3,18 +3,18 @@
 {% block title %}Edit Profile{% endblock %}
 
 {% block content %}
-<div class="container py-1">
+<div class="container py-4">
     <div class="text-center mb-3">
         <h1 class="fw-bold text-primary">Edit Profile</h1>
         <p class="text-muted">Update your personal information and preferences.</p>
     </div>
 
-    <div class="card shadow-lg border-0 rounded-4 mx-auto" style="max-width: 700px; height:470px;">
+    <div class="card shadow-lg border-0 rounded-4 mx-auto" style="max-width: 800px;">
         <div class="card-body mt-4">
             <div class="d-flex align-items-center mb-4 position-relative">
-                <div class="me-3 position-relative"  >
+                <div class="me-3 position-relative">
                     {% if profile_picture %}
-                        <img src="{{ user.profile_picture.url }}" alt="Profile Picture" class="rounded-circle shadow-lg " style="width: 100px; height: 100px; object-fit: cover;border: 1px solid;">
+                        <img src="{{ user.profile_picture.url }}" alt="Profile Picture" class="rounded-circle shadow-lg" style="width: 100px; height: 100px; object-fit: cover; border: 1px solid;">
                     {% else %}
                         <div class="bg-secondary rounded-circle text-white d-flex justify-content-center align-items-center" style="width: 100px; height: 100px;">
                             <span class="fs-1">👤</span>
@@ -47,7 +47,6 @@
                             <option value="Other" {% if gender == "Other" %}selected{% endif %}>Other</option>
                             <option value="Male" {% if gender == "Male" %}selected{% endif %}>Male</option>
                             <option value="Female" {% if gender == "Female" %}selected{% endif %}>Female</option>
-                           
                         </select>
                     </div>
                     <!-- Custom Gender Textbox (Hidden initially) -->
@@ -59,6 +58,10 @@
                     <div class="col-md-6">
                         <label for="birthDate" class="form-label">Birthday</label>
                         <input type="date" id="birthDate" name="birthDate" value="{{ birthDate|date:'Y-m-d' }}" class="form-control">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" id="email" name="email" value="{{ email }}" class="form-control" placeholder="Enter email address">
                     </div>
                     <div class="col-md-6">
                         <label for="password" class="form-label">New Password</label>
@@ -80,23 +83,21 @@
 
 <script>
     // Function to toggle the display of the custom gender textbox
-  // Function to toggle the display of the custom gender textbox
-function toggleOtherGenderField() {
-    const genderSelect = document.getElementById('gender');
-    const customGenderField = document.getElementById('custom-gender-field');
-    
-    if (genderSelect.value === 'Other') {
-        customGenderField.style.display = 'block'; // Show custom gender field
-    } else {
-        customGenderField.style.display = 'none'; // Hide custom gender field
+    function toggleOtherGenderField() {
+        const genderSelect = document.getElementById('gender');
+        const customGenderField = document.getElementById('custom-gender-field');
+        
+        if (genderSelect.value === 'Other') {
+            customGenderField.style.display = 'block'; // Show custom gender field
+        } else {
+            customGenderField.style.display = 'none'; // Hide custom gender field
+        }
     }
-}
 
-// Call the function on page load to set the correct display state
-document.addEventListener('DOMContentLoaded', function() {
-    toggleOtherGenderField();
-});
-
+    // Call the function on page load to set the correct display state
+    document.addEventListener('DOMContentLoaded', function() {
+        toggleOtherGenderField();
+    });
 </script>
 
 {% endblock %}

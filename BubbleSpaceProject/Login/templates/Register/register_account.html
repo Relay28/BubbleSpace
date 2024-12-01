@@ -7,9 +7,6 @@
     <title>BubbleSpace Register</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="{% static 'Register/registerStyle.css' %}">
-    <style>
-    
-    </style>
 </head>
 <body>
     <div class="register-container">
@@ -21,24 +18,27 @@
             <p>Already have an account? <a href="{% url 'login' %}">Log in</a></p>
             <form method="POST" action="{% url 'register' %}">
                 {% csrf_token %}
-
                 {% if error %}
                 <div class="alert alert-danger" role="alert">
                     {{ error }}
                 </div>
                 {% endif %} 
-                
+
                 <!-- Username Field -->
                 <label for="username">Username</label>
                 <input type="text" id="username" name="username" placeholder="Enter your username" required>
-                
+
                 <!-- First Name Field -->
                 <label for="fname">First Name</label>
                 <input type="text" id="fname" name="fname" placeholder="Enter your first name" required>
-                
+
                 <!-- Last Name Field -->
                 <label for="lname">Last Name</label>
                 <input type="text" id="lname" name="lname" placeholder="Enter your last name" required>
+
+                <!-- Email Field -->
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="Enter your email" required>
 
                 <!-- Password Field -->
                 <label for="password">Create a Password</label>
@@ -46,7 +46,7 @@
                     <input type="password" id="password" name="password" placeholder="Enter your password" required>
                     <span class="toggle-password" onclick="togglePassword()">👁️ Show</span>
                 </div>
-               
+
                 <!-- Birthdate Field -->
                 <label for="birthdate">Birthdate</label>
                 <input type="date" id="birthdate" name="birthDate" required>
