@@ -15,13 +15,12 @@
 
         a {
             text-decoration: none;
-            color: #28a745; /* Green */
+            color: #333; /* Green */
             font-weight: bold;
         }
 
         a:hover {
-            color: #1e7e34;
-            text-decoration: underline;
+            color: #6c6c6c;
         }
 
         /* Main Content Area */
@@ -51,28 +50,6 @@
             color: #555;
         }
 
-        /* Status Styling */
-        .status-ongoing, .status-completed, .status-cancelled {
-            font-weight: bold;
-            padding: 5px 10px;
-            border-radius: 5px;
-        }
-
-        .status-ongoing {
-            background-color: #dff0d8;
-            color: #28a745;
-        }
-
-        .status-completed {
-            background-color: #28a745;
-            color: #fff;
-        }
-
-        .status-cancelled {
-            background-color: #f8d7da;
-            color: #dc3545;
-        }
-
         /* Buttons */
         .button-group {
             display: flex;
@@ -92,41 +69,43 @@
         }
 
         .btn-edit {
-            background-color: #28a745;
+            background-color: #333;
             color: #fff;
+            text-decoration: none; /* Removes underline */
+            display: inline-block; /* Ensures hover effects apply properly */
+            transition: transform 0.3s ease, background-color 0.3s ease; /* Adds smooth transition */
         }
 
         .btn-edit:hover {
-            background-color: #218838;
+            background-color: #6c6c6c;
+            color: #fff;
+            transform: scale(1.1); /* Slightly enlarges the button */
         }
 
         .btn-delete {
             background-color: #dc3545;
             color: #fff;
+            display: inline-block; /* Ensures hover effects apply properly */
+            transition: transform 0.3s ease, background-color 0.3s ease; /* Adds smooth transition */
         }
 
         .btn-delete:hover {
             background-color: #bd2130;
+            transform: scale(1.1); /* Slightly enlarges the button */
         }
 
         .btn-back {
-            background-color: #6c757d;
-            color: #fff;
-        }
-
-        .btn-back:hover {
-            background-color: #5a6268;
+            color: #000;
+            text-decoration: none; /* Removes underline */
         }
 
         /* Modal Styling */
         .modal {
             display: none; /* Hidden by default */
             position: fixed;
-            z-index: 1000;
             left: 0;
             top: 0;
-            width: 100%;
-            height: 100%;
+            width: 50%;
             overflow: auto;
             background-color: rgba(0, 0, 0, 0.5); /* Black background with opacity */
         }
@@ -169,19 +148,25 @@
         .modal-content .btn-confirm {
             background-color: #dc3545;
             color: #fff;
+            display: inline-block; /* Ensures hover effects apply properly */
+            transition: transform 0.3s ease, background-color 0.3s ease; /* Adds smooth transition */
         }
 
         .modal-content .btn-confirm:hover {
             background-color: #bd2130;
+            transform: scale(1.1); /* Slightly enlarges the button */
         }
 
         .modal-content .btn-cancel {
             background-color: #6c757d;
             color: #fff;
+            display: inline-block; /* Ensures hover effects apply properly */
+            transition: transform 0.3s ease, background-color 0.3s ease; /* Adds smooth transition */
         }
 
         .modal-content .btn-cancel:hover {
             background-color: #5a6268;
+            transform: scale(1.1); /* Slightly enlarges the button */
         }
 
         .project-header {
@@ -213,27 +198,36 @@
         }
 
         .btn-start {
-            background-color: #ffc107; /* Yellow */
+            background-color: #333; /* Yellow */
+            display: inline-block; /* Ensures hover effects apply properly */
+            transition: transform 0.3s ease, background-color 0.3s ease; /* Adds smooth transition */
         }
 
         .btn-complete {
-            background-color: #28a745; /* Green */
+            background-color: #333; /* Green */
+            display: inline-block; /* Ensures hover effects apply properly */
+            transition: transform 0.3s ease, background-color 0.3s ease; /* Adds smooth transition */
         }
 
         .btn-cancel {
             background-color: #dc3545; /* Red */
+            display: inline-block; /* Ensures hover effects apply properly */
+            transition: transform 0.3s ease, background-color 0.3s ease; /* Adds smooth transition */
         }
 
         .btn-start:hover {
-            background-color: #e0a800; /* Darker yellow */
+            background-color: #6c6c6c; /* Darker yellow */
+            transform: scale(1.1); /* Slightly enlarges the button */
         }
 
         .btn-complete:hover {
-            background-color: #218838; /* Darker green */
+            background-color: #6c6c6c; /* Darker yellow */
+            transform: scale(1.1); /* Slightly enlarges the button */
         }
 
         .btn-cancel:hover {
             background-color: #bd2130; /* Darker red */
+            transform: scale(1.1); /* Slightly enlarges the button */
         }
     </style>
 </head>

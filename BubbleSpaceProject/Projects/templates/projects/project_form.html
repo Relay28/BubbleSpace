@@ -14,13 +14,14 @@
 
         a {
             text-decoration: none;
+            color: #333; /* Green */
             font-weight: bold;
-            color: #28a745; /* Green link color */
         }
 
-        a:hover {
-            color: #218838; /* Darker green on hover */
-            text-decoration: underline;
+        .btn-back{
+            text-decoration: none;
+            color: #333; /* Green */
+            font-weight: bold;
         }
 
         /* Main Container */
@@ -76,7 +77,7 @@
 
         /* Button Styling */
         button[type="submit"] {
-            background-color: #28a745; /* Green */
+            background-color: #333; /* Yellow */
             color: #fff;
             border: none;
             padding: 10px 15px;
@@ -84,10 +85,13 @@
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
+            display: inline-block; /* Ensures hover effects apply properly */
+            transition: transform 0.3s ease, background-color 0.3s ease; /* Adds smooth transition */
         }
 
         button[type="submit"]:hover {
-            background-color: #218838; /* Darker green on hover */
+            background-color: #6c6c6c; /* Darker yellow */
+            transform: scale(1.1); /* Slightly enlarges the button */
         }
     </style>
 </head>
@@ -96,7 +100,7 @@
     {% include "base.html" %}
 
     <div class="main-content1">
-        <a href="{% url 'team_detail' pk=team.pk %}">Back</a>
+        <a href="{% url 'project_detail' project.ProjectId %}" class="btn-back">Back</a>
 
         <h1>{{ title }}</h1>
 

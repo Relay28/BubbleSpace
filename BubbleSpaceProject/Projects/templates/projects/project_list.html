@@ -45,6 +45,23 @@
             justify-content: flex-end;
             gap: 10px;
         }
+        .btn-back{
+            color: #000;
+            text-decoration: none; /* Removes underline */
+        }
+        .btn-add{
+            background-color: #333;
+            color: #fff;
+            border-radius: 10px;
+            text-decoration: none; /* Removes underline */
+            display: inline-block; /* Ensures hover effects apply properly */
+            transition: transform 0.3s ease, background-color 0.3s ease; /* Adds smooth transition */
+        }
+        .btn-add:hover{
+            background-color: #6c6c6c;
+            color: #fff;
+            transform: scale(1.1); /* Slightly enlarges the button */
+        }
     </style>
 </head>
 
@@ -53,14 +70,14 @@
 
     <div class="container">
         <div class="back-button-container" style="margin: 10px;">
-            <a href="#" onclick="history.back(); return false;" class="btn btn-primary btn-sm" style="text-decoration: none;">
+            <a href="#" onclick="history.back(); return false;" class="btn-back" style="text-decoration: none;">
                 &larr; Back
             </a>
         </div>
 
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1 class="h4 text-primary">Tasks in {{ project.Title }}</h1>
-            <button id="addTaskButton" class="btn btn-sm btn-success">
+            <h1 class="h1" style="font-size: 24px; font-weight: bold; color: #333;">Tasks in {{ project.Title }}</h1>
+            <button id="addTaskButton" class="btn-add">
                 Add New Task
             </button>
         </div>
