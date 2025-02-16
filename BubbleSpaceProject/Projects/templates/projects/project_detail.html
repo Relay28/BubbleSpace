@@ -1,0 +1,307 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Project Details</title>
+    <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
+    <style>
+        /* General Reset */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+
+        a {
+            text-decoration: none;
+            color: #333; /* Green */
+            font-weight: bold;
+        }
+
+        a:hover {
+            color: #6c6c6c;
+        }
+
+        /* Main Content Area */
+        .main-content1 {
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            max-width: 75%;
+            margin: 30px auto;
+            margin-left: 320px;
+        }
+
+        .main-content1 h1 {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .main-content1 p {
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .main-content1 p strong {
+            color: #555;
+        }
+
+        /* Buttons */
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .button-group a, .button-group button {
+            display: inline-block;
+            padding: 10px 15px;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-edit {
+            background-color: var(--primary-color);
+            color: #fff;
+            text-decoration: none; /* Removes underline */
+            display: inline-block; /* Ensures hover effects apply properly */
+            transition: transform 0.3s ease, background-color 0.3s ease; /* Adds smooth transition */
+        }
+
+        .btn-edit:hover {
+            color: #fff;
+            transform: scale(1.1); /* Slightly enlarges the button */
+        }
+
+        .btn-delete {
+            background-color: #dc3545;
+            color: #fff;
+            display: inline-block; /* Ensures hover effects apply properly */
+            transition: transform 0.3s ease, background-color 0.3s ease; /* Adds smooth transition */
+        }
+
+        .btn-delete:hover {
+            background-color: #bd2130;
+            transform: scale(1.1); /* Slightly enlarges the button */
+        }
+
+        .btn-back {
+            color: #000;
+            text-decoration: none; /* Removes underline */
+        }
+
+        /* Modal Styling */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 50%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5); /* Black background with opacity */
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            border-radius: 8px;
+            width: 40%;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        .modal-content h2 {
+            color: #333;
+        }
+
+        .modal-content p {
+            margin: 20px 0;
+            font-size: 16px;
+        }
+
+        .modal-content .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .modal-content button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .modal-content .btn-confirm {
+            background-color: #dc3545;
+            color: #fff;
+            display: inline-block; /* Ensures hover effects apply properly */
+            transition: transform 0.3s ease, background-color 0.3s ease; /* Adds smooth transition */
+        }
+
+        .modal-content .btn-confirm:hover {
+            background-color: #bd2130;
+            transform: scale(1.1); /* Slightly enlarges the button */
+        }
+
+        .modal-content .btn-cancel {
+            background-color: #6c757d;
+            color: #fff;
+            display: inline-block; /* Ensures hover effects apply properly */
+            transition: transform 0.3s ease, background-color 0.3s ease; /* Adds smooth transition */
+        }
+
+        .modal-content .btn-cancel:hover {
+            background-color: #5a6268;
+            transform: scale(1.1); /* Slightly enlarges the button */
+        }
+
+        .project-header {
+            display: flex;
+            justify-content: space-between; /* Distribute items to far left and right */
+            align-items: center; /* Vertically align items */
+            margin-bottom: 20px;
+        }
+
+        .project-header h1 {
+            font-size: 28px;
+            margin: 0;
+            color: #333;
+        }
+
+        .project-actions {
+            display: flex;
+            gap: 10px; /* Space between buttons */
+        }
+
+        .btn-status {
+            padding: 10px 15px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .btn-start {
+            background-color: var(--primary-color); /* Yellow */
+            display: inline-block; /* Ensures hover effects apply properly */
+            transition: transform 0.3s ease, background-color 0.3s ease; /* Adds smooth transition */
+        }
+
+        .btn-complete {
+            background-color: var(--primary-color); /* Green */
+            display: inline-block; /* Ensures hover effects apply properly */
+            transition: transform 0.3s ease, background-color 0.3s ease; /* Adds smooth transition */
+        }
+
+        .btn-cancel {
+            background-color: #dc3545; /* Red */
+            display: inline-block; /* Ensures hover effects apply properly */
+            transition: transform 0.3s ease, background-color 0.3s ease; /* Adds smooth transition */
+        }
+
+        .btn-start:hover {
+            transform: scale(1.1); /* Slightly enlarges the button */
+        }
+
+        .btn-complete:hover {
+            transform: scale(1.1); /* Slightly enlarges the button */
+        }
+
+        .btn-cancel:hover {
+            background-color: #bd2130; /* Darker red */
+            transform: scale(1.1); /* Slightly enlarges the button */
+        }
+    </style>
+</head>
+<body>
+    {% include "base.html" %}
+
+    <div class="main-content1">
+        <p>
+            <a href="{% url 'team_detail' team.pk %}" class="btn-back">Back</a>
+        </p>
+        <!-- Flex Container for Project Details and Buttons -->
+        <div class="project-header">
+            <h1>Project Details</h1>
+            <div class="project-actions">
+                {% if project.Status == "Pending" %}
+                    <form method="post" action="{% url 'project_start' project.pk %}" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-status btn-start">Start Project</button>
+                    </form>
+                {% elif project.Status == "Ongoing" %}
+                    <form method="post" action="{% url 'project_complete' project.pk %}" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-status btn-complete">Complete Project</button>
+                    </form>
+                    <form method="post" action="{% url 'project_cancel' project.pk %}" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-status btn-cancel">Cancel Project</button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+
+        <p><strong>Title:</strong> {{ project.Title }}</p>
+        <p><strong>Description:</strong> {{ project.Description }}</p>
+        <p>
+            <strong>Status:</strong>
+            {% if project.Status == 'Pending' %}
+                <span class="status status-pending">{{ project.Status }}</span>
+            {% elif project.Status == 'Ongoing' %}
+                <span class="status status-ongoing">{{ project.Status }}</span>
+            {% elif project.Status == 'Completed' %}
+                <span class="status status-completed">{{ project.Status }}</span>
+            {% elif project.Status == 'Cancelled' %}
+                <span class="status status-cancelled">{{ project.Status }}</span>
+            {% endif %}
+        </p>
+
+        <!-- Button Group -->
+        <div class="button-group">
+            <a href="{% url 'project_update' project.pk %}" class="btn-edit">Edit</a>
+            <button class="btn-delete" onclick="showModal()">Delete</button>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <h2>Confirm Deletion</h2>
+            <p>Are you sure you want to delete this project? This action cannot be undone.</p>
+            <div class="btn-group">
+                <form method="post" action="{% url 'project_delete' project.pk %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-confirm">Yes, Delete</button>
+                </form>
+                <button class="btn-cancel" onclick="hideModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showModal() {
+            document.getElementById("deleteModal").style.display = "block";
+        }
+
+        function hideModal() {
+            document.getElementById("deleteModal").style.display = "none";
+        }
+    </script>
+</body>
+</html>

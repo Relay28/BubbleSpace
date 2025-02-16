@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Bubble Space - Your Task Management Companion">
+    <link rel="stylesheet" href="{% static 'LandingPage/LandingPage.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Bubble Space - Landing Page</title>
+    <style>
+        .hero {
+            position: relative;
+            background: url("{% static 'LandingPage/hero.gif' %}") center/cover no-repeat;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        .hero-content {
+            z-index: 1;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 0;
+        }
+        #f1, #f2, #f3 {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        #f1:hover, #f2:hover, #f3:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .about {
+            height: 20vh; /* Set height */
+            background-image: linear-gradient(to bottom, rgba(30, 61, 88, 0.8), rgba(77, 184, 184, 0.8)), 
+                            url("{% static 'LandingPage/about.jpg' %}"); /* Add gradient overlay and background image */
+            background-size: cover; /* Ensure the image covers the entire section */
+            background-position: center; /* Center the background */
+            background-repeat: no-repeat; /* Avoid image repetition */
+            display: flex; /* Center content vertically */
+            justify-content: center;
+            align-items: center;
+            color: white; /* White text for contrast */
+            text-align: center; /* Center text */
+            padding: 2rem; /* Adjust padding for better spacing */
+        }
+
+        .about h2 {
+            font-size: 2.5rem; /* Set heading size */
+            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5); /* Add shadow for readability */
+            margin-bottom: 1rem; /* Adjust spacing */
+            color: white; 
+        }
+
+        .about p {
+            font-size: 1.2rem; /* Adjust font size for text */
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5); /* Add shadow for readability */
+            max-width: 800px; /* Limit width for better readability */
+            margin: 0 auto; /* Center-align the paragraph */
+            color: white; 
+        }
+
+        .about .container {
+            padding: 1rem 2rem; /* Add extra padding */
+            max-width: 1000px; /* Limit container width */
+        }
+
+
+    </style>
+</head>
+<body>
+    <header class="header bg-primary py-4 shadow-sm fixed-top w-100" style="background-color: #ffffff;">
+        <div class="container d-flex justify-content-between align-items-center" >
+            <div class="logo text-white h3">Bubble Space</div>
+            <nav class="navbar navbar-expand-lg">
+                <ul class="navbar-nav d-flex align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="#features">Features</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="#about">About</a>
+                    </li>
+                </ul>
+                <a href="{% url 'register' %}" class="btn btn-secondary text-white ms-3">Get Started</a>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="hero-content text-center">
+            <h1 class="display-3 mb-4">Organize, Collaborate, and Achieve</h1>
+            <p class="lead mb-5">Manage your projects effortlessly with Bubble Space – your ultimate task management companion.</p>
+            <div class="d-flex justify-content-center gap-4">
+                <a href="{% url 'register' %}" class="btn btn-primary btn-lg">Sign Up Free</a>
+                <a href="#learn-more" class="btn btn-outline-light btn-lg">Learn More</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="features" class="features py-6">
+        <div class="container text-center">
+            <h2 class="display-5 text-primary mb-5">Features</h2>
+            <div class="row row-cols-1 row-cols-md-3 g-5">
+                <div class="col" id="f1">
+                    <div class="card border-0 shadow-sm p-4">
+                        <img src="{% static 'LandingPage/f1.jpg' %}" class="card-img-top mb-4" alt="Feature 1">
+                        <div class="card-body text-center">
+                            <h5 class="card-title text-primary">Seamless Collaboration</h5>
+                            <p class="card-text text-muted">Work with your team effortlessly in real-time.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col" id="f2">
+                    <div class="card border-0 shadow-sm p-4">
+                        <img src="{% static 'LandingPage/f2.jpg' %}" class="card-img-top mb-4" alt="Feature 2">
+                        <div class="card-body text-center">
+                            <h5 class="card-title text-primary">Customizable Workflows</h5>
+                            <p class="card-text text-muted">Tailor tasks and projects to your needs.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col" id="f3">
+                    <div class="card border-0 shadow-sm p-4">
+                        <img src="{% static 'LandingPage/f3.jpg' %}" class="card-img-top mb-4" alt="Feature 3">
+                        <div class="card-body text-center">
+                            <h5 class="card-title text-primary">Smart Insights</h5>
+                            <p class="card-text text-muted">Track progress with visual reports and insights.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="about" class="about py-6">
+        <div class="container text-center text-white">
+            <h2 class="display-5 mb-4">About Bubble Space</h2>
+            <p class="lead mb-5">
+                At Bubble Space, we are committed to transforming the way you manage projects and collaborate. Our intuitive platform is designed to streamline your workflow and boost productivity.
+            </p>
+        </div>
+    </section>
+    
+
+    <footer class="footer bg-primary py-4 text-white text-center">
+        <p>&copy; 2024 Bubble Space. All Rights Reserved.</p>
+        <div>
+            <a href="#privacy" class="text-white me-4">Privacy Policy</a>
+            <a href="#terms" class="text-white">Terms of Service</a>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

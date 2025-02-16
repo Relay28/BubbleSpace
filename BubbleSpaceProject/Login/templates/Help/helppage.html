@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}Help - Bubble Space{% endblock %}
+
+{% block extra_css %}
+<style>
+    .faq-container {
+        padding: 20px;
+        max-width: 800px;
+        margin: auto;
+        font-family: 'Inter', sans-serif;
+        color: #333;
+        text-align: left;
+    }
+
+    .faq-item {
+        margin-bottom: 20px;
+        border-bottom: 1px solid #eaeaea;
+    }
+
+    .faq-item-header {
+        font-size: 1.2em;
+        font-weight: 600;
+        padding: 10px 0;
+    }
+
+    .faq-item-answer {
+        padding: 10px 0;
+        color: #555;
+        line-height: 1.6;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="faq-container">
+    <h1>Frequently Asked Questions</h1>
+
+    <div class="faq-item">
+        <div class="faq-item-header">What is Bubble Space?</div>
+        <div class="faq-item-answer">
+            Bubble Space is a comprehensive platform designed to facilitate various business functions such as User Management, Team Management, Project and Task Management, Messaging, and Note Creation. It is inspired by the simplicity and flexibility of productivity tools like Notion.
+        </div>
+    </div>
+
+    <div class="faq-item">
+        <div class="faq-item-header">How does team management work?</div>
+        <div class="faq-item-answer">
+            Users are organized into teams, with each team having a leader and multiple members. The Team Management System allows for the creation of teams, assignment of members, and designation of team leadership roles.
+        </div>
+    </div>
+
+    <div class="faq-item">
+        <div class="faq-item-header">How are projects and tasks managed?</div>
+        <div class="faq-item-answer">
+            The Project and Task Management System enables teams to manage projects, assign tasks to individual users, and track task status, due dates, and comments. This helps ensure that projects are completed efficiently.
+        </div>
+    </div>
+
+    <div class="faq-item">
+        <div class="faq-item-header">Can I communicate with other users on Bubble Space?</div>
+        <div class="faq-item-answer">
+            Yes, Bubble Space includes a Messaging System that allows users to interact and communicate within and across teams, facilitating seamless collaboration and quick updates.
+        </div>
+    </div>
+
+    <!-- Add more FAQs if needed -->
+</div>
+{% endblock %}

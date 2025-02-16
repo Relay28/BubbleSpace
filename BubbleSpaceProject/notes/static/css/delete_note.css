@@ -1,0 +1,108 @@
+/* General body styling */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #ffffff;
+}
+
+/* Content wrapper styling */
+.content {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 20px 25px; /* Adjusted for more comfortable spacing */
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    border: 1px solid #80b68d;
+    text-align: center;
+    word-wrap: break-word; /* Ensures long text wraps properly */
+    overflow-wrap: break-word; /* Breaks long words if needed */
+}
+
+/* Page title styling */
+.content h1 {
+    color: #d9534f; /* Red color for emphasis */
+    margin-bottom: 15px; /* Increased spacing for better layout */
+    font-size: 24px;
+}
+
+/* Paragraph text styling */
+.content p {
+    color: #555;
+    margin-bottom: 20px;
+    font-size: 16px;
+    line-height: 1.5; /* Better readability for longer texts */
+}
+
+/* Note details box styling */
+.note-details {
+    background-color: #f9f9f9;
+    padding: 15px 20px; /* Balanced padding for better layout */
+    border-radius: 6px;
+    margin-bottom: 25px;
+    color: #333;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: left; /* Align text to the left for better readability */
+    word-wrap: break-word; /* Wrap long text properly */
+    overflow-wrap: break-word;
+}
+
+/* Note title inside the details box */
+.note-details h2 {
+    font-size: 20px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+/* Note description and content */
+.note-details p {
+    color: #666;
+    font-size: 15px;
+    line-height: 1.4; /* Matches note_detail readability */
+    margin-top: 8px; /* Spacing between paragraphs */
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+/* Delete form layout */
+.delete-form {
+    display: flex;
+    margin-left: 90vh; /* Center align the buttons */
+    gap: 15px; /* Space between buttons */
+    margin-top: 20px; /* Add space above buttons */
+}
+
+/* Delete button styling */
+.delete-form .delete-btn,
+.delete-form .cancel-btn {
+    
+    padding: 12px 25px; /* Larger buttons for better clickability */
+    font-size: 16px;
+    border: none;
+    border-radius: 6px; /* Smooth corners for buttons */
+    cursor: pointer;
+    text-decoration: none; /* Remove underlines */
+    color: #fff;
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth interaction effects */
+}
+
+/* Delete button hover effect */
+.delete-form .delete-btn {
+    background-color: #f44336; /* Primary red for delete */
+    box-shadow: 0 3px 6px rgba(217, 83, 79, 0.2);
+}
+
+.delete-form .delete-btn:hover {
+    background-color: #d32f2f;
+    transform: scale(1.05); /* Slight zoom effect on hover */
+}
+
+/* Cancel button hover effect */
+.delete-form .cancel-btn {
+    background-color: #5bc0de; /* Sky blue for cancel */
+    box-shadow: 0 3px 6px rgba(91, 192, 222, 0.2);
+}
+
+.delete-form .cancel-btn:hover {
+    background-color: #31b0d5;
+    transform: scale(1.05); /* Slight zoom effect on hover */
+}

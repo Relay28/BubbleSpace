@@ -1,0 +1,638 @@
+{% extends "base.html" %}
+
+{% block content %}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #ffffff; /* Light gray background for contrast */
+    }
+
+    .container1 {
+        max-width: 1200px;
+        padding: 20px;
+        background-color: #ffffff;
+        border-radius: 12px;
+        display: flex;
+        flex-direction: column;
+        margin: 0;
+        
+    }
+
+    .chat-section {
+        display: flex;
+        padding: 0;
+        height: 75vh; /* Fixed height for consistency */
+        gap:0;
+    }
+
+    /* Chat List Styles */
+    .chat-list {
+        flex: 1;
+        background-color: #f1f3f5;
+        border-radius: 12px;
+        padding: 15px;
+        margin-right: 20px;
+        display: flex;
+        flex-direction: column;
+        border: #1e3d58 solid 1px;
+    }
+
+    #search-input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        margin-bottom: 15px;
+        font-size: 14px;
+    }
+
+    #user-suggestions {
+        display: none;
+        margin-top: 43px;
+        background: #ffffff;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        list-style: none;
+        padding: 10px;
+        position: absolute;
+        z-index: 100;
+        max-height: auto;
+        width: 18%;
+    }
+
+    #chat-items {
+        flex: 1;
+        overflow-y: auto;
+        padding-top: 10px;
+    }
+
+    .chat-item {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .chat-item:hover,
+    .chat-item.selected {
+        background-color: #e9f2ff;
+    }
+
+    .chat-item img {
+        width: 40px;
+        height: 40px;
+        border-radius: 20px;
+        margin-right: 10px;
+    }
+
+    .chat-item strong {
+        font-size: 14px;
+        color: #333;
+    }
+
+    /* Chat Window Styles */
+    .chat-window {
+        flex: 3;
+        background-color: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        display: flex;
+        flex-direction: column;
+        border: #1e3d58 solid 1px;
+    }
+
+    .chat-header {
+        background-color: #1e3d58;
+        color: #ffffff;
+        padding: 15px;
+        display: flex;
+        align-items: center;
+        border-radius: 12px 12px 0 0;
+        height: 10vh;
+    }
+
+    .chat-header img {
+        width: 40px;
+        height: 40px;
+        border-radius: 20px;
+        margin-right: 10px;
+    }
+
+    .chat-header h4 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 500;
+    }
+
+    #chat-window {
+        flex: 1;
+        padding: 15px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        background-color: #f8f9fa;
+    }
+
+    .chat-message {
+        display: flex;
+        flex-direction: column;
+        max-width: 70%;
+        padding: 12px 15px;
+        border-radius: 10px;
+        font-size: 14px;
+        position: relative;
+        word-wrap: break-word;
+    }
+
+    .chat-message.sender {
+        align-self: flex-end;
+        background-color: #1e3d58;
+        color: #ffffff;
+    }
+
+    .chat-message.receiver {
+        align-self: flex-start;
+        background-color: #d1e7f7;
+        color: #333;
+    }
+
+    .chat-message .timestamp {
+        font-size: 10px;
+        color: #888;
+        margin-top: 5px;
+        align-self: flex-end;
+    }
+
+    .action-menu {
+        position: absolute;
+        top: 2px;
+        right: auto;
+        cursor: pointer;
+        font-size: 10px;
+        display: none;
+    }
+
+    .chat-message:hover .action-menu {
+    display: block;
+}
+
+    .dropdown-menu1 {
+        display: none;
+        position: absolute;
+        top: 2px;
+        right: 30px;
+        background: #fff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        border: #1e3d58 solid 1px;
+        border-radius: 6px;
+    }
+
+    .dropdown-menu1 i {
+        display: block;
+        font-size: 12px;
+        color: #555;
+        cursor: pointer;
+        width: 80px;
+        padding:2px;
+    }
+
+    .dropdown-menu1 i:hover {
+        background: #f1f3f5;
+        border-radius: 6px;
+    }
+
+    /* Chat Input */
+    .chat-input {
+        display: flex;
+        align-items: center;
+        padding: 10px 15px;
+        border-top: 1px solid #ddd;
+        background-color: #ffffff;
+        border-radius: 0 0 12px 12px;
+    }
+
+    #message-input {
+        flex: 1;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 14px;
+    }
+
+    .chat-input button {
+        margin-left: 10px;
+        background: none;
+        border: none;
+        padding: 0;
+        cursor: pointer;
+    }
+
+    .chat-input button i {
+        font-size: 24px;
+        color: #1e3d58;
+    }
+</style>
+
+<div class="container1">
+    <div class="chat-section">
+        <!-- Chat List -->
+        <div class="chat-list">
+            <input type="text" id="search-input" placeholder="Search User" oninput="searchUsers()">
+            <ul id="user-suggestions"></ul>
+            <div id="chat-items">
+                <p>No chats available</p>
+            </div>
+        </div>
+
+        <!-- Chat Window -->
+        <div class="chat-window">
+            <div class="chat-header">
+                <h4 id="chat-header">Chat with User</h4>
+            </div>
+            <div id="chat-window"></div>
+            <div class="chat-input">
+                <input type="text" id="message-input" placeholder="Type a message..." onkeypress="handleEnterKey(event)">
+                <button onclick="sendMessage()">
+                    <i class="bi bi-send-fill"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true" style="margin-top: 30vh;">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="deleteModalLabel">Confirm Deletion</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          Are you sure you want to delete this message?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-danger" id="confirmDeleteButton">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+
+<script>
+    const baseChatUrl = "{% url 'load_chat_history' 1 %}".replace("1/", "");
+
+    let currentChatUserId = null;
+    let editingMessageId = null;
+
+    let chatSocket = null;
+
+    null;
+
+function connectWebSocket(userId) {
+    if (chatSocket) {
+        chatSocket.close(); // Close existing connection if any
+    }
+
+    chatSocket = new WebSocket(`ws://${window.location.host}/ws/messages/${userId}/`);
+
+    chatSocket.onmessage = function (e) {
+        const data = JSON.parse(e.data);
+        const message = data.message;
+
+        // Update the chat window with the new message
+        const chatWindow = document.getElementById('chat-window');
+        const messageElement = document.createElement('div');
+        messageElement.classList.add('chat-message', 'receiver');
+        messageElement.innerHTML = `
+            <span class="text">${message}</span>
+            <span class="timestamp">${new Date().toLocaleTimeString([], {
+                hour: '2-digit',
+                minute: '2-digit',
+            })}</span>
+        `;
+        chatWindow.appendChild(messageElement);
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+    };
+
+    chatSocket.onclose = function () {
+        console.log('WebSocket disconnected');
+    };
+}
+
+    function handleEnterKey(event) {
+    if (event.key === "Enter") {
+        event.preventDefault(); // Prevent newline in input
+        sendMessage(); // Call the sendMessage function
+    }
+}
+async function searchUsers() {
+    const query = document.getElementById('search-input').value;
+    if (query.length === 0) {
+        document.getElementById('user-suggestions').style.display = 'none';
+        return;
+    }
+
+    try {
+        const response = await fetch(`/bubblespace/messages/search_users/?q=${query}`);
+        const users = await response.json();
+
+        const suggestions = document.getElementById('user-suggestions');
+        suggestions.innerHTML = '';
+
+        if (users.length > 0) {
+            users.forEach(user => {
+                // Fallback for profile picture if not defined or missing
+                const profilePictureUrl = user.profile_picture || '/static/default-avatar.jpg';
+
+                const li = document.createElement('li');
+                li.style.cursor = 'pointer';
+                li.classList.add('d-flex', 'align-items-center', 'mb-2');
+
+                li.onclick = () => selectUser(user.id, user.username, profilePictureUrl);
+
+                li.innerHTML = `
+                    <img src="${profilePictureUrl}" alt="${user.username}'s Profile Picture" 
+                        style="width: 30px; height: 30px; border-radius: 15px; margin-right: 10px;">
+                    <span>${user.username}</span>
+                `;
+                suggestions.appendChild(li);
+            });
+            suggestions.style.display = 'block';
+        } else {
+            suggestions.style.display = 'none';
+        }
+    } catch (error) {
+        console.error('Error fetching user suggestions:', error);
+    }
+}
+
+
+
+function selectUser(userId, username, profile_picture) {
+    // Fallback for undefined or null profile pictures
+    const profilePictureUrl = profile_picture || '/static/default-avatar.jpg';
+
+    // Get the chat items container
+    const chatItems = document.getElementById('chat-items');
+    const chatElements = chatItems.getElementsByClassName('chat-item');
+     connectWebSocket(userId);
+    // Remove the 'selected' class from any previously selected chat item
+    for (const chatElement of chatElements) {
+        chatElement.classList.remove('selected');
+    }
+    
+    // Set the selected chat item
+    const selectedChatItem = Array.from(chatElements).find(item => item.textContent.includes(username));
+    if (selectedChatItem) {
+        selectedChatItem.classList.add('selected');
+    }
+
+    currentChatUserId = userId;
+    document.getElementById('search-input').value = "";
+    document.getElementById('user-suggestions').style.display = 'none';
+
+    // Update the chat header with profile picture and username
+    const chatHeader = document.getElementById('chat-header');
+    chatHeader.innerHTML = `
+        <img src="${profilePictureUrl}" alt="${username}'s Profile Picture" 
+             style="width: 30px; height: 30px; border-radius: 15px; margin-right: 10px;">
+        <span>${username}</span>
+    `;
+
+    document.getElementById('message-input').value = '';
+    loadChatHistory(userId);
+}
+
+
+
+async function loadChatHistory(userId) {
+    try {
+        const response = await fetch(`${baseChatUrl}${userId}/`);
+        if (!response.ok) throw new Error('Failed to load chat history.');
+
+        const data = await response.json();
+        const chatWindow = document.getElementById('chat-window');
+        chatWindow.innerHTML = ''; // Clear existing messages
+
+        if (data.status === 'success' && data.messages.length > 0) {
+            data.messages.forEach((message) => {
+                const messageElement = document.createElement('div');
+                messageElement.classList.add('chat-message');
+
+                // Create formatted time
+                const messageDate = new Date(message.date_sent);
+                const formattedTime = messageDate.toLocaleTimeString([], {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                });
+
+                if (message.sender__username === data.current_user) {
+                    // Message sent by the current user
+                    messageElement.classList.add('sender');
+                    messageElement.innerHTML = `
+                        <div class="action-menu">
+                            <i class="bi bi-three-dots" title="More options" onclick="toggleMenu(this)"></i>
+                            <div class="dropdown-menu1">
+                                <i class="bi bi-pencil-square edit-icon" onclick="editMessage(${message.id}, '${message.message}')" title="Edit">Edit</i>
+                                <i class="bi bi-trash delete-icon" onclick="deleteMessage(${message.id})" title="Delete">Delete</i>
+                            </div>
+                        </div>
+                        <span class="text">${message.message}</span>
+                        <span class="timestamp">${formattedTime}</span>
+                    `;
+                } else {
+                    // Message received by the current user
+                    messageElement.classList.add('receiver');
+                    messageElement.innerHTML = `
+                        <span class="text">${message.message}</span>
+                        <span class="timestamp">${formattedTime}</span>
+                    `;
+                }
+
+                chatWindow.appendChild(messageElement);
+            });
+
+            chatWindow.scrollTop = chatWindow.scrollHeight; // Scroll to the bottom
+        }
+    } catch (error) {
+        console.error('Error loading chat history:', error);
+    }
+}
+
+
+function toggleMenu(element) {
+    const dropdown = element.nextElementSibling; // Select the dropdown menu
+    const isVisible = dropdown.style.display === "block";
+    document.querySelectorAll(".dropdown-menu1").forEach(menu => menu.style.display = "none"); // Close all other menus
+    dropdown.style.display = isVisible ? "none" : "block"; // Toggle the clicked menu
+}
+
+
+
+// Close the dropdown if clicked outside
+document.addEventListener('click', function (e) {
+    const dropdowns = document.querySelectorAll('.dropdown-menu1');
+    dropdowns.forEach(menu => {
+        if (!menu.parentNode.contains(e.target)) {
+            menu.style.display = 'none';
+        }
+    });
+});
+
+async function sendMessage() {
+    const messageInput = document.getElementById('message-input');
+    const message = messageInput.value.trim();
+
+  
+    if (message === "" || !chatSocket) return;
+
+    chatSocket.send(JSON.stringify({ message: message }));
+    messageInput.value = ''; // Clear the input field
+
+    try {
+        let response;
+
+        if (editingMessageId) {
+            // Editing an existing message
+            response = await fetch(`/bubblespace/messages/edit_message/${editingMessageId}/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': getCookie('csrftoken'),
+                },
+                body: `message=${encodeURIComponent(message)}`,
+            });
+
+            editingMessageId = null; // Reset after editing
+        } else {
+            // Sending a new message
+            if (currentChatUserId === null) {
+                alert("Please select a user to chat with.");
+                return;
+            }
+
+            response = await fetch(`/bubblespace/messages/send/${currentChatUserId}/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': getCookie('csrftoken'),
+                },
+                body: `message=${encodeURIComponent(message)}`,
+            });
+        }
+
+        const data = await response.json();
+        if (data.status === 'success') {
+            messageInput.value = ''; // Clear the input field
+            loadChatHistory(currentChatUserId);
+        } else {
+            console.error('Failed to send/edit message:', data.message);
+        }
+    } catch (error) {
+        console.error('Error sending/editing message:', error);
+    }
+}
+
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.startsWith(`${name}=`)) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    function editMessage(messageId, currentContent) {
+    editingMessageId = messageId;
+    const messageInput = document.getElementById('message-input');
+    messageInput.value = currentContent;
+    messageInput.focus(); // Focus on the input field
+}
+
+
+function deleteMessage(messageId) {
+    messageIdToDelete = messageId; // Store the message ID to delete
+    const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+    deleteModal.show();
+}
+
+// Add event listener for the confirm button in the modal
+document.getElementById('confirmDeleteButton').addEventListener('click', async function () {
+    if (!messageIdToDelete) return;
+
+    try {
+        const response = await fetch(`/bubblespace/messages/delete_message/${messageIdToDelete}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+            },
+        });
+
+        if (!response.ok) throw new Error('Failed to delete message');
+
+        const data = await response.json();
+        if (data.status === 'success') {
+            const deleteModal = bootstrap.Modal.getInstance(document.getElementById('deleteModal'));
+            deleteModal.hide(); // Hide the modal after successful deletion
+            loadChatHistory(currentChatUserId);
+        } else {
+            console.error("Error deleting message:", data.message);
+            alert("Error deleting message: " + data.message);
+        }
+    } catch (error) {
+        console.error("Error deleting message:", error);
+    } finally {
+        messageIdToDelete = null; // Reset the message ID
+    }
+});
+
+    async function loadUserChats() {
+        try {
+            const response = await fetch('/bubblespace/messages/get_user_chats/');
+            const data = await response.json();
+
+            const chatItems = document.getElementById('chat-items');
+            chatItems.innerHTML = '';  // Clear existing chat items
+
+            if (data.status === 'success' && data.chats.length > 0) {
+                data.chats.forEach(chat => {
+                    const chatElement = document.createElement('div');
+                    chatElement.classList.add('chat-item');
+                    chatElement.style.cursor = 'pointer';
+                    
+                    chatElement.onclick = () => selectUser(chat.recipient_id, chat.username, chat.profile_picture);
+
+                    chatElement.innerHTML = `<img src=${chat.profile_picture} alt="sda" style="width:30px;height:30px;border-radius:20px; margin-right: 10px;"> <strong>${chat.username}</strong>`;
+                    chatItems.appendChild(chatElement);
+                });
+            } else {
+                chatItems.innerHTML = '<p>No chats available</p>';
+            }
+        } catch (error) {
+            console.error('Error loading user chats:', error);
+        }
+    }
+    
+
+    // Call the function to load chats when the page loads
+    window.onload = loadUserChats;
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,99 @@
+/* General body and main content styling */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #ffffff; /* White background */
+    margin: 0;
+    padding: 0;
+}
+
+/* Content wrapper styling */
+.content {
+    max-width: 800px;
+    margin: 10px auto; /* Reduced top margin to bring content closer to the search bar */
+    padding: 10px 20px; /* Reduced padding for a tighter layout */
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+.content h1 {
+    text-align: center;
+    color: #333;
+    margin: 10px 0; /* Reduced margin for header */
+}
+
+/* Form styling */
+.edit-note-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Reduced gap between form elements */
+}
+
+/* Form group styling */
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    margin-bottom: 5px;
+    color: #666;
+}
+
+.form-group input[type="text"],
+.form-group textarea {
+    padding: 8px; /* Slightly reduced padding */
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    color: #333;
+    background-color: #fafafa;
+    width: 100%;
+}
+
+.form-group input[type="text"]:focus,
+.form-group textarea:focus {
+    border-color: #3cb371;
+    outline: none;
+}
+
+/* Textarea adjustments */
+.form-group textarea {
+    height: 150px;
+    resize: vertical;
+}
+
+/* Button group adjustments */
+.button-group {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding-top: 15px;
+}
+
+.button-group .save-btn,
+.button-group .cancel-btn {
+    padding: 8px 16px;
+    font-size: 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    color: #fff;
+    transition: background-color 0.3s;
+}
+
+.button-group .save-btn {
+    background-color: #4CAF50;
+}
+
+.button-group .save-btn:hover {
+    background-color: #45a049;
+}
+
+.button-group .cancel-btn {
+    background-color: #f44336;
+}
+
+.button-group .cancel-btn:hover {
+    background-color: #d32f2f;
+}

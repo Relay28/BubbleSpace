@@ -1,0 +1,121 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>{{ title }}</title>
+    <style>
+        /* General Styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9; /* Light background */
+        }
+
+        a {
+            text-decoration: none;
+            color: #333; /* Green */
+            font-weight: bold;
+        }
+
+        .btn-back{
+            text-decoration: none;
+            color: #333; /* Green */
+            font-weight: bold;
+        }
+
+        /* Main Container */
+        .main-content1 {
+          
+            padding: 20px;
+            max-width: 70%;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            margin: 30px auto;
+            margin-left: 325px;
+        }
+
+        .main-content h1 {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .main-content form {
+            margin-top: 20px;
+        }
+
+        /* Form Elements */
+        form label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        form input[type="text"],
+        form input[type="email"],
+        form input[type="password"],
+        form select,
+        form textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        form input:focus,
+        form select:focus,
+        form textarea:focus {
+            border-color: #28a745;
+            outline: none;
+        }
+
+        /* Button Styling */
+        button[type="submit"] {
+            background-color: var(--primary-color); /* Yellow */
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            display: inline-block; /* Ensures hover effects apply properly */
+            transition: transform 0.3s ease, background-color 0.3s ease; /* Adds smooth transition */
+        }
+
+        button[type="submit"]:hover {
+            transform: scale(1.1); /* Slightly enlarges the button */
+        }
+    </style>
+</head>
+
+<body>
+    {% include "base.html" %}
+
+    <div class="main-content1">
+        <a href="{% url 'project_detail' project.ProjectId %}" class="btn-back">Back</a>
+
+        <h1>{{ title }}</h1>
+
+        <form method="post">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            <div>
+                {{ form.Title.label_tag }}
+                {{ form.Title }}
+            </div>
+            <div>
+                {{ form.Description.label_tag }}
+                {{ form.Description }}
+            </div>
+            <button type="submit">Save</button>
+        </form>
+    </div>
+</body>
+</html>

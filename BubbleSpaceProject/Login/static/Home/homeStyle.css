@@ -1,0 +1,166 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    display: flex;
+    min-height: 100vh;
+    background-color: #f7f7f7;
+}
+
+/* Container Layout */
+.container {
+    display: flex;
+    width: 100%;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 220px;
+    background-color: #ffffff;
+    padding: 20px;
+    border-right: 2px solid #e0e0e0;
+    border-radius: 0 20px 20px 0;
+}
+
+.sidebar-header h2 {
+    font-size: 18px;
+    color: #333;
+    font-weight: 600;
+}
+
+.sidebar-content h3 {
+    font-size: 16px;
+    color: #4caf50;
+    font-weight: 600;
+    margin-top: 20px;
+    margin-bottom: 15px;
+}
+
+.sidebar-content ul {
+    list-style: none;
+}
+
+.sidebar-content ul li {
+    font-size: 14px;
+    color: #333;
+    padding: 10px 0;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.sidebar-content ul li i.icon {
+    margin-right: 8px;
+}
+
+/* Main Content */
+.main-content {
+    flex: 1;
+    padding: 20px;
+}
+
+/* Header */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.search-bar {
+    width: 60%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.header-icons span {
+    font-size: 20px;
+    color: #4caf50;
+    margin-left: 15px;
+    cursor: pointer;
+}
+
+/* Workspace Sections */
+.workspace {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.tasks-section, .notes-section {
+    background-color: #ffffff;
+    border-radius: 10px;
+    padding: 20px;
+    width: 100%;
+    max-width: 300px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.tasks-section h3, .notes-section h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.task-list, .note-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.task-item, .note-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background-color: #f7f7f7;
+    border-radius: 5px;
+    position: relative;
+}
+
+.circle {
+    width: 12px;
+    height: 12px;
+    background-color: #a8d5a2;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.see-all {
+    font-size: 14px;
+    color: #4caf50;
+    text-align: right;
+    margin-top: 10px;
+    text-decoration: none;
+}
+
+/* Popup styling */
+.popup {
+    display: none;
+    position: absolute;
+    background-color: white;
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+    right: 20px; /* Adjust based on your layout */
+    top: 40px; /* Adjust to align below the icon */
+    z-index: 100;
+}
+
+.popup a {
+    color: #333;
+    text-decoration: none;
+    font-size: 14px;
+    display: block;
+}
+
+.popup.show {
+    display: block;
+}

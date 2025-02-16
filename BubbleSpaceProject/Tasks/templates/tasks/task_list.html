@@ -1,0 +1,413 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<style>
+    .btn-new-task {
+        background-color: var(--primary-color); /* Use your primary color variable */
+        color: #fff;
+        text-decoration: none; /* Removes underline */
+        display: inline-block; /* Ensures hover effects apply properly */
+        transition: transform 0.3s ease, background-color 0.3s ease; /* Adds smooth transition */
+    }
+
+    .btn-new-task:hover {
+        color: #fff;
+        transform: scale(1.1); /* Slightly enlarges the button */
+    }
+
+    .btn-save-task{
+        background-color: var(--primary-color); /* Use your primary color variable */
+        color: #fff;
+        text-decoration: none; /* Removes underline */
+        display: inline-block; /* Ensures hover effects apply properly */
+        transition: transform 0.3s ease, background-color 0.3s ease; /* Adds smooth transition */
+    }
+
+    .btn-save-task:hover{
+        color: #fff;
+        transform: scale(1.1); /* Slightly enlarges the button */
+    }
+
+    .btn-cancel-action{
+        background-color: #dc3545;
+        color: #fff;
+        display: inline-block; /* Ensures hover effects apply properly */
+        transition: transform 0.3s ease, background-color 0.3s ease; /* Adds smooth transition */
+    }
+
+    .btn-cancel-action:hover{
+        background-color: #bd2130;
+        transform: scale(1.1); /* Slightly enlarges the button */
+    }
+</style>
+
+<div class="container py-3">
+    <!-- Task List Header -->
+    <div class="d-flex justify-content-between align-items-center mb-1">
+        <h1 class="h1" style="font-size: 24px; font-weight: bold; color: #333;">Tasks</h1>
+        <!-- Create New Task Button (Text with background color) -->
+    </div>
+
+    <!-- Task Filter (Status Dropdown) -->
+    <div class="mb-4 d-flex justify-content-between align-items-center">
+        <!-- Form for dropdown -->
+        <form method="GET" action="{% url 'task_list' %}" class="d-flex" style="height: 30px;">
+            <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
+                <option value="">All Tasks</option>
+                <option value="green" {% if request.GET.status == 'green' %}selected{% endif %}>Completed</option>
+                <option value="yellow" {% if request.GET.status == 'yellow' %}selected{% endif %}>Ongoing</option>
+                <option value="red" {% if request.GET.status == 'red' %}selected{% endif %}>To Do</option>
+            </select>
+        </form>
+    
+        <!-- Button outside the form -->
+        <button id="new-task-btn" class="btn btn-primary btn-sm btn-new-task">
+            Add Task
+        </button>
+    </div>
+
+    
+    <!-- Task Creation Form -->
+    <div id="task-form-container" class="p-3 bg-light rounded shadow-sm mb-3" style="display: none;">
+        <form id="task-form" class="row g-2 align-items-center" method="POST" action="{% url 'task_create' %}">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            <div class="col-4">
+                {{ form.title.label_tag }}
+                {{ form.title }}
+            </div>
+            <div class="col-4">
+                {{ form.description.label_tag }}
+                {{ form.description }}
+            </div>
+            <div class="col-3">
+                {{ form.due_date.label_tag }}
+                {{ form.due_date }}
+            </div>
+            <div class="col-1">
+                {{ form.status.label_tag }}
+                {{ form.status }}
+            </div>
+            <div class="text-end">
+                <!-- Save Task Button (with background color) -->
+                <button type="submit" class="btn btn-primary btn-sm me-2 btn-save-task">
+                    <i class="bi bi-save"></i> Save
+                </button>
+                <!-- Cancel Button (with background color) -->
+                <button id="cancel-task-btn" type="button" class="btn btn-danger btn-sm btn-cancel-action">
+                    <i class="bi bi-x-circle"></i> Cancel
+                </button>
+            </div>
+        </form>
+    </div>
+    <!-- Task List -->
+    <div id="task-list">
+        {% if request.GET.status == 'green' %}
+        <!-- Green Tasks (Completed) -->
+        <div>
+            <h5 class="text-success">Completed Tasks</h5>
+            <div class="d-flex justify-content-between mb-2">
+                <div class="fw-bold" style="width: 40%;">Name</div>
+                <div class="fw-bold" style="width: 30%;">Due Date</div>
+                <div class="fw-bold" style="width: 30%;">Actions</div>
+            </div>
+            {% for task in tasks %}
+            {% if task.status == 'green' %}
+            <div class="d-flex justify-content-between align-items-center p-3 mb-3 bg-white rounded shadow-sm border border-light">
+                <div class="d-flex align-items-center" style="width: 40%;">
+                    <!-- Round Green Status Icon -->
+                    <div class="rounded-circle bg-success text-white d-flex justify-content-center align-items-center me-3" style="width: 30px; height: 30px;">
+                        <i class="bi bi-check-circle" style="font-size: 16px;"></i>
+                    </div>
+                    <a href="#" 
+                        class="text-decoration-none text-dark" 
+                        style="font-size: 14px;" 
+                        onclick="showTaskDetails('{{ task.title }}', '{{ task.description }}', '{{ task.due_date }}', '{{ task.status }}')">
+                        {{ task.title }}
+                    </a>
+                </div>
+                <div style="width: 30%;">{{ task.due_date|date:"M d, Y" }}</div>
+                <div class="d-flex align-items-center gap-2" style="width: 30%;">
+                    <button type="button" class="btn btn-link btn-sm text-primary" 
+                            onclick="openEditForm({
+                                id: '{{ task.pk }}', 
+                                title: '{{ task.title }}', 
+                                description: '{{ task.description }}', 
+                                due_date: '{{ task.due_date }}', 
+                                status: '{{ task.status }}'
+                            })">
+                        <i class="bi bi-pencil" style="font-size: 16px;"></i>
+                    </button>
+                    <!-- Delete Button -->
+                    <a href="#" class="btn btn-link btn-sm" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#deleteModal" 
+                        onclick="setDeleteModal('{{ task.pk }}', '{{ task.title }}')">
+                            <i class="bi bi-trash text-danger" style="font-size: 16px;"></i>
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+            {% empty %}
+            <p>No completed tasks found.</p>
+            {% endfor %}
+        </div>
+        {% elif request.GET.status == 'yellow' %}
+        <!-- Yellow Tasks (Ongoing) -->
+        <div>
+            <h5 class="text-warning">Ongoing Tasks</h5>
+            <div class="d-flex justify-content-between mb-2">
+                <div class="fw-bold" style="width: 40%;">Name</div>
+                <div class="fw-bold" style="width: 30%;">Due Date</div>
+                <div class="fw-bold" style="width: 30%;">Actions</div>
+            </div>
+            {% for task in tasks %}
+            {% if task.status == 'yellow' %}
+            <div class="d-flex justify-content-between align-items-center p-3 mb-3 bg-white rounded shadow-sm border border-light">
+                <div class="d-flex align-items-center" style="width: 40%;">
+                    <!-- Round Yellow Status Icon -->
+                    <div class="rounded-circle bg-warning text-dark d-flex justify-content-center align-items-center me-3" style="width: 30px; height: 30px;">
+                        <i class="bi bi-clock" style="font-size: 16px;"></i>
+                    </div>
+                    <a href="#" 
+                        class="text-decoration-none text-dark" 
+                        style="font-size: 14px;" 
+                        onclick="showTaskDetails('{{ task.title }}', '{{ task.description }}', '{{ task.due_date }}', '{{ task.status }}')">
+                        {{ task.title }}
+                    </a>
+                </div>
+                <div style="width: 30%;">{{ task.due_date|date:"M d, Y" }}</div>
+                <div class="d-flex align-items-center gap-2" style="width: 30%;">
+                    <button type="button" class="btn btn-link btn-sm text-primary" 
+                            onclick="openEditForm({
+                                id: '{{ task.pk }}', 
+                                title: '{{ task.title }}', 
+                                description: '{{ task.description }}', 
+                                due_date: '{{ task.due_date }}', 
+                                status: '{{ task.status }}'
+                            })">
+                        <i class="bi bi-pencil" style="font-size: 16px;"></i>
+                    </button>
+                    <!-- Delete Button -->
+                    <a href="#" class="btn btn-link btn-sm" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#deleteModal" 
+                        onclick="setDeleteModal('{{ task.pk }}', '{{ task.title }}')">
+                            <i class="bi bi-trash text-danger" style="font-size: 16px;"></i>
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+            {% empty %}
+            <p>No ongoing tasks found.</p>
+            {% endfor %}
+        </div>
+        {% elif request.GET.status == 'red' %}
+        <!-- Red Tasks (To Do) -->
+        <div>
+            <h5 class="text-danger">To Do Tasks</h5>
+            <div class="d-flex justify-content-between mb-2">
+                <div class="fw-bold" style="width: 40%;">Name</div>
+                <div class="fw-bold" style="width: 30%;">Due Date</div>
+                <div class="fw-bold" style="width: 30%;">Actions</div>
+            </div>
+            {% for task in tasks %}
+            {% if task.status == 'red' %}
+            <div class="d-flex justify-content-between align-items-center p-3 mb-3 bg-white rounded shadow-sm border border-light">
+                <div class="d-flex align-items-center" style="width: 40%;">
+                    <!-- Round Red Status Icon -->
+                    <div class="rounded-circle bg-danger text-white d-flex justify-content-center align-items-center me-3" style="width: 30px; height: 30px;">
+                        <i class="bi bi-list-check" style="font-size: 16px;"></i>
+                    </div>
+                    <a href="#" 
+                        class="text-decoration-none text-dark" 
+                        style="font-size: 14px;" 
+                        onclick="showTaskDetails('{{ task.title }}', '{{ task.description }}', '{{ task.due_date }}', '{{ task.status }}')">
+                        {{ task.title }}
+                    </a>
+                </div>
+                <div style="width: 30%;">{{ task.due_date|date:"M d, Y" }}</div>
+                <div class="d-flex align-items-center gap-2" style="width: 30%;">
+                    <button type="button" class="btn btn-link btn-sm text-primary" 
+                            onclick="openEditForm({
+                                id: '{{ task.pk }}', 
+                                title: '{{ task.title }}', 
+                                description: '{{ task.description }}', 
+                                due_date: '{{ task.due_date }}', 
+                                status: '{{ task.status }}'
+                            })">
+                        <i class="bi bi-pencil" style="font-size: 16px;"></i>
+                    </button>
+                    <!-- Delete Button -->
+                    <a href="#" class="btn btn-link btn-sm" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#deleteModal" 
+                        onclick="setDeleteModal('{{ task.pk }}', '{{ task.title }}')">
+                            <i class="bi bi-trash text-danger" style="font-size: 16px;"></i>
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+            {% empty %}
+            <p>No tasks to do found.</p>
+            {% endfor %}
+        </div>
+        {% else %}
+        <!-- All Tasks (No Filter Applied) -->
+        <div>
+            <h5 class="text-dark">All Tasks</h5>
+            <div class="d-flex justify-content-between mb-2">
+                <div class="fw-bold" style="width: 40%;">Name</div>
+                <div class="fw-bold" style="width: 30%;">Due Date</div>
+                <div class="fw-bold" style="width: 30%;">Actions</div>
+            </div>
+            {% for task in tasks %}
+            <div class="d-flex justify-content-between align-items-center p-3 mb-3 bg-white rounded shadow-sm border border-light">
+                <div class="d-flex align-items-center" style="width: 40%;">
+                    <!-- Status Icon based on task status -->
+                    <div class="rounded-circle {% if task.status == 'green' %}bg-success{% elif task.status == 'yellow' %}bg-warning{% else %}bg-danger{% endif %} text-white d-flex justify-content-center align-items-center me-3" style="width: 30px; height: 30px;">
+                        <i class="bi {% if task.status == 'green' %}bi-check-circle{% elif task.status == 'yellow' %}bi-clock{% else %}bi-list-check{% endif %}" style="font-size: 16px;"></i>
+                    </div>
+                    <a href="#" 
+                        class="text-decoration-none text-dark" 
+                        style="font-size: 14px;" 
+                        onclick="showTaskDetails('{{ task.title }}', '{{ task.description }}', '{{ task.due_date }}', '{{ task.status }}')">
+                        {{ task.title }}
+                    </a>
+                </div>
+                <div style="width: 30%;">{{ task.due_date|date:"M d, Y" }}</div>
+                <div class="d-flex align-items-center gap-2" style="width: 30%;">
+                    <button type="button" class="btn btn-link btn-sm text-primary" 
+                            onclick="openEditForm({
+                                id: '{{ task.pk }}', 
+                                title: '{{ task.title }}', 
+                                description: '{{ task.description }}', 
+                                due_date: '{{ task.due_date }}', 
+                                status: '{{ task.status }}'
+                            })">
+                        <i class="bi bi-pencil" style="font-size: 16px;"></i>
+                    </button>
+                    <!-- Delete Button -->
+                    <a href="#" class="btn btn-link btn-sm" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#deleteModal" 
+                        onclick="setDeleteModal('{{ task.pk }}', '{{ task.title }}')">
+                            <i class="bi bi-trash text-danger" style="font-size: 16px;"></i>
+                    </a>
+                </div>
+            </div>
+            {% empty %}
+            <p>No tasks found.</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-danger" id="deleteModalLabel">Delete Task</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete the task: <strong id="delete-task-title"></strong>?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                <form id="delete-task-form" method="POST">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Task Details Modal -->
+<div class="modal fade" id="taskDetailsModal" tabindex="-1" aria-labelledby="taskDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="taskDetailsModalLabel">Task Details</h5>
+            </div>
+            <div class="modal-body">
+                <p><strong>Title:</strong> <span id="modal-task-title"></span></p>
+                <p><strong>Description:</strong> <span id="modal-task-description"></span></p>
+                <p><strong>Due Date:</strong> <span id="modal-task-due-date"></span></p>
+                <p><strong>Status:</strong> <span id="modal-task-status"></span></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('new-task-btn').addEventListener('click', function() {
+        document.getElementById('task-form-container').style.display = 'block';
+        this.style.display = 'none';
+    });
+
+    document.getElementById('cancel-task-btn').addEventListener('click', function() {
+        document.getElementById('task-form-container').style.display = 'none';
+        document.getElementById('new-task-btn').style.display = 'inline-block';
+    });
+
+    function openEditForm(task) {
+        const taskFormContainer = document.getElementById('task-form-container');
+        const taskForm = document.getElementById('task-form');
+        const newTaskBtn = document.getElementById('new-task-btn');
+
+        // Populate form fields with existing task data
+        taskForm.title.value = task.title;
+        taskForm.description.value = task.description;
+        console.log(new Date(task.due_date).toLocaleDateString('en-GB'));
+        taskForm.due_date.value = new Date(task.due_date).toLocaleDateString('en-GB');
+        taskForm.status.value = task.status;
+
+        // Update form action URL
+        taskForm.action = `/bubblespace/tasks/task/${task.id}/edit/`;
+
+        // Show the form and hide the "Add Task" button
+        taskFormContainer.style.display = 'block';
+        newTaskBtn.style.display = 'none';
+    }
+
+    document.getElementById('cancel-task-btn').addEventListener('click', function() {
+        const taskFormContainer = document.getElementById('task-form-container');
+        const newTaskBtn = document.getElementById('new-task-btn');
+
+        // Reset form and toggle visibility
+        document.getElementById('task-form').reset();
+        taskFormContainer.style.display = 'none';
+        newTaskBtn.style.display = 'block';
+    });
+
+    function setDeleteModal(taskId, taskTitle) {
+        // Set the task title in the modal
+        document.getElementById('delete-task-title').textContent = taskTitle;
+
+        // Update the form action URL with the correct task ID
+        const deleteForm = document.getElementById('delete-task-form');
+        deleteForm.action = `/bubblespace/tasks/task/${taskId}/delete/`;
+    }
+
+    function showTaskDetails(title, description, dueDate, status) {
+        // Populate modal content
+        document.getElementById('modal-task-title').textContent = title;
+        document.getElementById('modal-task-description').textContent = description;
+        document.getElementById('modal-task-due-date').textContent = dueDate ? new Date(dueDate).toLocaleDateString() : 'N/A';
+        document.getElementById('modal-task-status').textContent = status.charAt(0).toUpperCase() + status.slice(1);
+
+        // Show the modal
+        var taskDetailsModal = new bootstrap.Modal(document.getElementById('taskDetailsModal'));
+        taskDetailsModal.show();
+    }
+</script>
+{% endblock %}
+    

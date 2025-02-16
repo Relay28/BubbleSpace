@@ -1,0 +1,33 @@
+.main-content {
+    margin-left: 290px; /* Slightly larger to create more space */
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    color: #333;
+}
+
+form button[type="submit"] {
+    background-color: #3cb371;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+form button[type="submit"]:hover {
+    background-color: #2e8b57; /* Darker shade on hover */
+}
+
+input[type="text"], textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 15px;
+}
+
+input[type="text"]:focus, textarea:focus {
+    border-color: #3cb371; /* Highlighted border on focus */
+    outline: none;
+}

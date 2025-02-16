@@ -1,0 +1,113 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        /* Main content styles */
+        .main-content1 {
+            margin-left: 260px; /* Adjust spacing to fit design */
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            color: #1e3d58;
+            margin-top: 10px;
+            padding-top: 0;
+            font-size: 14px;
+        }
+        .header{
+            height:69px;
+            padding-top: 16px;
+        }
+        .mb-0{
+            margin-top: -2px;
+        }
+        .p{
+            font-weight: 2;
+        }
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            background-color: white;
+            border-bottom: 2px solid #e6e6e6;
+            transition: all 0.3s ease;
+            flex-wrap: nowrap;
+        }
+
+        .header-row h3 {
+            font-size: 23px;
+            font-weight: bold;
+            margin: 0;
+            color: #333; 
+            margin-top: 0;
+            margin-bottom: 12px;
+        }
+        /* Form inputs */
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+            box-sizing: border-box;
+            margin-bottom: 15px;
+        }
+
+        input[type="text"]:focus, textarea:focus {
+            border-color: #1e3d58;
+            outline: none;
+            box-shadow: 0 0 5px rgba(30, 61, 88, 0.5);
+        }
+
+        /* Buttons container */
+        .button-container {
+            text-align: right;
+        }
+
+        /* Submit button */
+        button[type="submit"] {
+            background-color: #1e3d58;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            font-size: 14px;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #164256;
+            transform: scale(1.05);
+        }
+
+        .container{
+            padding: 20px;
+            padding-top: 20px;
+        }
+        form label {
+            font-weight: bold;
+            font-size: 15px;
+        }
+    </style>
+</head>
+<body>
+    {% include "base.html" %}
+    <div class="main-content1" style="padding-top: 0;">
+    <div class = "header-row">
+        <h3>Add Note</h3>
+    </div>
+    
+        <div class="container">
+            <form method="post" style="width: 100%;">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <div class="button-container">
+                    <button type="submit">Save Note</button>
+                    <a href="{% url 'notes_list' %}" style="margin-left: 10px; color: red; text-decoration: none;">Cancel</a>
+            </form>
+        </div>
+        
+    </div>
+</body>
+</html>

@@ -1,0 +1,79 @@
+/* Content wrapper styling for Note Detail page */
+.content {
+    max-width: 90%;
+    max-height: 900px;
+    margin: 20px auto; /* Center the content */
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid #80b68d;
+    border-radius: 8px;
+}
+
+/* Header styling */
+.content h1 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    margin: auto;
+    margin-bottom: 20px;
+    word-break: break-word; /* Ensure long titles wrap correctly */
+    padding: 10px;
+    border-bottom: 1px solid rgb(105, 105, 105);
+    align-items: center; /* Vertically center the text */
+    justify-content: flex-start;
+}
+
+
+
+/* Description and content text styling */
+.content .description,
+.content .content-text {
+    font-size: 16px;
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 15px;
+    padding: 10px;
+    word-wrap: break-word; /* Prevent overflow for long text */
+}
+
+/* Action buttons styling */
+.actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+/* Shared button styles */
+.actions a {
+    text-decoration: none;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-size: 16px;
+    transition: background-color 0.3s;
+    text-align: center;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+/* Edit button */
+.actions .edit-button {
+    background-color: #4CAF50;
+}
+
+.actions .edit-button:hover {
+    background-color: #45a049;
+    transform: scale(1.05);
+}
+
+/* Delete button */
+.actions .delete-button {
+    background-color: #f44336;
+    
+}
+
+.actions .delete-button:hover {
+    background-color: #d32f2f;
+    transform: scale(1.05);
+}

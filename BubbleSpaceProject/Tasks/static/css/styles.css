@@ -1,0 +1,55 @@
+.container {
+    width: 80%;
+    margin: auto; /* Adjust margins here */
+    padding: 20px;
+}
+
+h1 {
+    font-size: 2em;
+}
+
+.create-task-button {
+    float: right; /* Positions the button to the right */
+    margin: 20px 0; /* Adjust margins here */
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.task-list {
+    margin-top: 20px;
+}
+
+.task-item {
+    display: flex;
+    justify-content: space-between; /* Space between title and actions */
+    padding: 10px;
+    border: 1px solid #ccc;
+    margin-bottom: 10px; /* Space between tasks */
+}
+
+.task-actions {
+    display: flex;
+    gap: 10px; /* Space between buttons */
+}
+
+.edit-button, .delete-button {
+    background-color: #f0ad4e;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.delete-button {
+    background-color: #d9534f; /* Red for delete */
+}
+
+.delete-button:hover, .edit-button:hover {
+    opacity: 0.8; /* Change opacity on hover */
+}
+
+/* Add more styles as needed */

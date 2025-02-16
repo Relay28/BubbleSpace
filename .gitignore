@@ -1,0 +1,14 @@
+__pycache__/
+*.pyc
+/BubbleSpaceProject/BubbleSpaceProject/pycache/*.pyc
+/BubbleSpaceProject/Login/*.py
+/BubbleSpaceProject/Messages/*.py
+/BubbleSpaceProject/notes/*.py
+/BubbleSpaceProject/Projects/*.py
+/BubbleSpaceProject/Tasks/*.py
+/BubbleSpaceProject/Teams/*.py
+/BubbleSpaceProject/*.py
+<<<<<<< HEAD
+=======
+
+>>>>>>> dc0baf37bb83ed6d075ffab3c828f73c56467927
