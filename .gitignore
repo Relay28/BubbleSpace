@@ -1,12 +1,7 @@
 __pycache__/
 *.pyc
 /BubbleSpaceProject/BubbleSpaceProject/pycache/*.pyc
-/BubbleSpaceProject/Login/*.py
-/BubbleSpaceProject/Messages/*.py
-/BubbleSpaceProject/notes/*.py
-/BubbleSpaceProject/Projects/*.py
-/BubbleSpaceProject/Tasks/*.py
-/BubbleSpaceProject/Teams/*.py
+
 <<<<<<< HEAD
 =======
 
